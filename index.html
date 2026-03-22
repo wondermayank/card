@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ThunderTechnology – Card Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #f5f4f2;
+    --card-bg: #ffffff;
+    --icon-bg: #f0ede8;
+    --text-dark: #1a1814;
+    --text-mid: #5a5550;
+    --text-soft: #9a948e;
+    --accent: #6a6cff;
+    --radius: 22px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.07);
+    --shadow-hover: 0 12px 40px rgba(0,0,0,0.13);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--text-dark);
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: .5;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative; z-index: 2;
+    padding: 48px 60px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+
+  .brand {
+    display: flex; align-items: center; gap: 14px;
+  }
+
+  .brand-icon {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, #f7c948 0%, #ff7c2a 100%);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 14px rgba(255,124,42,0.35);
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #1a1814 30%, #6a6cff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .brand-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+
+  .header-cta {
+    display: flex; gap: 12px; align-items: center;
+  }
+
+  .btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 500;
+    transition: all .2s ease;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid #d8d4ce;
+    color: var(--text-mid);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #6a6cff 0%, #a06cf7 100%);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(106,108,255,.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(106,108,255,.45); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 2;
+    padding: 56px 60px 12px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    background: linear-gradient(90deg, #ffe8f0, #e8eaff);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -1px;
+    color: var(--text-dark);
+    max-width: 640px;
+    margin: 0 auto 16px;
+  }
+
+  .hero p {
+    font-size: 1rem;
+    color: var(--text-soft);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    position: relative; z-index: 2;
+    max-width: 480px; margin: 32px auto 0;
+    padding: 0 60px;
+  }
+  .search-wrap input {
+    width: 100%; padding: 14px 48px 14px 20px;
+    border: 1.5px solid #e2ddd8;
+    border-radius: 50px;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text-dark);
+    outline: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .search-wrap input::placeholder { color: var(--text-soft); }
+  .search-wrap input:focus { border-color: var(--accent); box-shadow: 0 2px 16px rgba(106,108,255,.18); }
+  .search-wrap .search-icon {
+    position: absolute; right: 74px; top: 50%; transform: translateY(-50%);
+    color: var(--text-soft); font-size: 1rem; pointer-events: none;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-label {
+    position: relative; z-index: 2;
+    padding: 48px 60px 0;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-label h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; font-weight: 700;
+    color: var(--text-dark);
+  }
+  .section-label .pill {
+    background: #eeeaff; color: var(--accent);
+    border-radius: 50px; padding: 3px 11px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    position: relative; z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 24px 60px 80px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 28px 22px 22px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s ease;
+    box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+    border: 1.5px solid transparent;
+    background-clip: padding-box;
+    animation: fadeUp .5s ease both;
+  }
+
+  /* gradient border top line per card using pseudo */
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--card-accent, linear-gradient(90deg, #a8d8ff, #c4b5fd));
+    opacity: 0;
+    transition: opacity .25s;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-icon {
+    width: 90px; height: 90px;
+    border-radius: 20px;
+    background: var(--icon-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.8rem;
+    margin-bottom: 18px;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .card:hover .card-icon { transform: scale(1.1) rotate(-3deg); }
+
+  a.card { text-decoration: none; }
+
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+  }
+
+  .card p {
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-arrow {
+    margin-top: 20px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: #f0ede8;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    font-size: 0.95rem;
+    transition: background .2s, transform .2s;
+  }
+  .card:hover .card-arrow {
+    background: var(--accent);
+    color: #fff;
+    transform: translateX(3px);
+  }
+
+  /* accent colors per card */
+  .c1  { --card-accent: linear-gradient(90deg,#ffd6a5,#ffadad); }
+  .c2  { --card-accent: linear-gradient(90deg,#fdffb6,#caffbf); }
+  .c3  { --card-accent: linear-gradient(90deg,#ffc6ff,#bdb2ff); }
+  .c4  { --card-accent: linear-gradient(90deg,#ff9a9e,#fad0c4); }
+  .c5  { --card-accent: linear-gradient(90deg,#a1c4fd,#c2e9fb); }
+  .c6  { --card-accent: linear-gradient(90deg,#d4fc79,#96e6a1); }
+  .c7  { --card-accent: linear-gradient(90deg,#f6d365,#fda085); }
+  .c8  { --card-accent: linear-gradient(90deg,#89f7fe,#66a6ff); }
+  .c9  { --card-accent: linear-gradient(90deg,#fddb92,#d1fdff); }
+  .c10 { --card-accent: linear-gradient(90deg,#a18cd1,#fbc2eb); }
+  .c11 { --card-accent: linear-gradient(90deg,#fccb90,#d57eeb); }
+  .c12 { --card-accent: linear-gradient(90deg,#e0c3fc,#8ec5fc); }
+  .c13 { --card-accent: linear-gradient(90deg,#f093fb,#f5576c); }
+  .c14 { --card-accent: linear-gradient(90deg,#4facfe,#00f2fe); }
+  .c15 { --card-accent: linear-gradient(90deg,#43e97b,#38f9d7); }
+  .c16 { --card-accent: linear-gradient(90deg,#fa709a,#fee140); }
+  .c17 { --card-accent: linear-gradient(90deg,#30cfd0,#667eea); }
+  .c18 { --card-accent: linear-gradient(90deg,#ff9a9e,#fecfef); }
+  .c19 { --card-accent: linear-gradient(90deg,#84fab0,#8fd3f4); }
+  .c20 { --card-accent: linear-gradient(90deg,#ffecd2,#fcb69f); }
+  .c21 { --card-accent: linear-gradient(90deg,#a1ffce,#faffd1); }
+  .c22 { --card-accent: linear-gradient(90deg,#f7971e,#ffd200); }
+  .c23 { --card-accent: linear-gradient(90deg,#bc4e9c,#f80759); }
+  .c24 { --card-accent: linear-gradient(90deg,#4481eb,#04befe); }
+  .c25 { --card-accent: linear-gradient(90deg,#0ba360,#3cba92); }
+  .c26 { --card-accent: linear-gradient(90deg,#e96c6c,#c850c0); }
+  .c27 { --card-accent: linear-gradient(90deg,#ee9ca7,#ffdde1); }
+  .c28 { --card-accent: linear-gradient(90deg,#2af598,#009efd); }
+  .c29 { --card-accent: linear-gradient(90deg,#fbd3e9,#bb1ccc); }
+  .c30 { --card-accent: linear-gradient(90deg,#ffeaa7,#dfe6e9); }
+  .c31 { --card-accent: linear-gradient(90deg,#fd79a8,#e17055); }
+
+  /* stagger animation */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(24px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .grid .card:nth-child(1)  { animation-delay: .05s }
+  .grid .card:nth-child(2)  { animation-delay: .10s }
+  .grid .card:nth-child(3)  { animation-delay: .15s }
+  .grid .card:nth-child(4)  { animation-delay: .20s }
+  .grid .card:nth-child(5)  { animation-delay: .25s }
+  .grid .card:nth-child(6)  { animation-delay: .30s }
+  .grid .card:nth-child(7)  { animation-delay: .35s }
+  .grid .card:nth-child(8)  { animation-delay: .40s }
+  .grid .card:nth-child(9)  { animation-delay: .45s }
+  .grid .card:nth-child(10) { animation-delay: .50s }
+  .grid .card:nth-child(n+11) { animation-delay: .55s }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 28px;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    border-top: 1px solid #e8e4de;
+  }
+  footer strong { color: var(--text-mid); }
+
+  /* ── AMBIENT BLOBS ── */
+  .blob {
+    position: fixed; border-radius: 50%;
+    pointer-events: none; z-index: 0;
+    filter: blur(90px); opacity: .18;
+  }
+  .blob-1 { width:420px; height:420px; background:#a06cf7; top:-80px; left:-100px; }
+  .blob-2 { width:360px; height:360px; background:#f7c948; bottom:0; right:-60px; }
+  .blob-3 { width:280px; height:280px; background:#6af7c8; top:40%; left:50%; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    header, .hero, .search-wrap, .section-label, .grid {
+      padding-left: 20px; padding-right: 20px;
+    }
+    .hero { padding-top: 36px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    .card { padding: 20px 16px 16px; }
+    .card-icon { width: 70px; height: 70px; font-size: 2.2rem; }
+    .card h3 { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <div>
+      <div class="brand-name">ThunderTechnology</div>
+      <div class="brand-tag">Card Studio</div>
+    </div>
+  </div>
+
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">✦ Cards for every moment</div>
+  <h1>Send the perfect card, every time</h1>
+  <p>Beautiful, heartfelt cards crafted with care — for celebrations, gratitude, love, and everything in between.</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <input type="text" placeholder="Search card categories…" id="searchInput" oninput="filterCards()"/>
+  <span class="search-icon">🔍</span>
+</div>
+
+<!-- SECTION LABEL -->
+<div class="section-label">
+  <h2>All Categories</h2>
+  <span class="pill" id="countPill">31</span>
+</div>
+
+<!-- GRID -->
+<div class="grid" id="cardGrid">
+
+  <a href="https://wondermayank.github.io/code/thankyou" class="card c1">
+    <div class="card-icon">💐</div>
+    <h3>Thank You</h3>
+    <p>Express gratitude with heartfelt messages</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/birthday" class="card c2">
+    <div class="card-icon">🎂</div>
+    <h3>Birthday</h3>
+    <p>Celebrate special birthdays with personalized cards</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/anniversary" class="card c3">
+    <div class="card-icon">💍</div>
+    <h3>Anniversary</h3>
+    <p>Celebrate love and milestones together</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="valentine" class="card c4">
+    <div class="card-icon">💝</div>
+    <h3>Valentine</h3>
+    <p>Express your love with heartfelt Valentine cards</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/congratulations" class="card c5">
+    <div class="card-icon">🏆</div>
+    <h3>Congratulations</h3>
+    <p>Celebrate achievements and milestones</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/gellwellsoon" class="card c6">
+    <div class="card-icon">🧸</div>
+    <h3>Get Well Soon</h3>
+    <p>Send healing wishes and support</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/wedding" class="card c7">
+    <div class="card-icon">👰</div>
+    <h3>Wedding</h3>
+    <p>Invite guests to celebrate your special day</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/newbaby" class="card c8">
+    <div class="card-icon">🍼</div>
+    <h3>New Baby</h3>
+    <p>Welcome new life with joy and love</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/graduation" class="card c9">
+    <div class="card-icon">🎓</div>
+    <h3>Graduation</h3>
+    <p>Honor academic achievements and new beginnings</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/cheer" class="card c10">
+    <div class="card-icon">🍀</div>
+    <h3>Good Luck</h3>
+    <p>Send encouragement and cheer them on</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/care" class="card c11">
+    <div class="card-icon">🌙</div>
+    <h3>Missing You</h3>
+    <p>Share memories and let them know you care</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/thoughts" class="card c12">
+    <div class="card-icon">💭</div>
+    <h3>Thinking of You</h3>
+    <p>Let them know they're always in your thoughts</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/times" class="card c13">
+    <div class="card-icon">🕊️</div>
+    <h3>Sympathy</h3>
+    <p>Offer comfort and support during difficult times</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/just" class="card c14">
+    <div class="card-icon">🌈</div>
+    <h3>Just Because</h3>
+    <p>Send a smile just because — no reason needed</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/first" class="card c15">
+    <div class="card-icon">💌</div>
+    <h3>Crush Ask Out</h3>
+    <p>Make the first move with creative, charming cards</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/sorry" class="card c16">
+    <div class="card-icon">🙏</div>
+    <h3>Apology</h3>
+    <p>Say sorry with thoughtful, sincere messages</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/long" class="card c17">
+    <div class="card-icon">✈️</div>
+    <h3>Long Distance</h3>
+    <p>Stay connected and warm across the miles</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/christmas" class="card c18">
+    <div class="card-icon">🎄</div>
+    <h3>Christmas</h3>
+    <p>Spread holiday cheer with festive wishes</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/newyear" class="card c19">
+    <div class="card-icon">🎆</div>
+    <h3>New Year</h3>
+    <p>Share hopes, resolutions and fresh beginnings</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/easter" class="card c20">
+    <div class="card-icon">🐣</div>
+    <h3>Easter</h3>
+    <p>Send joyful Easter blessings and greetings</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/halloween" class="card c21">
+    <div class="card-icon">🎃</div>
+    <h3>Halloween</h3>
+    <p>Send spooky, fun Halloween wishes</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/formal" class="card c22">
+    <div class="card-icon">📜</div>
+    <h3>Formal Invite</h3>
+    <p>Professional invitations for special events</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/precious" class="card c23">
+    <div class="card-icon">⏳</div>
+    <h3>Time Capsule</h3>
+    <p>Preserve precious memories for the future</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/ways" class="card c24">
+    <div class="card-icon">🫙</div>
+    <h3>Wish Jar</h3>
+    <p>Share wishes and dreams in creative ways</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/career" class="card c25">
+    <div class="card-icon">🌅</div>
+    <h3>Retirement</h3>
+    <p>Celebrate a lifetime of career achievements</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/memories" class="card c26">
+    <div class="card-icon">🐱</div>
+    <h3>Cat Lovers</h3>
+    <p>Celebrate the joy of feline friendship and memories</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/celebrating" class="card c27">
+    <div class="card-icon">🎈</div>
+    <h3>Balloon Celebration</h3>
+    <p>Mark any joyful occasion worth celebrating</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/journey" class="card c28">
+    <div class="card-icon">🚢</div>
+    <h3>Bon Voyage</h3>
+    <p>Wish them a safe and wonderful journey ahead</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/home" class="card c29">
+    <div class="card-icon">🏡</div>
+    <h3>Housewarming</h3>
+    <p>Celebrate the joy of their beautiful new home</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/bestie" class="card c30">
+    <div class="card-icon">👯</div>
+    <h3>Friendship (Bestie)</h3>
+    <p>Celebrate your one-of-a-kind special bond</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a href="https://wondermayank.github.io/code/self" class="card c31">
+    <div class="card-icon">🌿</div>
+    <h3>Self-Care Reminder</h3>
+    <p>Remind someone to slow down and take care</p>
+    <div class="card-arrow">›</div>
+  </a>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  Crafted with ⚡ by <strong>ThunderTechnology</strong> &nbsp;·&nbsp; All rights reserved © 2025
+</footer>
+
+<script>
+  function filterCards() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('#cardGrid .card');
+    let visible = 0;
+    cards.forEach(c => {
+      const text = c.innerText.toLowerCase();
+      const match = text.includes(q);
+      c.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    document.getElementById('countPill').textContent = visible;
+  }
+</script>
+</body>
+</html>
