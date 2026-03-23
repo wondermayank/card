@@ -1,181 +1,2470 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script type="module">
-import { createHotContext } from "/@vite/client";
-const hot = createHotContext("/__dummy__runtime-error-plugin");
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>eGreet by THunderTechnology — Wedding Invitation Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;color:#2d2438;min-height:100vh;overflow-x:hidden}
+#page-creator{background:#faf8f5}
+#page-share{display:none;background:#faf8f5;min-height:100vh;flex-direction:column}
+#page-share.show{display:flex}
 
-function sendError(error) {
-  if (!(error instanceof Error)) {
-    error = new Error("(unknown runtime error)");
+/* ── NAV ── */
+.c-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:#fff;border-bottom:1px solid #e2d9f0;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(124,92,191,.08)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#7c5cbf;display:flex;align-items:center;gap:6px}
+.logo-sub{font-size:.62rem;color:#a385d6;font-family:'Jost',sans-serif;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-left:2px;opacity:.8}
+.logo span{color:#c9a84c}
+.nav-btn{background:#7c5cbf;color:#fff;border:none;padding:9px 22px;border-radius:50px;font-family:'Jost',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:.2s}
+.nav-btn:hover{background:#6347a8}
+
+/* ── HERO ── */
+.hero{min-height:calc(100vh - 57px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;background:linear-gradient(155deg,#1e1430 0%,#3d2470 55%,#f0ebf8 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(201,168,76,.08) 1px,transparent 1px);background-size:30px 30px}
+.hero-glyph{position:absolute;font-family:'Great Vibes',cursive;font-size:clamp(8rem,22vw,20rem);color:rgba(255,255,255,.035);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;user-select:none;white-space:nowrap}
+.hero-inner{position:relative;z-index:2}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:6px 20px;border-radius:40px;margin-bottom:26px;backdrop-filter:blur(8px)}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,7vw,5.5rem);color:#fff;line-height:1.08;margin-bottom:14px}
+.hero h1 em{color:#e8d5a0;font-style:italic}
+.hero p{color:rgba(255,255,255,.6);font-size:clamp(.95rem,2vw,1.15rem);max-width:480px;margin:0 auto 40px;line-height:1.75;font-family:'Cormorant Garamond',serif;font-style:italic}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#7c5cbf;padding:17px 42px;border-radius:50px;font-size:1rem;font-weight:600;cursor:pointer;border:none;transition:.25s;box-shadow:0 10px 40px rgba(0,0,0,.22);font-family:'Jost',sans-serif}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 16px 50px rgba(0,0,0,.28)}
+.hero-cta svg{width:18px;height:18px;transition:.2s}
+.hero-cta:hover svg{transform:translateX(4px)}
+.hero-chips{display:flex;gap:10px;margin-top:32px;flex-wrap:wrap;justify-content:center}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:40px;color:rgba(255,255,255,.7);font-size:.76rem;display:flex;align-items:center;gap:5px}
+
+/* ── WIZARD ── */
+#wizard{display:none;max-width:1160px;margin:0 auto;padding:32px 16px 120px}
+@media(min-width:900px){#wizard{padding:44px 28px 120px}}
+
+/* STEP BAR — now 7 steps */
+.stepbar{display:flex;background:#fff;border:1px solid #e2d9f0;border-radius:14px;overflow:hidden;margin-bottom:28px;box-shadow:0 4px 20px rgba(124,92,191,.08)}
+.sp{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 4px;cursor:pointer;border-right:1px solid #e2d9f0;position:relative;transition:.15s}
+.sp:last-child{border-right:none}
+.sp:hover{background:#f0ebf8}
+.sp.active{background:#f0ebf8}
+.sp.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:#7c5cbf;border-radius:2px 2px 0 0}
+.spn{width:26px;height:26px;border-radius:50%;background:#e2d9f0;color:#7a6e8a;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;transition:.2s}
+.sp.done .spn{background:#a385d6;color:#fff}
+.sp.active .spn{background:#7c5cbf;color:#fff;box-shadow:0 3px 10px rgba(124,92,191,.4)}
+.spl{font-size:.6rem;color:#7a6e8a;font-weight:500;letter-spacing:.03em;text-align:center;line-height:1.2}
+.sp.active .spl{color:#7c5cbf;font-weight:600}
+@media(max-width:520px){.spl{display:none}.sp{padding:11px 3px}}
+
+.progbar{height:3px;background:#e2d9f0;border-radius:2px;margin-bottom:28px;overflow:hidden}
+.progfill{height:100%;background:linear-gradient(90deg,#7c5cbf,#a385d6);border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+.wbody{display:grid;gap:22px;grid-template-columns:1fr}
+@media(min-width:900px){.wbody{grid-template-columns:1fr 360px;align-items:start}}
+
+/* FORM PANEL */
+.fpanel{background:#fff;border-radius:14px;border:1px solid #e2d9f0;box-shadow:0 4px 24px rgba(124,92,191,.07);overflow:hidden}
+.ph{padding:18px 24px 13px;border-bottom:1px solid #e2d9f0}
+.ph h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:#2d2438}
+.ph p{color:#7a6e8a;font-size:.82rem;margin-top:3px}
+.pb{padding:20px 24px}
+.fi{margin-bottom:17px}
+.fi:last-child{margin-bottom:0}
+.fi label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#7a6e8a;margin-bottom:6px}
+.opt-tag{font-weight:400;color:#a385d6;text-transform:none;letter-spacing:0;font-size:.72rem}
+.fi input,.fi textarea,.fi select{width:100%;padding:11px 14px;border:1.5px solid #e2d9f0;border-radius:10px;font-family:'Jost',sans-serif;font-size:.88rem;background:#faf8f5;color:#2d2438;outline:none;transition:.2s;resize:vertical}
+.fi input:focus,.fi textarea:focus,.fi select:focus{border-color:#7c5cbf;box-shadow:0 0 0 3px rgba(124,92,191,.11)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.frow{grid-template-columns:1fr}}
+
+/* PHOTO UPLOAD (single) */
+.phu{border:2px dashed #e2d9f0;border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.2s;text-align:center;background:#faf8f5}
+.phu:hover{border-color:#a385d6;background:#f0ebf8}
+.phu input{display:none}
+.phu-icon{width:46px;height:46px;background:#f0ebf8;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.phu-txt{font-size:.78rem;color:#7a6e8a}
+.phu-lnk{font-size:.76rem;color:#7c5cbf;font-weight:500}
+#photo-prev{width:72px;height:72px;border-radius:50%;object-fit:cover;display:none;border:3px solid #a385d6}
+
+/* ── GALLERY UPLOAD ── */
+.gal-upload-area{border:2px dashed #e2d9f0;border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:.2s;background:#faf8f5}
+.gal-upload-area:hover{border-color:#a385d6;background:#f0ebf8}
+.gal-upload-area input{display:none}
+.gal-thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.gal-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid #e2d9f0}
+.gal-thumb img{width:100%;height:100%;object-fit:cover}
+.gal-thumb .del-btn{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.gal-thumb .del-btn:hover{background:rgba(200,40,40,.8)}
+
+/* ── EVENTS ── */
+.ecard{border:1.5px solid #e2d9f0;border-radius:12px;margin-bottom:9px;overflow:hidden;transition:.2s}
+.ecard.on{border-color:#7c5cbf}
+.ehead{display:flex;align-items:center;gap:10px;padding:12px 15px;cursor:pointer;background:#fff;user-select:none;transition:.15s}
+.ehead:hover{background:#f0ebf8}
+.eem{font-size:1.1rem;width:26px;text-align:center}
+.en{font-weight:500;flex:1;font-size:.9rem}
+.tog{position:relative;width:40px;height:22px;flex-shrink:0}
+.tog input{display:none}
+.togt{position:absolute;inset:0;background:#e2d9f0;border-radius:11px;cursor:pointer;transition:.2s}
+.tog input:checked+.togt{background:#7c5cbf}
+.togk{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:.2s;pointer-events:none}
+.tog input:checked~.togk{transform:translateX(18px)}
+.ebody{display:none;padding:13px 15px;border-top:1px solid #e2d9f0;background:#f0ebf8}
+.ecard.on .ebody{display:block}
+.add-ev{width:100%;padding:11px;border:2px dashed #a385d6;background:transparent;border-radius:12px;color:#7c5cbf;font-family:'Jost',sans-serif;font-size:.86rem;font-weight:500;cursor:pointer;transition:.2s;margin-top:2px}
+.add-ev:hover{background:#f0ebf8}
+
+/* ── THEME GRID ── */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:380px){.tgrid{grid-template-columns:repeat(2,1fr)}}
+.tsw{aspect-ratio:3/4;border-radius:10px;cursor:pointer;border:2.5px solid transparent;transition:.2s;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:8px;font-size:.6rem;font-weight:600;letter-spacing:.04em;text-align:center;position:relative;color:#fff;overflow:hidden}
+.tsw:hover{transform:scale(1.05);z-index:1}
+.tsw.sel{border-color:#7c5cbf;box-shadow:0 0 0 3px rgba(124,92,191,.28)}
+.tck{position:absolute;top:5px;right:5px;width:18px;height:18px;background:#7c5cbf;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.7rem}
+.tsw.sel .tck{display:flex}
+.t0{background:linear-gradient(160deg,#2d2438,#7c5cbf)}
+.t1{background:linear-gradient(160deg,#1a2c20,#3d7a52)}
+.t2{background:linear-gradient(160deg,#2c1810,#8b4513)}
+.t3{background:linear-gradient(160deg,#1a1a2c,#3d4a8b)}
+.t4{background:linear-gradient(160deg,#2c1a25,#8b3d6a)}
+.t5{background:linear-gradient(160deg,#181f2c,#3d6a8b)}
+.t6{background:linear-gradient(160deg,#2c2818,#8b7a3d)}
+.t7{background:linear-gradient(160deg,#f0ebe0,#d4c8a8);color:#2d2438}
+.t8{background:linear-gradient(160deg,#0d1117,#1f2937)}
+
+/* ── BORDER PICKER ── */
+.border-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px}
+.bopt{aspect-ratio:3/4;border-radius:10px;cursor:pointer;border:2.5px solid #e2d9f0;transition:.2s;background:#faf8f5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;position:relative;overflow:hidden}
+.bopt:hover{border-color:#a385d6;transform:scale(1.04);z-index:1}
+.bopt.sel{border-color:#7c5cbf;box-shadow:0 0 0 3px rgba(124,92,191,.25)}
+.bopt .bck{position:absolute;top:5px;right:5px;width:16px;height:16px;background:#7c5cbf;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.6rem;color:#fff}
+.bopt.sel .bck{display:flex}
+.bopt svg{width:100%;height:100%;flex:1}
+.bopt-label{font-size:.6rem;color:#7a6e8a;font-weight:600;letter-spacing:.04em;text-align:center;position:absolute;bottom:6px;left:0;right:0}
+
+/* border colour row */
+.border-color-row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.bcol-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.2s;flex-shrink:0}
+.bcol-dot.sel{border-color:#7c5cbf;transform:scale(1.18);box-shadow:0 0 0 2px rgba(124,92,191,.3)}
+
+/* ── THE BORDER LAYER ON CARD ── */
+#card-border-layer,#s-card-border-layer{position:absolute;inset:0;pointer-events:none;z-index:6;border-radius:inherit}
+#card-border-layer svg,#s-card-border-layer svg{width:100%;height:100%;position:absolute;inset:0}
+
+/* ── FONT & ANIM ── */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fopt{border:2px solid #e2d9f0;border-radius:10px;padding:13px 10px;cursor:pointer;text-align:center;transition:.2s;background:#faf8f5}
+.fopt:hover{border-color:#a385d6}.fopt.sel{border-color:#7c5cbf;background:#f0ebf8}
+.fp{font-size:1.4rem;margin-bottom:4px}.fn{font-size:.67rem;color:#7a6e8a;font-weight:500}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.aopt{border:2px solid #e2d9f0;border-radius:10px;padding:11px 6px;cursor:pointer;text-align:center;transition:.2s;background:#faf8f5}
+.aopt:hover{border-color:#a385d6}.aopt.sel{border-color:#7c5cbf;background:#f0ebf8}
+.ai{font-size:1.25rem;margin-bottom:3px}.an{font-size:.67rem;color:#7a6e8a;font-weight:500}
+
+/* ── DRESS CODE ── */
+.dc-event{background:#faf8f5;border:1.5px solid #e2d9f0;border-radius:14px;padding:18px;margin-bottom:14px;transition:.2s}
+.dc-event-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #e2d9f0}
+.dc-event-em{font-size:1.4rem}
+.dc-event-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:#2d2438;flex:1}
+.dc-event-name-input{flex:1;border:none;background:transparent;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:#2d2438;outline:none;min-width:0}
+.dc-event-del{background:none;border:none;color:#c17a6f;font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.2s;line-height:1}
+.dc-event-del:hover{background:#fce8e4}
+/* Full 40-colour palette */
+.dc-full-palette{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;padding:12px;background:#fff;border-radius:10px;border:1.5px solid #e2d9f0}
+.dc-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:all .15s;position:relative;flex-shrink:0}
+.dc-dot:hover{transform:scale(1.2);z-index:1}
+.dc-dot.active{border-color:#1a1020;transform:scale(1.18);box-shadow:0 0 0 2px #fff,0 0 0 4px #2d2438}
+.dc-dot.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.dc-dot.light.active::after{color:#2d2438;text-shadow:none}
+/* Custom row */
+.dc-custom-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dc-custom-pick{width:34px;height:34px;border-radius:50%;border:2px solid #e2d9f0;cursor:pointer;padding:2px;background:none;flex-shrink:0}
+.dc-add-color-btn{padding:8px 14px;background:#7c5cbf;color:#fff;border:none;border-radius:8px;font-family:'Jost',sans-serif;font-size:.76rem;font-weight:500;cursor:pointer;transition:.2s;white-space:nowrap}
+.dc-add-color-btn:hover{background:#6347a8}
+/* Chosen dots */
+.dc-chosen{display:flex;align-items:center;gap:8px;min-height:26px;flex-wrap:wrap;padding:6px 0}
+.dc-chosen-label{font-size:.7rem;color:#7a6e8a;font-weight:500;white-space:nowrap}
+.dc-chosen-dots{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.dc-chosen-dot{width:22px;height:22px;border-radius:50%;border:2px solid rgba(0,0,0,.12);position:relative;cursor:pointer;transition:.15s;flex-shrink:0}
+.dc-chosen-dot:hover::after{content:'×';position:absolute;inset:0;background:rgba(0,0,0,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.65rem}
+.dc-code-input{width:100%;padding:10px 14px;border:1.5px solid #e2d9f0;border-radius:10px;font-family:'Jost',sans-serif;font-size:.88rem;background:#fff;color:#2d2438;outline:none;transition:.2s}
+.dc-code-input:focus{border-color:#7c5cbf;box-shadow:0 0 0 3px rgba(124,92,191,.1)}
+
+/* ── STICKER PANEL ── */
+.sticker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.stk{font-size:1.6rem;text-align:center;padding:8px 4px;border-radius:10px;cursor:grab;border:1.5px solid #e2d9f0;transition:.15s;background:#faf8f5;user-select:none}
+.stk:hover{background:#f0ebf8;border-color:#a385d6;transform:scale(1.08)}
+.stk:active{cursor:grabbing}
+.stk-hint{font-size:.76rem;color:#7a6e8a;margin-bottom:10px}
+#sticker-layer{position:absolute;inset:0;pointer-events:none;z-index:20}
+#sticker-layer .placed-stk{position:absolute;font-size:1.4rem;cursor:grab;pointer-events:all;user-select:none;line-height:1;transition:transform .1s}
+#sticker-layer .placed-stk:hover::after{content:'✕';position:absolute;top:-8px;right:-8px;background:#e53;color:#fff;border-radius:50%;width:16px;height:16px;font-size:.55rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#sticker-layer .placed-stk.dragging{cursor:grabbing;z-index:99}
+
+/* ── MUSIC PANEL ── */
+.music-info{font-size:.78rem;color:#7a6e8a;margin-bottom:10px;line-height:1.5}
+.piano-keys{display:flex;gap:3px;margin-bottom:14px;background:#1a1a2a;padding:14px 12px;border-radius:12px;justify-content:center;flex-wrap:wrap}
+.wkey{width:32px;height:80px;background:#f5f5f0;border-radius:0 0 6px 6px;cursor:pointer;border:1px solid #bbb;transition:.1s;position:relative;flex-shrink:0}
+.wkey:active,.wkey.playing{background:#e8d5a0;transform:scaleY(.96)}
+.bkey{width:22px;height:52px;background:#2d2438;border-radius:0 0 5px 5px;cursor:pointer;margin-left:-11px;margin-right:-11px;z-index:2;position:relative;transition:.1s;flex-shrink:0}
+.bkey:active,.bkey.playing{background:#7c5cbf}
+.music-note-anim{position:absolute;font-size:1.2rem;pointer-events:none;animation:noteFloat 1.2s ease-out forwards}
+@keyframes noteFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(.6)}}
+.music-sel{display:flex;flex-direction:column;gap:8px}
+.music-sel label{font-size:.72rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#7a6e8a}
+.tempo-row{display:flex;align-items:center;gap:10px}
+.tempo-row input[type=range]{flex:1}
+.tempo-val{font-size:.78rem;color:#7c5cbf;font-weight:600;min-width:40px}
+.melody-btns{display:flex;gap:8px;flex-wrap:wrap}
+.melbtn{padding:8px 14px;border:1.5px solid #e2d9f0;border-radius:8px;background:#faf8f5;color:#2d2438;font-family:'Jost',sans-serif;font-size:.78rem;cursor:pointer;transition:.2s}
+.melbtn:hover{border-color:#7c5cbf;background:#f0ebf8}
+.melbtn.active{border-color:#7c5cbf;background:#7c5cbf;color:#fff}
+#play-music-btn{display:flex;align-items:center;gap:8px;padding:11px 20px;background:#7c5cbf;color:#fff;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:.2s;width:100%;justify-content:center;margin-top:4px}
+#play-music-btn:hover{background:#6347a8}
+
+/* ── QR CODE ── */
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:16px;background:#faf8f5;border-radius:12px;border:1px solid #e2d9f0}
+#qr-box{background:#fff;padding:12px;border-radius:10px;border:1px solid #e2d9f0}
+#qr-box canvas,#qr-box img{display:block}
+.qr-note{font-size:.76rem;color:#7a6e8a;text-align:center;line-height:1.5}
+
+/* ── COUNTDOWN (on share page) ── */
+.countdown-wrap{display:flex;gap:12px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
+.cd-box{background:#fff;border:1px solid #e2d9f0;border-radius:14px;padding:14px 18px;text-align:center;min-width:70px;box-shadow:0 4px 16px rgba(124,92,191,.08)}
+.cd-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:#7c5cbf;line-height:1}
+.cd-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#7a6e8a;margin-top:4px}
+
+/* ── PREVIEW PANEL ── */
+.ppanel{display:flex;flex-direction:column;gap:13px;position:sticky;top:80px;height:fit-content}
+.plbl{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:#7a6e8a;text-align:center}
+.cstage{width:100%;max-width:320px;margin:0 auto;aspect-ratio:3/4;border-radius:18px;overflow:hidden;box-shadow:0 16px 50px rgba(44,24,16,.18),0 0 0 1px rgba(255,255,255,.4);position:relative}
+
+#card-el{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:28px 20px;background:linear-gradient(160deg,#2d2438,#7c5cbf);transition:background .4s}
+.cco{position:absolute;width:60px;height:60px;opacity:.42;pointer-events:none}
+.cco svg{width:100%;height:100%}
+.cco-tl{top:5px;left:5px}.cco-tr{top:5px;right:5px;transform:scaleX(-1)}
+.cco-bl{bottom:5px;left:5px;transform:scaleY(-1)}.cco-br{bottom:5px;right:5px;transform:scale(-1)}
+.cbdr{position:absolute;inset:8px;border:1px solid rgba(255,255,255,.13);border-radius:12px;pointer-events:none}
+.cct{position:relative;z-index:5;text-align:center;width:100%}
+#cd-dear{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.1em;margin-bottom:4px;font-family:'Jost',sans-serif;font-weight:300;display:none}
+#cd-tog{font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;font-family:'Jost',sans-serif}
+#cd-bride,#cd-groom{font-size:clamp(1.2rem,3.5vw,1.75rem);color:#fff;display:block;font-family:'Cormorant Garamond',serif;font-weight:600;line-height:1.1}
+#cd-and{font-family:'Great Vibes',cursive;font-size:clamp(1.5rem,4.5vw,2.1rem);color:#e8d5a0;display:block;margin:1px 0;line-height:1.25}
+.cdiv{display:flex;align-items:center;gap:7px;margin:9px 0;opacity:.4}
+.cdiv hr{flex:1;border:none;border-top:1px solid rgba(255,255,255,.6)}
+.cdiv span{font-size:.85rem;color:#e8d5a0}
+#cd-msg{font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(255,255,255,.7);font-size:.78rem;line-height:1.6;white-space:pre-line}
+#cd-photo{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.3);margin-bottom:8px;display:none}
+
+/* card gallery strip */
+.card-gallery{display:flex;gap:4px;justify-content:center;margin-top:8px;width:100%}
+.card-gallery img{width:38px;height:38px;border-radius:6px;object-fit:cover;border:1.5px solid rgba(255,255,255,.3)}
+
+.evlist{margin-top:9px;text-align:left;width:100%}
+.evrow{display:flex;align-items:flex-start;gap:5px;padding:3px 6px;background:rgba(255,255,255,.08);border-radius:5px;margin-bottom:3px}
+.evem{font-size:.75rem;margin-top:1px}
+.evnm{font-size:.65rem;font-weight:600;color:rgba(255,255,255,.9)}
+.evdt{font-size:.58rem;color:rgba(255,255,255,.55)}
+
+.petal{position:absolute;border-radius:50% 0 50% 0;opacity:0;pointer-events:none;animation:pfall linear infinite}
+@keyframes pfall{0%{opacity:0;transform:translateY(-10%) rotate(0deg)}10%{opacity:.7}90%{opacity:.4}100%{opacity:0;transform:translateY(108%) rotate(480deg)}}
+@keyframes cfadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes czoom{from{opacity:0;transform:scale(.84)}to{opacity:1;transform:scale(1)}}
+@keyframes cglow{0%,100%{box-shadow:0 16px 50px rgba(44,24,16,.18)}50%{box-shadow:0 20px 70px rgba(124,92,191,.45)}}
+.af .cct{animation:cfadeup .8s ease both}
+.az .cct{animation:czoom .8s ease both}
+.ag{animation:cglow 3s ease-in-out infinite}
+
+/* SHARE BOX */
+.sbox{background:#f0ebf8;border:1px solid #e2d9f0;border-radius:12px;padding:14px}
+.sbox p{font-size:.74rem;color:#7a6e8a;margin-bottom:7px;font-weight:500}
+.slrow{display:flex;gap:7px}
+.slrow input{flex:1;font-size:.74rem;background:#fff;cursor:text;min-width:0;padding:9px 12px;border:1.5px solid #e2d9f0;border-radius:8px;font-family:'Jost',sans-serif;color:#2d2438;outline:none}
+.cpbtn{padding:9px 13px;background:#7c5cbf;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.78rem;white-space:nowrap;font-family:'Jost',sans-serif;transition:.2s}
+.cpbtn:hover{background:#6347a8}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.86rem;font-weight:500;cursor:pointer;transition:.2s;letter-spacing:.02em;width:100%;margin-bottom:9px}
+.btn:last-child{margin-bottom:0}
+.bpu{background:#7c5cbf;color:#fff;box-shadow:0 4px 14px rgba(124,92,191,.26)}
+.bpu:hover{background:#6347a8;transform:translateY(-1px)}
+.bdk{background:#2d2438;color:#fff}
+.bdk:hover{background:#1a1020}
+.bol{background:transparent;color:#7c5cbf;border:1.5px solid #7c5cbf}
+.bol:hover{background:#f0ebf8}
+.bsm{flex:1;margin:0!important;padding:10px 12px;font-size:.8rem}
+.sact{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:12px}
+.sact .btn{flex:none;width:auto;padding:11px 22px;margin-bottom:0}
+.ssec{display:none}.ssec.active{display:block}
+
+/* MOBILE PREVIEW */
+.mob-prev-btn{display:none;position:fixed;bottom:18px;right:18px;z-index:150;background:#7c5cbf;color:#fff;border:none;border-radius:50px;padding:12px 20px;font-family:'Jost',sans-serif;font-size:.84rem;font-weight:500;cursor:pointer;box-shadow:0 6px 20px rgba(124,92,191,.4);align-items:center;gap:7px}
+
+/* Desktop (≥900px): preview always visible as sticky sidebar */
+@media(min-width:900px){
+  .ppanel{display:flex !important}
+  .clsbtn{display:none !important}
+  .pact{display:flex !important}
+  .mob-prev-btn{display:none !important}
+}
+
+/* Mobile (<900px): hide preview in normal flow, show as fullscreen overlay */
+@media(max-width:899px){
+  .mob-prev-btn{display:flex}
+  .ppanel{display:none;position:fixed;inset:0;z-index:400;background:rgba(10,5,20,.88);align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(8px)}
+  .ppanel.open{display:flex !important;flex-direction:column}
+  .ppanel.open .cstage{max-width:280px}
+  .clsbtn{display:flex !important}
+  .pact{display:none}
+}
+
+.clsbtn{display:none;position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:36px;height:36px;font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center;z-index:10;backdrop-filter:blur(4px)}
+.pact{display:flex;gap:10px;max-width:320px;margin:0 auto;width:100%}
+
+/* ══ SHARE PAGE ══ */
+.s-nav{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;background:#fff;border-bottom:1px solid #e2d9f0;box-shadow:0 2px 12px rgba(124,92,191,.07)}
+.s-nav-link{font-size:.82rem;color:#7c5cbf;font-weight:500;border:1.5px solid #7c5cbf;padding:7px 16px;border-radius:50px;cursor:pointer;transition:.2s;background:none;font-family:'Jost',sans-serif}
+.s-nav-link:hover{background:#7c5cbf;color:#fff}
+.s-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:36px 16px 60px;position:relative;overflow:hidden}
+.s-main::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(124,92,191,.05) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(201,168,76,.04) 0%,transparent 60%)}
+.s-dear{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:#7a6e8a;margin-bottom:10px;text-align:center;animation:fadeD .6s ease both}
+@keyframes fadeD{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.s-names{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:#2d2438;text-align:center;margin-bottom:4px}
+.s-names em{color:#7c5cbf;font-style:italic}
+.s-date-line{text-align:center;color:#7a6e8a;font-size:.86rem;margin-bottom:20px}
+
+/* ENVELOPE */
+.env-wrap{position:relative;width:min(320px,88vw);height:min(210px,57vw);margin:0 auto 20px;cursor:pointer}
+.env-body{width:100%;height:100%;border-radius:12px;background:linear-gradient(145deg,#fff,#f5f0e8);box-shadow:0 10px 40px rgba(44,24,16,.16);position:relative;overflow:hidden;border:1.5px solid #e0d5c0;transition:.3s}
+.env-wrap:hover .env-body{transform:scale(1.01)}
+.env-flap{position:absolute;top:0;left:0;right:0;height:55%;background:linear-gradient(160deg,#ede0c8,#ddd0b0);clip-path:polygon(0 0,100% 0,50% 100%);border-radius:12px 12px 0 0;transform-origin:top center;transition:transform .75s cubic-bezier(.4,0,.2,1);z-index:8}
+.env-wrap.open .env-flap{transform:rotateX(-185deg)}
+.env-el{position:absolute;bottom:0;left:0;width:52%;height:58%;background:linear-gradient(135deg,#e8dcc8,#d8ccb0);clip-path:polygon(0 100%,100% 46%,0 0);z-index:2}
+.env-er{position:absolute;bottom:0;right:0;width:52%;height:58%;background:linear-gradient(225deg,#e0d4b4,#d0c4a0);clip-path:polygon(100% 100%,0 46%,100% 0);z-index:2}
+.env-eb{position:absolute;bottom:0;left:0;right:0;height:56%;background:linear-gradient(180deg,#ede0c8,#ddd0b0);clip-path:polygon(0 100%,50% 0,100% 100%);z-index:3}
+.env-seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:12;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#a385d6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 16px rgba(124,92,191,.4);transition:.3s}
+.env-wrap.open .env-seal{opacity:0;transform:translate(-50%,-50%) scale(0)}
+.click-hint{text-align:center;color:#7a6e8a;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:24px;animation:ph 2s ease-in-out infinite}
+@keyframes ph{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* CARD REVEAL */
+.card-reveal{width:min(300px,82vw);margin:0 auto;opacity:0;transform:translateY(28px) scale(.93);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1);pointer-events:none;position:relative;z-index:1}
+.card-reveal.show{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
+.s-cstage{width:100%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(44,24,16,.2);margin-bottom:18px}
+#s-card-el{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:28px 20px;background:linear-gradient(160deg,#2d2438,#7c5cbf)}
+
+/* share page photo gallery */
+.s-gallery{width:100%;max-width:300px;margin-top:16px;margin-bottom:0}
+.s-gal-title{font-family:'Cormorant Garamond',serif;font-size:.95rem;color:#2d2438;text-align:center;margin-bottom:10px;font-style:italic}
+.s-gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;border-radius:12px;overflow:hidden}
+.s-gal-grid img{width:100%;aspect-ratio:1;object-fit:cover;cursor:pointer;transition:.2s}
+.s-gal-grid img:hover{opacity:.85;transform:scale(1.02)}
+
+/* fullscreen lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;padding:20px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:90vw;max-height:85vh;border-radius:12px;object-fit:contain}
+.lightbox-close{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:38px;height:38px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* dress code on share page */
+.s-dresscode{width:100%;max-width:300px;margin-top:18px}
+.s-dc-title{font-family:'Cormorant Garamond',serif;font-size:.95rem;color:#2d2438;text-align:center;margin-bottom:10px;font-style:italic}
+.s-dc-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.s-dc-card{background:#fff;border:1px solid #e2d9f0;border-radius:10px;padding:10px 8px;text-align:center}
+.s-dc-card .dc-event-name{font-size:.7rem;font-weight:600;color:#2d2438;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.s-dc-dots{display:flex;gap:4px;justify-content:center;margin-bottom:6px}
+.s-dc-dot{width:16px;height:16px;border-radius:50%}
+.s-dc-attire{font-size:.65rem;color:#7a6e8a;line-height:1.4}
+
+.dl-area{text-align:center}
+.dl-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#2d2438;margin-bottom:12px}
+.dl-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.dlbtn{display:flex;align-items:center;gap:7px;padding:12px 22px;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.86rem;font-weight:500;cursor:pointer;transition:.2s}
+.dlbtn:hover{transform:translateY(-1px)}
+.dlp{background:#7c5cbf;color:#fff;box-shadow:0 4px 14px rgba(124,92,191,.28)}
+.dlp:hover{background:#6347a8}
+.dlg{background:#2d2438;color:#fff}
+.dlg:hover{background:#1a1020}
+
+#fw-canvas{position:fixed;inset:0;pointer-events:none;z-index:500;display:none}
+
+/* FOOTER */
+footer{background:#2d2438;color:#b0a0c0;text-align:center;padding:24px 20px;font-size:.8rem}
+footer a{color:#e8d5a0;text-decoration:none}
+footer a:hover{text-decoration:underline}
+.fb{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#fff;margin-bottom:4px}
+.fb span{color:#c9a84c}
+.fb-sub{font-size:.68rem;color:#6a5a7a;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.hrt{color:#c17a6f;animation:hb 1.4s ease-in-out infinite;display:inline-block}
+@keyframes hb{0%,100%{transform:scale(1)}14%{transform:scale(1.28)}28%{transform:scale(1)}42%{transform:scale(1.18)}70%{transform:scale(1)}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ CREATOR PAGE ══════════════════════ -->
+<div id="page-creator">
+
+<nav class="c-nav">
+  <div class="logo">e<span>Greet</span> <span class="logo-sub">by THunderTechnology</span></div>
+  <button class="nav-btn" onclick="scrollWizard()">Create Invitation</button>
+</nav>
+
+<section class="hero">
+  <div class="hero-glyph">Together</div>
+  <div class="hero-inner">
+    <div class="hero-badge">✦ Digital Wedding Invitations</div>
+    <h1>Your Love Story,<br/><em>Beautifully Shared</em></h1>
+    <p>Create stunning digital wedding invitations in minutes. Gallery, music, countdown, stickers &amp; more.</p>
+    <button class="hero-cta" onclick="scrollWizard()">
+      Start Creating
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </button>
+    <div class="hero-chips">
+      <div class="chip">🖼️ Photo Gallery</div>
+      <div class="chip">⏱ Countdown</div>
+      <div class="chip">🎹 Piano Music</div>
+      <div class="chip">🪄 Stickers</div>
+      <div class="chip">👗 Dress Code</div>
+      <div class="chip">📱 QR Code</div>
+    </div>
+  </div>
+</section>
+
+<div id="wizard">
+  <!-- STEP BAR — 8 steps -->
+  <div class="stepbar">
+    <div class="sp active" id="sp0" onclick="goStep(0)"><div class="spn">1</div><div class="spl">Couple</div></div>
+    <div class="sp" id="sp1" onclick="goStep(1)"><div class="spn">2</div><div class="spl">Events</div></div>
+    <div class="sp" id="sp2" onclick="goStep(2)"><div class="spn">3</div><div class="spl">Theme</div></div>
+    <div class="sp" id="sp3" onclick="goStep(3)"><div class="spn">4</div><div class="spl">Stickers</div></div>
+    <div class="sp" id="sp4" onclick="goStep(4)"><div class="spn">5</div><div class="spl">Style</div></div>
+    <div class="sp" id="sp5" onclick="goStep(5)"><div class="spn">6</div><div class="spl">Dress</div></div>
+    <div class="sp" id="sp6" onclick="goStep(6)"><div class="spn">7</div><div class="spl">Music</div></div>
+    <div class="sp" id="sp7" onclick="goStep(7)"><div class="spn">8</div><div class="spl">Share</div></div>
+  </div>
+  <div class="progbar"><div class="progfill" id="progfill" style="width:12.5%"></div></div>
+
+  <div class="wbody">
+    <div>
+
+      <!-- ── SEC 1: COUPLE ── -->
+      <div class="ssec active" id="sec0">
+        <div class="fpanel">
+          <div class="ph"><h2>💑 Couple Details</h2><p>Names, photos &amp; personal message</p></div>
+          <div class="pb">
+            <div class="fi">
+              <label>Profile Photo <span class="opt-tag">(Optional)</span></label>
+              <div class="phu" onclick="document.getElementById('ph-inp').click()">
+                <img id="photo-prev" src="" alt=""/>
+                <div class="phu-icon" id="phu-ico">📷</div>
+                <div class="phu-txt">Upload couple photo · Max 3MB</div>
+                <div class="phu-lnk">Choose file</div>
+                <input type="file" id="ph-inp" accept="image/*" onchange="handlePhoto(this)"/>
+              </div>
+            </div>
+
+            <!-- GALLERY UPLOAD -->
+            <div class="fi">
+              <label>Photo Gallery <span class="opt-tag">(Optional — up to 6 photos)</span></label>
+              <div class="gal-upload-area" onclick="document.getElementById('gal-inp').click()">
+                <div style="font-size:1.4rem;margin-bottom:6px">🖼️</div>
+                <div style="font-size:.8rem;color:#7a6e8a">Click to upload multiple photos</div>
+                <div style="font-size:.74rem;color:#a385d6;font-weight:500;margin-top:4px">Choose files</div>
+                <input type="file" id="gal-inp" accept="image/*" multiple onchange="handleGallery(this)"/>
+              </div>
+              <div class="gal-thumbs" id="gal-thumbs"></div>
+            </div>
+
+            <div class="frow">
+              <div class="fi"><label>Bride's Name <span style="color:#7c5cbf">*</span></label><input type="text" id="f-bride" placeholder="Eleanor" oninput="updateCard()"/></div>
+              <div class="fi"><label>Groom's Name <span style="color:#7c5cbf">*</span></label><input type="text" id="f-groom" placeholder="Alexander" oninput="updateCard()"/></div>
+            </div>
+            <div class="fi"><label>Personal Message</label><textarea id="f-msg" rows="3" oninput="updateCard()">Together with their families, invite you to share in the joy of our celebration.</textarea></div>
+            <div class="fi">
+              <label>Personalised Invite <span class="opt-tag">(Optional)</span></label>
+              <p style="font-size:.74rem;color:#7a6e8a;margin-bottom:6px">Address to someone — "Chachi", "Nanaji", "Mama"…</p>
+              <input type="text" id="f-dear" placeholder="e.g. Chachi, Nanaji, Mama…" oninput="updateCard()"/>
+            </div>
+            <div class="fi">
+              <label>Send To <span class="opt-tag">(Optional)</span></label>
+              <select id="f-sendto"><option value="">Everyone</option><option>Family</option><option>Friends</option><option>Relatives</option><option>Colleagues</option></select>
+            </div>
+            <div class="frow">
+              <div class="fi"><label>RSVP Phone <span class="opt-tag">(Optional)</span></label><input type="tel" id="f-phone" placeholder="+91 98765 43210"/></div>
+              <div class="fi"><label>RSVP Email <span class="opt-tag">(Optional)</span></label><input type="email" id="f-email" placeholder="hello@example.com"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="sact"><div></div><button class="btn bpu" onclick="goStep(1)">Next: Events →</button></div>
+      </div>
+
+      <!-- ── SEC 2: EVENTS ── -->
+      <div class="ssec" id="sec1">
+        <div class="fpanel">
+          <div class="ph"><h2>🎉 Celebration Events</h2><p>Toggle events and fill in the details</p></div>
+          <div class="pb">
+            <div class="ecard on" id="ev-wedding">
+              <div class="ehead" onclick="toggleEv('ev-wedding')"><span class="eem">💍</span><span class="en">Wedding</span><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" checked onchange="syncTog('ev-wedding',this)"/><div class="togt"></div><div class="togk"></div></label></div>
+              <div class="ebody">
+                <div class="fi"><label>Date *</label><input type="date" id="ev-wedding-date" oninput="updateCard()"/></div>
+                <div class="frow"><div class="fi"><label>Time</label><input type="time" id="ev-wedding-time"/></div><div class="fi"><label>Venue *</label><input type="text" id="ev-wedding-venue" placeholder="Venue name" oninput="updateCard()"/></div></div>
+                <div class="fi"><label>Address</label><input type="text" id="ev-wedding-addr" placeholder="Full address"/></div>
+              </div>
+            </div>
+            <div class="ecard" id="ev-haldi">
+              <div class="ehead" onclick="toggleEv('ev-haldi')"><span class="eem">🌻</span><span class="en">Haldi</span><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" onchange="syncTog('ev-haldi',this)"/><div class="togt"></div><div class="togk"></div></label></div>
+              <div class="ebody">
+                <div class="frow"><div class="fi"><label>Date</label><input type="date" id="ev-haldi-date" oninput="updateCard()"/></div><div class="fi"><label>Time</label><input type="time" id="ev-haldi-time"/></div></div>
+                <div class="fi"><label>Venue</label><input type="text" id="ev-haldi-venue" placeholder="Venue name" oninput="updateCard()"/></div>
+                <div class="fi"><label>Address</label><input type="text" id="ev-haldi-addr" placeholder="Full address"/></div>
+              </div>
+            </div>
+            <div class="ecard" id="ev-mehandi">
+              <div class="ehead" onclick="toggleEv('ev-mehandi')"><span class="eem">🌿</span><span class="en">Mehandi</span><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" onchange="syncTog('ev-mehandi',this)"/><div class="togt"></div><div class="togk"></div></label></div>
+              <div class="ebody">
+                <div class="frow"><div class="fi"><label>Date</label><input type="date" id="ev-mehandi-date" oninput="updateCard()"/></div><div class="fi"><label>Time</label><input type="time" id="ev-mehandi-time"/></div></div>
+                <div class="fi"><label>Venue</label><input type="text" id="ev-mehandi-venue" placeholder="Venue name" oninput="updateCard()"/></div>
+                <div class="fi"><label>Address</label><input type="text" id="ev-mehandi-addr" placeholder="Full address"/></div>
+              </div>
+            </div>
+            <div class="ecard" id="ev-sangeet">
+              <div class="ehead" onclick="toggleEv('ev-sangeet')"><span class="eem">🎵</span><span class="en">Sangeet</span><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" onchange="syncTog('ev-sangeet',this)"/><div class="togt"></div><div class="togk"></div></label></div>
+              <div class="ebody">
+                <div class="frow"><div class="fi"><label>Date</label><input type="date" id="ev-sangeet-date" oninput="updateCard()"/></div><div class="fi"><label>Time</label><input type="time" id="ev-sangeet-time"/></div></div>
+                <div class="fi"><label>Venue</label><input type="text" id="ev-sangeet-venue" placeholder="Venue name" oninput="updateCard()"/></div>
+                <div class="fi"><label>Address</label><input type="text" id="ev-sangeet-addr" placeholder="Full address"/></div>
+              </div>
+            </div>
+            <div class="ecard" id="ev-reception">
+              <div class="ehead" onclick="toggleEv('ev-reception')"><span class="eem">🥂</span><span class="en">Reception</span><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" onchange="syncTog('ev-reception',this)"/><div class="togt"></div><div class="togk"></div></label></div>
+              <div class="ebody">
+                <div class="frow"><div class="fi"><label>Date</label><input type="date" id="ev-reception-date" oninput="updateCard()"/></div><div class="fi"><label>Time</label><input type="time" id="ev-reception-time"/></div></div>
+                <div class="fi"><label>Venue</label><input type="text" id="ev-reception-venue" placeholder="Venue name" oninput="updateCard()"/></div>
+                <div class="fi"><label>Address</label><input type="text" id="ev-reception-addr" placeholder="Full address"/></div>
+              </div>
+            </div>
+            <div id="custom-evs"></div>
+            <button class="add-ev" onclick="addCusEv()">+ Add Custom Event</button>
+          </div>
+        </div>
+        <div class="sact"><button class="btn bol" onclick="goStep(0)">← Back</button><button class="btn bpu" onclick="goStep(2)">Next: Theme →</button></div>
+      </div>
+
+      <!-- ── SEC 3: THEME ── -->
+      <div class="ssec" id="sec2">
+        <div class="fpanel">
+          <div class="ph"><h2>🎨 Choose a Theme</h2><p>Pick a colour palette for your invitation</p></div>
+          <div class="pb">
+            <div class="tgrid">
+              <div class="tsw t0 sel" onclick="setTheme(0,this)"><div class="tck">✓</div>Royal Violet</div>
+              <div class="tsw t1" onclick="setTheme(1,this)"><div class="tck">✓</div>Garden Green</div>
+              <div class="tsw t2" onclick="setTheme(2,this)"><div class="tck">✓</div>Rose Gold</div>
+              <div class="tsw t3" onclick="setTheme(3,this)"><div class="tck">✓</div>Midnight Blue</div>
+              <div class="tsw t4" onclick="setTheme(4,this)"><div class="tck">✓</div>Blush Berry</div>
+              <div class="tsw t5" onclick="setTheme(5,this)"><div class="tck">✓</div>Ocean Teal</div>
+              <div class="tsw t6" onclick="setTheme(6,this)"><div class="tck">✓</div>Golden Dust</div>
+              <div class="tsw t7" onclick="setTheme(7,this)"><div class="tck">✓</div>Ivory Classic</div>
+              <div class="tsw t8" onclick="setTheme(8,this)"><div class="tck">✓</div>Dark Luxury</div>
+            </div>
+            <div class="fi"><label>Custom Accent Colour</label>
+              <div style="display:flex;align-items:center;gap:12px">
+                <input type="color" id="f-accent" value="#c9a84c" oninput="updateCard()" style="width:42px;height:36px;border-radius:8px;border:1.5px solid #e2d9f0;cursor:pointer;padding:2px;background:none"/>
+                <span style="font-size:.78rem;color:#7a6e8a">Overrides theme accent colour</span>
+              </div>
+            </div>
+
+            <!-- BORDER PATTERNS -->
+            <div class="fi" style="margin-top:20px">
+              <label>Border Pattern</label>
+              <p style="font-size:.74rem;color:#7a6e8a;margin-bottom:12px">Choose a decorative border for your invitation card</p>
+              <div class="border-grid" id="border-grid">
+
+                <!-- None -->
+                <div class="bopt sel" onclick="setBorder('none',this)" title="No border">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80"><rect x="4" y="4" width="52" height="72" rx="4" fill="none" stroke="#e2d9f0" stroke-width="1.5" stroke-dasharray="4 3"/><text x="30" y="43" text-anchor="middle" font-size="8" fill="#b0a0c0" font-family="sans-serif">None</text></svg>
+                  <span class="bopt-label">None</span>
+                </div>
+
+                <!-- Rangoli -->
+                <div class="bopt" onclick="setBorder('rangoli',this)" title="Rangoli">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- top row rangoli dots -->
+                    <circle cx="8" cy="8" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="16" cy="4" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="24" cy="8" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="30" cy="4" r="2" fill="#c17a6f" opacity=".7"/>
+                    <circle cx="36" cy="8" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="44" cy="4" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="52" cy="8" r="3" fill="#c9a84c" opacity=".8"/>
+                    <!-- bottom row -->
+                    <circle cx="8" cy="72" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="16" cy="76" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="24" cy="72" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="30" cy="76" r="2" fill="#c17a6f" opacity=".7"/>
+                    <circle cx="36" cy="72" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="44" cy="76" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="52" cy="72" r="3" fill="#c9a84c" opacity=".8"/>
+                    <!-- left col -->
+                    <circle cx="4" cy="20" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="8" cy="28" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="4" cy="36" r="2" fill="#c17a6f" opacity=".7"/>
+                    <circle cx="8" cy="44" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="4" cy="52" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="8" cy="60" r="3" fill="#c9a84c" opacity=".8"/>
+                    <!-- right col -->
+                    <circle cx="56" cy="20" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="52" cy="28" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="56" cy="36" r="2" fill="#c17a6f" opacity=".7"/>
+                    <circle cx="52" cy="44" r="3" fill="#c9a84c" opacity=".8"/>
+                    <circle cx="56" cy="52" r="2" fill="#c9a84c" opacity=".6"/>
+                    <circle cx="52" cy="60" r="3" fill="#c9a84c" opacity=".8"/>
+                    <!-- corner diamonds -->
+                    <polygon points="8,8 12,12 8,16 4,12" fill="#c17a6f" opacity=".7"/>
+                    <polygon points="52,8 56,12 52,16 48,12" fill="#c17a6f" opacity=".7"/>
+                    <polygon points="8,72 12,68 8,64 4,68" fill="#c17a6f" opacity=".7"/>
+                    <polygon points="52,72 56,68 52,64 48,68" fill="#c17a6f" opacity=".7"/>
+                  </svg>
+                  <span class="bopt-label">Rangoli</span>
+                </div>
+
+                <!-- Paisley -->
+                <div class="bopt" onclick="setBorder('paisley',this)" title="Paisley">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- top paisley motifs -->
+                    <path d="M10,4 Q14,0 18,4 Q22,8 18,12 Q14,10 10,12 Q6,8 10,4Z" fill="#a385d6" opacity=".7"/>
+                    <path d="M30,2 Q34,-2 38,2 Q42,6 38,10 Q34,8 30,10 Q26,6 30,2Z" fill="#c9a84c" opacity=".7"/>
+                    <path d="M50,4 Q54,0 58,4 Q62,8 58,12 Q54,10 50,12 Q46,8 50,4Z" fill="#a385d6" opacity=".7"/>
+                    <!-- bottom -->
+                    <path d="M10,76 Q14,80 18,76 Q22,72 18,68 Q14,70 10,68 Q6,72 10,76Z" fill="#a385d6" opacity=".7"/>
+                    <path d="M30,78 Q34,82 38,78 Q42,74 38,70 Q34,72 30,70 Q26,74 30,78Z" fill="#c9a84c" opacity=".7"/>
+                    <path d="M50,76 Q54,80 58,76 Q62,72 58,68 Q54,70 50,68 Q46,72 50,76Z" fill="#a385d6" opacity=".7"/>
+                    <!-- left -->
+                    <path d="M4,20 Q0,24 4,28 Q8,32 12,28 Q10,24 12,20 Q8,16 4,20Z" fill="#c9a84c" opacity=".7"/>
+                    <path d="M4,44 Q0,48 4,52 Q8,56 12,52 Q10,48 12,44 Q8,40 4,44Z" fill="#a385d6" opacity=".7"/>
+                    <!-- right -->
+                    <path d="M56,20 Q60,24 56,28 Q52,32 48,28 Q50,24 48,20 Q52,16 56,20Z" fill="#c9a84c" opacity=".7"/>
+                    <path d="M56,44 Q60,48 56,52 Q52,56 48,52 Q50,48 48,44 Q52,40 56,44Z" fill="#a385d6" opacity=".7"/>
+                    <!-- thin border line -->
+                    <rect x="13" y="13" width="34" height="54" rx="2" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>
+                  </svg>
+                  <span class="bopt-label">Paisley</span>
+                </div>
+
+                <!-- Floral -->
+                <div class="bopt" onclick="setBorder('floral',this)" title="Floral">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- corner flowers -->
+                    <g transform="translate(8,8)">
+                      <circle cx="0" cy="0" r="4" fill="#c17a6f" opacity=".7"/>
+                      <circle cx="5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="-5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="-5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                    </g>
+                    <g transform="translate(52,8)">
+                      <circle cx="0" cy="0" r="4" fill="#c17a6f" opacity=".7"/>
+                      <circle cx="5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="-5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="-5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                    </g>
+                    <g transform="translate(8,72)">
+                      <circle cx="0" cy="0" r="4" fill="#c17a6f" opacity=".7"/>
+                      <circle cx="5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="-5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="-5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                    </g>
+                    <g transform="translate(52,72)">
+                      <circle cx="0" cy="0" r="4" fill="#c17a6f" opacity=".7"/>
+                      <circle cx="5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="-5" cy="0" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                      <circle cx="0" cy="-5" r="2.5" fill="#e8d5a0" opacity=".7"/>
+                    </g>
+                    <!-- vine lines -->
+                    <path d="M14,8 Q20,6 26,10 Q32,14 38,10 Q44,6 50,8" fill="none" stroke="#3d7a52" stroke-width="1" opacity=".6"/>
+                    <path d="M14,72 Q20,74 26,70 Q32,66 38,70 Q44,74 50,72" fill="none" stroke="#3d7a52" stroke-width="1" opacity=".6"/>
+                    <path d="M4,14 Q6,20 4,26 Q2,32 4,40 Q6,48 4,56 Q2,62 4,68" fill="none" stroke="#3d7a52" stroke-width="1" opacity=".6"/>
+                    <path d="M56,14 Q54,20 56,26 Q58,32 56,40 Q54,48 56,56 Q58,62 56,68" fill="none" stroke="#3d7a52" stroke-width="1" opacity=".6"/>
+                    <!-- small leaf buds -->
+                    <ellipse cx="20" cy="6" rx="3" ry="2" fill="#3d7a52" opacity=".5" transform="rotate(-30 20 6)"/>
+                    <ellipse cx="40" cy="74" rx="3" ry="2" fill="#3d7a52" opacity=".5" transform="rotate(30 40 74)"/>
+                    <ellipse cx="4" cy="32" rx="2" ry="3" fill="#3d7a52" opacity=".5" transform="rotate(-60 4 32)"/>
+                    <ellipse cx="56" cy="52" rx="2" ry="3" fill="#3d7a52" opacity=".5" transform="rotate(60 56 52)"/>
+                  </svg>
+                  <span class="bopt-label">Floral</span>
+                </div>
+
+                <!-- Mandala -->
+                <div class="bopt" onclick="setBorder('mandala',this)" title="Mandala">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- corner mandala motifs -->
+                    <g transform="translate(9,9)">
+                      <circle cx="0" cy="0" r="7" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="4" fill="none" stroke="#c17a6f" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="2" fill="#c9a84c" opacity=".8"/>
+                      <line x1="-7" y1="0" x2="7" y2="0" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                      <line x1="0" y1="-7" x2="0" y2="7" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                      <line x1="-5" y1="-5" x2="5" y2="5" stroke="#c9a84c" stroke-width=".5" opacity=".4"/>
+                      <line x1="5" y1="-5" x2="-5" y2="5" stroke="#c9a84c" stroke-width=".5" opacity=".4"/>
+                    </g>
+                    <g transform="translate(51,9)">
+                      <circle cx="0" cy="0" r="7" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="4" fill="none" stroke="#c17a6f" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="2" fill="#c9a84c" opacity=".8"/>
+                      <line x1="-7" y1="0" x2="7" y2="0" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                      <line x1="0" y1="-7" x2="0" y2="7" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                    </g>
+                    <g transform="translate(9,71)">
+                      <circle cx="0" cy="0" r="7" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="4" fill="none" stroke="#c17a6f" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="2" fill="#c9a84c" opacity=".8"/>
+                      <line x1="-7" y1="0" x2="7" y2="0" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                      <line x1="0" y1="-7" x2="0" y2="7" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                    </g>
+                    <g transform="translate(51,71)">
+                      <circle cx="0" cy="0" r="7" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="4" fill="none" stroke="#c17a6f" stroke-width=".8" opacity=".7"/>
+                      <circle cx="0" cy="0" r="2" fill="#c9a84c" opacity=".8"/>
+                      <line x1="-7" y1="0" x2="7" y2="0" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                      <line x1="0" y1="-7" x2="0" y2="7" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                    </g>
+                    <!-- double border lines -->
+                    <rect x="3" y="3" width="54" height="74" rx="2" fill="none" stroke="#c9a84c" stroke-width=".7" opacity=".5"/>
+                    <rect x="6" y="6" width="48" height="68" rx="1" fill="none" stroke="#c9a84c" stroke-width=".4" opacity=".35"/>
+                  </svg>
+                  <span class="bopt-label">Mandala</span>
+                </div>
+
+                <!-- Mughal -->
+                <div class="bopt" onclick="setBorder('mughal',this)" title="Mughal Arch">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- arched top border -->
+                    <path d="M4,4 L4,20 Q4,12 12,12 Q20,12 20,4 L40,4 Q40,12 48,12 Q56,12 56,20 L56,4Z" fill="#a385d6" opacity=".18"/>
+                    <!-- arched bottom border -->
+                    <path d="M4,76 L4,60 Q4,68 12,68 Q20,68 20,76 L40,76 Q40,68 48,68 Q56,68 56,60 L56,76Z" fill="#a385d6" opacity=".18"/>
+                    <!-- arch outlines top -->
+                    <path d="M4,4 Q4,16 14,16 Q24,16 24,4" fill="none" stroke="#a385d6" stroke-width="1" opacity=".8"/>
+                    <path d="M36,4 Q36,16 46,16 Q56,16 56,4" fill="none" stroke="#a385d6" stroke-width="1" opacity=".8"/>
+                    <!-- arch outlines bottom -->
+                    <path d="M4,76 Q4,64 14,64 Q24,64 24,76" fill="none" stroke="#a385d6" stroke-width="1" opacity=".8"/>
+                    <path d="M36,76 Q36,64 46,64 Q56,64 56,76" fill="none" stroke="#a385d6" stroke-width="1" opacity=".8"/>
+                    <!-- side lines -->
+                    <line x1="4" y1="16" x2="4" y2="64" stroke="#a385d6" stroke-width="1" opacity=".6"/>
+                    <line x1="56" y1="16" x2="56" y2="64" stroke="#a385d6" stroke-width="1" opacity=".6"/>
+                    <!-- top horizontal bar -->
+                    <line x1="24" y1="4" x2="36" y2="4" stroke="#a385d6" stroke-width="1" opacity=".6"/>
+                    <line x1="24" y1="76" x2="36" y2="76" stroke="#a385d6" stroke-width="1" opacity=".6"/>
+                    <!-- keystone diamonds -->
+                    <polygon points="30,4 33,8 30,12 27,8" fill="#c9a84c" opacity=".8"/>
+                    <polygon points="30,76 33,72 30,68 27,72" fill="#c9a84c" opacity=".8"/>
+                    <!-- decorative dots -->
+                    <circle cx="14" cy="10" r="1.5" fill="#c9a84c" opacity=".7"/>
+                    <circle cx="46" cy="10" r="1.5" fill="#c9a84c" opacity=".7"/>
+                    <circle cx="14" cy="70" r="1.5" fill="#c9a84c" opacity=".7"/>
+                    <circle cx="46" cy="70" r="1.5" fill="#c9a84c" opacity=".7"/>
+                    <circle cx="4" cy="40" r="1.5" fill="#c9a84c" opacity=".7"/>
+                    <circle cx="56" cy="40" r="1.5" fill="#c9a84c" opacity=".7"/>
+                  </svg>
+                  <span class="bopt-label">Mughal</span>
+                </div>
+
+                <!-- Lotus -->
+                <div class="bopt" onclick="setBorder('lotus',this)" title="Lotus">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- top lotus row -->
+                    <path d="M10,12 Q10,4 14,4 Q18,4 18,12Z" fill="#c17a6f" opacity=".7"/>
+                    <path d="M10,12 Q6,4 10,2 Q14,4 10,12Z" fill="#e8d5a0" opacity=".6"/>
+                    <path d="M18,12 Q22,4 18,2 Q14,4 18,12Z" fill="#e8d5a0" opacity=".6"/>
+                    <path d="M30,12 Q30,4 34,4 Q38,4 38,12Z" fill="#c17a6f" opacity=".7"/>
+                    <path d="M30,12 Q26,4 30,2 Q34,4 30,12Z" fill="#e8d5a0" opacity=".6"/>
+                    <path d="M38,12 Q42,4 38,2 Q34,4 38,12Z" fill="#e8d5a0" opacity=".6"/>
+                    <path d="M50,12 Q50,4 54,4 Q58,4 58,12Z" fill="#c17a6f" opacity=".7"/>
+                    <path d="M50,12 Q46,4 50,2 Q54,4 50,12Z" fill="#e8d5a0" opacity=".6"/>
+                    <!-- bottom lotus row (inverted) -->
+                    <path d="M10,68 Q10,76 14,76 Q18,76 18,68Z" fill="#c17a6f" opacity=".7"/>
+                    <path d="M10,68 Q6,76 10,78 Q14,76 10,68Z" fill="#e8d5a0" opacity=".6"/>
+                    <path d="M18,68 Q22,76 18,78 Q14,76 18,68Z" fill="#e8d5a0" opacity=".6"/>
+                    <path d="M30,68 Q30,76 34,76 Q38,76 38,68Z" fill="#c17a6f" opacity=".7"/>
+                    <path d="M30,68 Q26,76 30,78 Q34,76 30,68Z" fill="#e8d5a0" opacity=".6"/>
+                    <path d="M50,68 Q50,76 54,76 Q58,76 58,68Z" fill="#c17a6f" opacity=".7"/>
+                    <path d="M50,68 Q46,76 50,78 Q54,76 50,68Z" fill="#e8d5a0" opacity=".6"/>
+                    <!-- side vines -->
+                    <path d="M4,18 Q8,24 4,30 Q0,36 4,42 Q8,48 4,54 Q0,60 4,66" fill="none" stroke="#3d7a52" stroke-width=".9" opacity=".6"/>
+                    <path d="M56,18 Q52,24 56,30 Q60,36 56,42 Q52,48 56,54 Q60,60 56,66" fill="none" stroke="#3d7a52" stroke-width=".9" opacity=".6"/>
+                    <!-- inner border line -->
+                    <rect x="12" y="14" width="36" height="52" rx="2" fill="none" stroke="#c17a6f" stroke-width=".6" opacity=".4"/>
+                  </svg>
+                  <span class="bopt-label">Lotus</span>
+                </div>
+
+                <!-- Diya -->
+                <div class="bopt" onclick="setBorder('diya',this)" title="Diya Chain">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- diya motifs top -->
+                    <ellipse cx="10" cy="8" rx="5" ry="3" fill="#c9a84c" opacity=".7"/>
+                    <path d="M10,5 Q10,1 12,1 Q10,5" fill="#FF6347" opacity=".8"/>
+                    <ellipse cx="30" cy="8" rx="5" ry="3" fill="#c9a84c" opacity=".7"/>
+                    <path d="M30,5 Q30,1 32,1 Q30,5" fill="#FF6347" opacity=".8"/>
+                    <ellipse cx="50" cy="8" rx="5" ry="3" fill="#c9a84c" opacity=".7"/>
+                    <path d="M50,5 Q50,1 52,1 Q50,5" fill="#FF6347" opacity=".8"/>
+                    <!-- diya motifs bottom -->
+                    <ellipse cx="10" cy="72" rx="5" ry="3" fill="#c9a84c" opacity=".7"/>
+                    <path d="M10,69 Q10,65 12,65 Q10,69" fill="#FF6347" opacity=".8"/>
+                    <ellipse cx="30" cy="72" rx="5" ry="3" fill="#c9a84c" opacity=".7"/>
+                    <path d="M30,69 Q30,65 32,65 Q30,69" fill="#FF6347" opacity=".8"/>
+                    <ellipse cx="50" cy="72" rx="5" ry="3" fill="#c9a84c" opacity=".7"/>
+                    <path d="M50,69 Q50,65 52,65 Q50,69" fill="#FF6347" opacity=".8"/>
+                    <!-- string of dots horizontal -->
+                    <line x1="4" y1="8" x2="56" y2="8" stroke="#c9a84c" stroke-width=".5" stroke-dasharray="3 2" opacity=".4"/>
+                    <line x1="4" y1="72" x2="56" y2="72" stroke="#c9a84c" stroke-width=".5" stroke-dasharray="3 2" opacity=".4"/>
+                    <!-- side diyas -->
+                    <ellipse cx="5" cy="30" rx="3" ry="5" fill="#c9a84c" opacity=".7" transform="rotate(90 5 30)"/>
+                    <path d="M8,30 Q12,30 12,28" fill="none" stroke="#FF6347" stroke-width="1" opacity=".8"/>
+                    <ellipse cx="5" cy="50" rx="3" ry="5" fill="#c9a84c" opacity=".7" transform="rotate(90 5 50)"/>
+                    <path d="M8,50 Q12,50 12,48" fill="none" stroke="#FF6347" stroke-width="1" opacity=".8"/>
+                    <ellipse cx="55" cy="30" rx="3" ry="5" fill="#c9a84c" opacity=".7" transform="rotate(90 55 30)"/>
+                    <path d="M52,30 Q48,30 48,28" fill="none" stroke="#FF6347" stroke-width="1" opacity=".8"/>
+                    <ellipse cx="55" cy="50" rx="3" ry="5" fill="#c9a84c" opacity=".7" transform="rotate(90 55 50)"/>
+                    <path d="M52,50 Q48,50 48,48" fill="none" stroke="#FF6347" stroke-width="1" opacity=".8"/>
+                  </svg>
+                  <span class="bopt-label">Diya</span>
+                </div>
+
+                <!-- Geometric -->
+                <div class="bopt" onclick="setBorder('geometric',this)" title="Geometric">
+                  <div class="bck">✓</div>
+                  <svg viewBox="0 0 60 80">
+                    <!-- outer rect -->
+                    <rect x="2" y="2" width="56" height="76" rx="0" fill="none" stroke="#7c5cbf" stroke-width="1.2" opacity=".7"/>
+                    <!-- inner rect -->
+                    <rect x="6" y="6" width="48" height="68" rx="0" fill="none" stroke="#c9a84c" stroke-width=".6" opacity=".5"/>
+                    <!-- corner squares -->
+                    <rect x="2" y="2" width="10" height="10" fill="#7c5cbf" opacity=".25"/>
+                    <rect x="48" y="2" width="10" height="10" fill="#7c5cbf" opacity=".25"/>
+                    <rect x="2" y="68" width="10" height="10" fill="#7c5cbf" opacity=".25"/>
+                    <rect x="48" y="68" width="10" height="10" fill="#7c5cbf" opacity=".25"/>
+                    <!-- corner cross marks -->
+                    <line x1="2" y1="7" x2="12" y2="7" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <line x1="7" y1="2" x2="7" y2="12" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <line x1="48" y1="7" x2="58" y2="7" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <line x1="53" y1="2" x2="53" y2="12" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <line x1="2" y1="73" x2="12" y2="73" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <line x1="7" y1="68" x2="7" y2="78" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <line x1="48" y1="73" x2="58" y2="73" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <line x1="53" y1="68" x2="53" y2="78" stroke="#c9a84c" stroke-width=".8" opacity=".8"/>
+                    <!-- mid-side triangles -->
+                    <polygon points="30,2 34,6 30,10 26,6" fill="#c9a84c" opacity=".7"/>
+                    <polygon points="30,78 34,74 30,70 26,74" fill="#c9a84c" opacity=".7"/>
+                    <polygon points="2,40 6,36 10,40 6,44" fill="#c9a84c" opacity=".7"/>
+                    <polygon points="58,40 54,36 50,40 54,44" fill="#c9a84c" opacity=".7"/>
+                    <!-- tiny repeating triangles along top -->
+                    <polygon points="18,2 20,5 16,5" fill="#7c5cbf" opacity=".5"/>
+                    <polygon points="24,2 26,5 22,5" fill="#7c5cbf" opacity=".5"/>
+                    <polygon points="36,2 38,5 34,5" fill="#7c5cbf" opacity=".5"/>
+                    <polygon points="42,2 44,5 40,5" fill="#7c5cbf" opacity=".5"/>
+                  </svg>
+                  <span class="bopt-label">Geometric</span>
+                </div>
+
+              </div><!-- end border-grid -->
+
+              <!-- BORDER COLOUR -->
+              <label style="margin-top:4px;display:block">Border Colour</label>
+              <div class="border-color-row" id="border-color-row">
+                <div class="bcol-dot sel" style="background:#c9a84c" onclick="setBorderColor('#c9a84c',this)" title="Gold"></div>
+                <div class="bcol-dot" style="background:#fff" onclick="setBorderColor('#fff',this)" title="White"></div>
+                <div class="bcol-dot" style="background:#a385d6" onclick="setBorderColor('#a385d6',this)" title="Lavender"></div>
+                <div class="bcol-dot" style="background:#c17a6f" onclick="setBorderColor('#c17a6f',this)" title="Rose"></div>
+                <div class="bcol-dot" style="background:#3d7a52" onclick="setBorderColor('#3d7a52',this)" title="Emerald"></div>
+                <div class="bcol-dot" style="background:#3d6a8b" onclick="setBorderColor('#3d6a8b',this)" title="Navy"></div>
+                <div class="bcol-dot" style="background:#e8d5a0" onclick="setBorderColor('#e8d5a0',this)" title="Cream"></div>
+                <input type="color" id="border-custom-color" value="#c9a84c" oninput="setBorderColor(this.value,null)" style="width:26px;height:26px;border-radius:50%;border:2px solid #e2d9f0;cursor:pointer;padding:1px;background:none;flex-shrink:0" title="Custom colour"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sact"><button class="btn bol" onclick="goStep(1)">← Back</button><button class="btn bpu" onclick="goStep(3)">Next: Stickers →</button></div>
+      </div>
+
+      <!-- ── SEC 4: STICKERS ── -->
+      <div class="ssec" id="sec3">
+        <div class="fpanel">
+          <div class="ph"><h2>🪄 Sticker Overlays</h2><p>Drag &amp; drop festive stickers onto your card preview</p></div>
+          <div class="pb">
+
+            <div class="fi">
+              <label>Indian Wedding Stickers</label>
+              <p class="stk-hint" style="margin-bottom:12px">Drag any sticker and drop it onto the card preview on the right. Double-click a placed sticker to remove it.</p>
+              <div style="margin-bottom:10px;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a6e8a">🪔 Diyas &amp; Lights</div>
+              <div class="sticker-grid">
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🪔')">🪔</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🕯️')">🕯️</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'✨')">✨</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌟')">🌟</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'⭐')">⭐</div>
+              </div>
+            </div>
+
+            <div class="fi">
+              <div style="margin-bottom:10px;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a6e8a">💐 Flowers &amp; Nature</div>
+              <div class="sticker-grid">
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌸')">🌸</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌺')">🌺</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌼')">🌼</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌹')">🌹</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🪷')">🪷</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🏵️')">🏵️</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌻')">🌻</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🍃')">🍃</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌿')">🌿</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🦚')">🦚</div>
+              </div>
+            </div>
+
+            <div class="fi">
+              <div style="margin-bottom:10px;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a6e8a">💍 Wedding &amp; Celebration</div>
+              <div class="sticker-grid">
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'💍')">💍</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'💒')">💒</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🎊')">🎊</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🎉')">🎉</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🥂')">🥂</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'💑')">💑</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'👰')">👰</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🤵')">🤵</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'💕')">💕</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'❤️')">❤️</div>
+              </div>
+            </div>
+
+            <div class="fi">
+              <div style="margin-bottom:10px;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a6e8a">🕌 Indian Culture</div>
+              <div class="sticker-grid">
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🕌')">🕌</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🛕')">🛕</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🌙')">🌙</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'☀️')">☀️</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🎶')">🎶</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🥁')">🥁</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🪘')">🪘</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'💛')">💛</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🧿')">🧿</div>
+                <div class="stk" draggable="true" ondragstart="dragStk(event,'🪬')">🪬</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:4px">
+              <button class="btn bol" style="font-size:.78rem;padding:10px" onclick="clearStickers()">🗑 Clear All Stickers</button>
+              <button class="btn bpu" style="font-size:.78rem;padding:10px;flex:1" onclick="document.getElementById('cstage').scrollIntoView({behavior:'smooth',block:'center'})">👁 View Card Preview</button>
+            </div>
+          </div>
+        </div>
+        <div class="sact"><button class="btn bol" onclick="goStep(2)">← Back</button><button class="btn bpu" onclick="goStep(4)">Next: Style →</button></div>
+      </div>
+
+      <!-- ── SEC 5: FONT & ANIM ── -->
+      <div class="ssec" id="sec4">
+        <div class="fpanel">
+          <div class="ph"><h2>✍️ Font &amp; Animation</h2><p>Choose a typeface and card animation</p></div>
+          <div class="pb">
+            <div class="fi"><label>Name Font</label>
+              <div class="fgrid">
+                <div class="fopt sel" onclick="setFont('Cormorant Garamond',this)"><div class="fp" style="font-family:'Cormorant Garamond',serif">Aa</div><div class="fn">Cormorant</div></div>
+                <div class="fopt" onclick="setFont('Great Vibes',this)"><div class="fp" style="font-family:'Great Vibes',cursive">Aa</div><div class="fn">Great Vibes</div></div>
+                <div class="fopt" onclick="setFont('Playfair Display',this)"><div class="fp" style="font-family:'Playfair Display',serif">Aa</div><div class="fn">Playfair</div></div>
+                <div class="fopt" onclick="setFont('Georgia',this)"><div class="fp" style="font-family:Georgia,serif">Aa</div><div class="fn">Georgia</div></div>
+              </div>
+            </div>
+            <div class="fi" style="margin-top:18px"><label>Card Animation</label>
+              <div class="agrid">
+                <div class="aopt sel" onclick="setAnim('fade',this)"><div class="ai">✨</div><div class="an">Fade In</div></div>
+                <div class="aopt" onclick="setAnim('zoom',this)"><div class="ai">🔍</div><div class="an">Zoom In</div></div>
+                <div class="aopt" onclick="setAnim('glow',this)"><div class="ai">💫</div><div class="an">Glow</div></div>
+                <div class="aopt" onclick="setAnim('petals',this)"><div class="ai">🌸</div><div class="an">Petals</div></div>
+                <div class="aopt" onclick="setAnim('none',this)"><div class="ai">⬜</div><div class="an">None</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sact"><button class="btn bol" onclick="goStep(3)">← Back</button><button class="btn bpu" onclick="goStep(5)">Next: Dress Code →</button></div>
+      </div>
+
+      <!-- ── SEC 6: DRESS CODE ── -->
+      <div class="ssec" id="sec5">
+        <div class="fpanel">
+          <div class="ph"><h2>👗 Dress Code</h2><p>Set attire colours &amp; style for each function</p></div>
+          <div class="pb">
+
+            <!-- Fixed functions -->
+            <div id="dc-fixed-events">
+
+              <div class="dc-event" id="dce-haldi">
+                <div class="dc-event-head">
+                  <span class="dc-event-em">🌻</span>
+                  <span class="dc-event-title">Haldi Ceremony</span>
+                </div>
+                <div class="fi">
+                  <label>Choose Colours <span class="opt-tag">(click to select)</span></label>
+                  <div class="dc-full-palette" id="dc-haldi-palette"></div>
+                  <div class="dc-custom-row">
+                    <input type="color" class="dc-custom-pick" id="dc-haldi-custom" value="#FFD700" title="Pick any colour"/>
+                    <button class="dc-add-color-btn" onclick="addCustomDcColor('haldi')">+ Add Colour</button>
+                  </div>
+                  <div class="dc-chosen" id="dc-haldi-chosen">
+                    <span class="dc-chosen-label">Selected:</span>
+                    <div class="dc-chosen-dots" id="dc-haldi-sel"></div>
+                  </div>
+                </div>
+                <div class="fi">
+                  <label>Attire Description</label>
+                  <input class="dc-code-input" id="dc-haldi-note" placeholder="e.g. Light cotton saree, no heavy jewellery" oninput="updateCard()"/>
+                </div>
+              </div>
+
+              <div class="dc-event" id="dce-mehandi">
+                <div class="dc-event-head">
+                  <span class="dc-event-em">🌿</span>
+                  <span class="dc-event-title">Mehandi Night</span>
+                </div>
+                <div class="fi">
+                  <label>Choose Colours</label>
+                  <div class="dc-full-palette" id="dc-mehandi-palette"></div>
+                  <div class="dc-custom-row">
+                    <input type="color" class="dc-custom-pick" id="dc-mehandi-custom" value="#3CB371"/>
+                    <button class="dc-add-color-btn" onclick="addCustomDcColor('mehandi')">+ Add Colour</button>
+                  </div>
+                  <div class="dc-chosen" id="dc-mehandi-chosen">
+                    <span class="dc-chosen-label">Selected:</span>
+                    <div class="dc-chosen-dots" id="dc-mehandi-sel"></div>
+                  </div>
+                </div>
+                <div class="fi">
+                  <label>Attire Description</label>
+                  <input class="dc-code-input" id="dc-mehandi-note" placeholder="e.g. Anarkali or lehenga in green shades" oninput="updateCard()"/>
+                </div>
+              </div>
+
+              <div class="dc-event" id="dce-wedding">
+                <div class="dc-event-head">
+                  <span class="dc-event-em">💍</span>
+                  <span class="dc-event-title">Wedding Day</span>
+                </div>
+                <div class="fi">
+                  <label>Choose Colours</label>
+                  <div class="dc-full-palette" id="dc-wedding-palette"></div>
+                  <div class="dc-custom-row">
+                    <input type="color" class="dc-custom-pick" id="dc-wedding-custom" value="#DC143C"/>
+                    <button class="dc-add-color-btn" onclick="addCustomDcColor('wedding')">+ Add Colour</button>
+                  </div>
+                  <div class="dc-chosen" id="dc-wedding-chosen">
+                    <span class="dc-chosen-label">Selected:</span>
+                    <div class="dc-chosen-dots" id="dc-wedding-sel"></div>
+                  </div>
+                </div>
+                <div class="fi">
+                  <label>Attire Description</label>
+                  <input class="dc-code-input" id="dc-wedding-note" placeholder="e.g. Bridal lehenga, ethnic wear preferred" oninput="updateCard()"/>
+                </div>
+              </div>
+
+            </div><!-- end fixed events -->
+
+            <!-- Custom added functions -->
+            <div id="dc-custom-events"></div>
+
+            <!-- Add Function button -->
+            <button class="add-ev" style="margin-top:12px" onclick="addDcFunction()">+ Add Custom Function</button>
+
+          </div>
+        </div>
+        <div class="sact"><button class="btn bol" onclick="goStep(4)">← Back</button><button class="btn bpu" onclick="goStep(6)">Next: Music →</button></div>
+      </div>
+
+      <!-- ── SEC 7: MUSIC ── -->
+      <div class="ssec" id="sec6">
+        <div class="fpanel">
+          <div class="ph"><h2>🎹 Piano Music</h2><p>Play wedding notes on the piano — guests hear it when the card opens</p></div>
+          <div class="pb">
+            <p class="music-info">Play the keys below to compose your melody. Choose a preset or record your own. The melody will play automatically on the share page.</p>
+            <div class="piano-keys" id="piano-keys"></div>
+            <div class="music-sel">
+              <label>Preset Melodies</label>
+              <div class="melody-btns">
+                <button class="melbtn active" id="mel-none" onclick="setMelody('none',this)">None</button>
+                <button class="melbtn" id="mel-wedding" onclick="setMelody('wedding',this)">🎵 Wedding March</button>
+                <button class="melbtn" id="mel-love" onclick="setMelody('love',this)">💕 Love Theme</button>
+                <button class="melbtn" id="mel-bells" onclick="setMelody('bells',this)">🔔 Bells</button>
+              </div>
+              <label style="margin-top:12px">Tempo</label>
+              <div class="tempo-row">
+                <input type="range" id="tempo-sl" min="40" max="160" value="80" oninput="document.getElementById('tempo-val').textContent=this.value+' BPM'"/>
+                <span class="tempo-val" id="tempo-val">80 BPM</span>
+              </div>
+              <button id="play-music-btn" onclick="playMelody()">▶ Play Preview</button>
+            </div>
+          </div>
+        </div>
+        <div class="sact"><button class="btn bol" onclick="goStep(5)">← Back</button><button class="btn bpu" onclick="goStep(7)">Preview &amp; Share →</button></div>
+      </div>
+
+      <!-- ── SEC 8: SHARE ── -->
+      <div class="ssec" id="sec7">
+        <div class="fpanel">
+          <div class="ph"><h2>🎊 Preview &amp; Share</h2><p>Your invitation is ready!</p></div>
+          <div class="pb">
+            <div class="sbox" style="margin-bottom:14px">
+              <p>🔗 Share link — guests click envelope, card opens with fireworks &amp; music</p>
+              <div class="slrow">
+                <input type="text" id="share-url" readonly value="Click 'Generate Share Link' below…"/>
+                <button class="cpbtn" onclick="copyLink()">Copy</button>
+              </div>
+            </div>
+            <button class="btn bpu" onclick="genLink()">🔗 Generate Share Link</button>
+            <button class="btn bdk" onclick="dlPNG('card-el')">⬇ Download PNG</button>
+            <button class="btn bol" onclick="showQR()">📱 Generate QR Code</button>
+            <div class="qr-wrap" id="qr-wrap" style="display:none;margin-top:12px">
+              <div class="qr-note">📱 Scan to open the invitation on any phone</div>
+              <div id="qr-box"></div>
+              <button class="btn bdk" style="margin-top:0;width:auto;padding:9px 18px;font-size:.8rem" onclick="dlQR()">⬇ Download QR</button>
+            </div>
+          </div>
+        </div>
+        <div class="sact"><button class="btn bol" onclick="goStep(6)">← Back</button><div></div></div>
+      </div>
+
+    </div><!-- end form col -->
+
+    <!-- ═══ PREVIEW PANEL ═══ -->
+    <div class="ppanel" id="ppanel">
+      <button class="clsbtn" onclick="closePrev()">✕</button>
+      <div class="plbl">Live Preview</div>
+      <div class="cstage" id="cstage"
+        ondragover="event.preventDefault()"
+        ondrop="dropStk(event)">
+        <div id="card-el">
+          <div class="cco cco-tl"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/><circle cx="3" cy="18" r="1.7" fill="rgba(201,168,76,.3)"/><circle cx="18" cy="3" r="1.7" fill="rgba(201,168,76,.3)"/></svg></div>
+          <div class="cco cco-tr"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/><circle cx="3" cy="18" r="1.7" fill="rgba(201,168,76,.3)"/><circle cx="18" cy="3" r="1.7" fill="rgba(201,168,76,.3)"/></svg></div>
+          <div class="cco cco-bl"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/><circle cx="3" cy="18" r="1.7" fill="rgba(201,168,76,.3)"/><circle cx="18" cy="3" r="1.7" fill="rgba(201,168,76,.3)"/></svg></div>
+          <div class="cco cco-br"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/><circle cx="3" cy="18" r="1.7" fill="rgba(201,168,76,.3)"/><circle cx="18" cy="3" r="1.7" fill="rgba(201,168,76,.3)"/></svg></div>
+          <div class="cbdr"></div>
+          <div id="card-border-layer"></div>
+          <div id="sticker-layer"></div>
+          <div class="cct">
+            <img id="cd-photo" src="" alt=""/>
+            <div id="cd-dear"></div>
+            <div id="cd-tog">Together with their families</div>
+            <div><span id="cd-bride">Eleanor</span><span id="cd-and">&amp;</span><span id="cd-groom">Alexander</span></div>
+            <div class="cdiv"><hr/><span>❧</span><hr/></div>
+            <div id="cd-msg">Together with their families, invite you to share in the joy of our celebration.</div>
+            <div class="cdiv"><hr/><span>❧</span><hr/></div>
+            <div class="evlist" id="cd-evs"></div>
+            <div class="card-gallery" id="cd-gallery"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pact">
+        <button class="btn bdk bsm" onclick="dlPNG('card-el')">⬇ PNG</button>
+        <button class="btn bol bsm" onclick="showQR()">📱 QR</button>
+      </div>
+    </div>
+
+  </div>
+</div><!-- wizard -->
+
+<button class="mob-prev-btn" id="mob-btn" onclick="openPrev()" style="display:none">👁 Preview Card</button>
+
+<footer>
+  <div class="fb">e<span>Greet</span></div>
+  <div class="fb-sub">by THunderTechnology</div>
+  <div>Made with <span class="hrt">♥</span> by <a href="https://wondermayank.github.io" target="_blank">Wondermayank</a> &nbsp;|&nbsp; <a href="https://thundertechnology.github.io" target="_blank">THunderTechnology</a></div>
+  <div style="margin-top:5px;opacity:.35;font-size:.7rem">© 2025 eGreet by THunderTechnology · Beautiful Digital Wedding Invitations</div>
+</footer>
+</div><!-- #page-creator -->
+
+
+<!-- ══════════════════════ SHARE PAGE ══════════════════════ -->
+<div id="page-share">
+<canvas id="fw-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:500;display:none"></canvas>
+
+<nav class="s-nav">
+  <div class="logo" style="font-size:1.3rem">e<span>Greet</span></div>
+  <button class="s-nav-link" onclick="showCreator()">✨ Create Yours Free</button>
+</nav>
+
+<div class="s-main">
+  <div class="s-dear" id="s-dear" style="display:none"></div>
+  <div class="s-names" id="s-names"><em>Eleanor &amp; Alexander</em></div>
+  <div class="s-date-line" id="s-dateline">cordially invite you to their wedding celebration</div>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown-wrap" id="s-countdown" style="display:none">
+    <div class="cd-box"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">Days</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-hours">0</div><div class="cd-lbl">Hours</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Mins</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Secs</div></div>
+  </div>
+
+  <!-- ENVELOPE -->
+  <div class="env-wrap" id="env" onclick="openEnv()">
+    <div class="env-body">
+      <div class="env-flap"></div>
+      <div class="env-el"></div>
+      <div class="env-er"></div>
+      <div class="env-eb"></div>
+      <div class="env-seal">💌</div>
+    </div>
+  </div>
+  <div class="click-hint" id="s-hint">👆 Click the envelope to open your invitation 👆</div>
+
+  <!-- CARD REVEAL -->
+  <div class="card-reveal" id="card-reveal">
+    <div class="s-cstage">
+      <div id="s-card-el">
+        <div class="cco cco-tl"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/></svg></div>
+        <div class="cco cco-tr"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/></svg></div>
+        <div class="cco cco-bl"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/></svg></div>
+        <div class="cco cco-br"><svg viewBox="0 0 60 60" fill="none"><path d="M3 3 Q3 30 30 30" stroke="rgba(255,255,255,.25)" stroke-width="1.1" fill="none"/><circle cx="9" cy="9" r="3" fill="rgba(201,168,76,.55)"/></svg></div>
+        <div class="cbdr"></div>
+        <div id="s-card-border-layer"></div>
+        <div id="s-sticker-layer" style="position:absolute;inset:0;pointer-events:none;z-index:20"></div>
+        <div class="cct">
+          <img id="s-photo" src="" alt="" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.3);margin-bottom:8px;display:none"/>
+          <div id="s-dear-c" style="font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.1em;margin-bottom:4px;font-family:'Jost',sans-serif;font-weight:300;display:none"></div>
+          <div style="font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;font-family:'Jost',sans-serif">Together with their families</div>
+          <div><span id="s-bride" style="font-size:clamp(1.1rem,3.5vw,1.7rem);color:#fff;display:block;font-family:'Cormorant Garamond',serif;font-weight:600;line-height:1.1">Eleanor</span><span id="s-and" style="font-family:'Great Vibes',cursive;font-size:clamp(1.4rem,4.5vw,2rem);color:#e8d5a0;display:block;margin:1px 0;line-height:1.25">&amp;</span><span id="s-groom" style="font-size:clamp(1.1rem,3.5vw,1.7rem);color:#fff;display:block;font-family:'Cormorant Garamond',serif;font-weight:600;line-height:1.1">Alexander</span></div>
+          <div class="cdiv"><hr/><span>❧</span><hr/></div>
+          <div id="s-msg" style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(255,255,255,.7);font-size:.77rem;line-height:1.6;white-space:pre-line">Together with their families, invite you to share in the joy of our celebration.</div>
+          <div class="cdiv"><hr/><span>❧</span><hr/></div>
+          <div class="evlist" id="s-evs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO GALLERY on share page -->
+    <div class="s-gallery" id="s-gallery" style="display:none">
+      <div class="s-gal-title">📸 Our Moments</div>
+      <div class="s-gal-grid" id="s-gal-grid"></div>
+    </div>
+
+    <!-- DRESS CODE on share page -->
+    <div class="s-dresscode" id="s-dresscode" style="display:none">
+      <div class="s-dc-title">👗 Dress Code</div>
+      <div class="s-dc-cards" id="s-dc-cards"></div>
+    </div>
+
+    <div class="dl-area" style="margin-top:18px">
+      <div class="dl-title">💾 Save Your Invitation</div>
+      <div class="dl-row">
+        <button class="dlbtn dlp" onclick="dlPNG('s-card-el')">⬇ Download PNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+<footer>
+  <div class="fb">e<span>Greet</span></div>
+  <div class="fb-sub">by THunderTechnology</div>
+  <div>Made with <span class="hrt">♥</span> by <a href="https://wondermayank.github.io" target="_blank">Wondermayank</a></div>
+  <div style="margin-top:5px;opacity:.35;font-size:.7rem">© 2025 eGreet by THunderTechnology</div>
+</footer>
+</div><!-- #page-share -->
+
+
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const ST = {
+  theme:0, font:'Cormorant Garamond', anim:'fade', photo:'',
+  gallery:[], melody:'none', tempo:80,
+  dcColors:{ haldi:[], mehandi:[], wedding:[] },
+  stickers:[], border:'none'
+};
+
+const THEMES = [
+  'linear-gradient(160deg,#2d2438,#7c5cbf)',
+  'linear-gradient(160deg,#1a2c20,#3d7a52)',
+  'linear-gradient(160deg,#2c1810,#8b4513)',
+  'linear-gradient(160deg,#1a1a2c,#3d4a8b)',
+  'linear-gradient(160deg,#2c1a25,#8b3d6a)',
+  'linear-gradient(160deg,#181f2c,#3d6a8b)',
+  'linear-gradient(160deg,#2c2818,#8b7a3d)',
+  'linear-gradient(160deg,#f0ebe0,#d4c8a8)',
+  'linear-gradient(160deg,#0d1117,#1f2937)',
+];
+
+const MELODIES = {
+  none:[],
+  wedding:[60,64,67,72,71,67,69,71,72,60,64,67,65,64],
+  love:[60,62,64,65,67,69,71,72,71,69,67,65,64,62,60],
+  bells:[72,71,69,67,72,71,69,67,72,72,71,71,69,69,67]
+};
+
+/* ═══════════════════════════════════════════
+   PAGE ROUTING
+═══════════════════════════════════════════ */
+function init() {
+  buildPiano();
+  initDressCode();
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('view') === '1') {
+    document.getElementById('page-creator').style.display = 'none';
+    document.getElementById('page-share').classList.add('show');
+    loadSharePage(p);
+  } else {
+    updateCard();
   }
-  const serialized = {
-    message: error.message,
-    stack: error.stack,
+}
+function showCreator() { window.location.href = window.location.pathname; }
+
+/* ═══════════════════════════════════════════
+   WIZARD
+═══════════════════════════════════════════ */
+function scrollWizard() {
+  document.getElementById('wizard').style.display = 'block';
+  if (window.innerWidth < 900) {
+    document.getElementById('mob-btn').style.display = 'flex';
+  }
+  setTimeout(() => document.getElementById('wizard').scrollIntoView({ behavior:'smooth' }), 50);
+}
+function goStep(n) {
+  document.querySelectorAll('.ssec').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec'+n).classList.add('active');
+  document.querySelectorAll('.sp').forEach((p,i) => {
+    p.classList.remove('active','done');
+    if (i < n) p.classList.add('done');
+    if (i === n) p.classList.add('active');
+  });
+  document.getElementById('progfill').style.width = ((n+1)/8*100)+'%';
+  updateCard();
+  window.scrollTo({ top: document.getElementById('wizard').offsetTop - 66, behavior:'smooth' });
+}
+
+/* ═══════════════════════════════════════════
+   EVENTS
+═══════════════════════════════════════════ */
+function toggleEv(id) {
+  const c = document.getElementById(id);
+  const cb = c.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked; syncTog(id, cb);
+}
+function syncTog(id, cb) {
+  const c = document.getElementById(id);
+  cb.checked ? c.classList.add('on') : c.classList.remove('on');
+  updateCard();
+}
+let cusN = 0;
+function addCusEv() {
+  cusN++;
+  const id = 'evc'+cusN;
+  const d = document.createElement('div');
+  d.className = 'ecard on'; d.id = id;
+  d.innerHTML = `<div class="ehead" onclick="toggleEv('${id}')">
+    <span class="eem">🎊</span>
+    <input type="text" placeholder="Event name" id="${id}-nm" onclick="event.stopPropagation()" oninput="updateCard()" style="flex:1;border:none;background:transparent;font-size:.9rem;font-family:'Jost',sans-serif;color:#2d2438;outline:none;font-weight:500"/>
+    <label class="tog" onclick="event.stopPropagation()"><input type="checkbox" checked onchange="syncTog('${id}',this)"/><div class="togt"></div><div class="togk"></div></label>
+  </div>
+  <div class="ebody">
+    <div class="frow"><div class="fi"><label>Date</label><input type="date" id="${id}-dt" oninput="updateCard()"/></div><div class="fi"><label>Time</label><input type="time" id="${id}-tm"/></div></div>
+    <div class="fi"><label>Venue</label><input type="text" id="${id}-vn" placeholder="Venue name" oninput="updateCard()"/></div>
+  </div>`;
+  document.getElementById('custom-evs').appendChild(d);
+}
+
+/* ═══════════════════════════════════════════
+   THEME / FONT / ANIM
+═══════════════════════════════════════════ */
+function setTheme(i,el) {
+  ST.theme = i;
+  document.querySelectorAll('.tsw').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel'); updateCard();
+}
+function setFont(f,el) {
+  ST.font = f;
+  document.querySelectorAll('.fopt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel'); updateCard();
+}
+function setAnim(a,el) {
+  ST.anim = a;
+  document.querySelectorAll('.aopt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel'); applyAnim();
+}
+
+/* ═══════════════════════════════════════════
+   PHOTO (profile)
+═══════════════════════════════════════════ */
+function handlePhoto(inp) {
+  const f = inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    ST.photo = e.target.result;
+    document.getElementById('phu-ico').style.display = 'none';
+    const p = document.getElementById('photo-prev');
+    p.src = ST.photo; p.style.display = 'block';
+    updateCard();
   };
-  hot.send("runtime-error-plugin:error", serialized);
+  r.readAsDataURL(f);
 }
 
-// Only notify the parent frame after the server confirms the error passed
-// the filter and the overlay will be shown.
-hot.on("runtime-error-plugin:notify-parent", () => {
-  try {
-    window.parent.postMessage({ type: "runtime-error", id: null }, "*");
-  } catch (_) {}
-});
-
-window.addEventListener("error", (evt) => {
-  sendError(evt.error);
-});
-
-window.addEventListener("unhandledrejection", (evt) => {
-  sendError(evt.reason);
-});
-</script>
-
-    <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
-injectIntoGlobalHook(window);
-window.$RefreshReg$ = () => {};
-window.$RefreshSig$ = () => (type) => type;</script>
-
-    <script type="module" src="/@vite/client"></script>
-
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>eGreet - Wedding Invitations</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <script type="module">"use strict";(()=>{var O="0.5.1";var v={HIGHLIGHT_COLOR:"#0079F2",HIGHLIGHT_BG:"#0079F210",ALLOWED_PARENT_DOMAINS:[".replit.dev",".replit.com",".replit-staging.com",".repl.co"],THEME_PREVIEW_STYLE_ID:"replit-theme-preview",MAX_SIBLING_HIGHLIGHTERS:1e3,MAX_DESCENDANTS_FOR_SCREENSHOT:1500},ie=`
-  [contenteditable] {
-    outline: none !important;
-  }
-
-  [contenteditable]:focus {
-    outline: none !important;
-  }
-`,ne=`
-  .beacon-highlighter {
-    content: '';
-    position: absolute;
-    z-index: ${Number.MAX_SAFE_INTEGER-3};
-    box-sizing: border-box;
-    pointer-events: none;
-    outline: 2px dashed ${v.HIGHLIGHT_COLOR} !important;
-    outline-offset: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    transform: none !important;
-    background: ${v.HIGHLIGHT_BG} !important;
-    opacity: 0;
-  }
-  
-  .beacon-hover-highlighter {
-    position: fixed;
-    z-index: ${Number.MAX_SAFE_INTEGER};
-  }
-  
-  .beacon-selected-highlighter {
-    position: fixed;
-    pointer-events: none;
-    outline: 2px solid ${v.HIGHLIGHT_COLOR} !important;
-    outline-offset: 3px !important;
-    background: none !important;
-  }
-  
-  .beacon-label {
-    position: absolute;
-    background-color: ${v.HIGHLIGHT_COLOR};
-    color: #FFFFFF;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-family: monospace;
-    line-height: 1;
-    white-space: nowrap;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transform: translateY(-100%);
-    margin-top: -4px;
-    left: 0;
-    z-index: ${Number.MAX_SAFE_INTEGER-2};
-    pointer-events: none;
-    opacity: 0;
-  }
-  
-  .beacon-hover-label {
-    position: fixed;
-    z-index: ${Number.MAX_SAFE_INTEGER};
-  }
-  
-  .beacon-selected-label {
-    position: fixed;
-    pointer-events: none;
-  }
-  
-  .beacon-sibling-highlighter {
-    position: fixed;
-    pointer-events: none;
-    outline: 2px dashed ${v.HIGHLIGHT_COLOR} !important;
-    outline-offset: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    transform: none !important;
-    background: ${v.HIGHLIGHT_BG} !important;
-  }
-`;function Fe(e,i){return e[13]=1,e[14]=i>>8,e[15]=i&255,e[16]=i>>8,e[17]=i&255,e}var he=112,de=72,ue=89,ge=115,G;function Ue(){let e=new Int32Array(256);for(let i=0;i<256;i++){let t=i;for(let n=0;n<8;n++)t=t&1?3988292384^t>>>1:t>>>1;e[i]=t}return e}function $e(e){let i=-1;G||(G=Ue());for(let t=0;t<e.length;t++)i=G[(i^e[t])&255]^i>>>8;return i^-1}function We(e){let i=e.length-1;for(let t=i;t>=4;t--)if(e[t-4]===9&&e[t-3]===he&&e[t-2]===de&&e[t-1]===ue&&e[t]===ge)return t-3;return 0}function Ge(e,i,t=!1){let n=new Uint8Array(13);i*=39.3701,n[0]=he,n[1]=de,n[2]=ue,n[3]=ge,n[4]=i>>>24,n[5]=i>>>16,n[6]=i>>>8,n[7]=i&255,n[8]=n[4],n[9]=n[5],n[10]=n[6],n[11]=n[7],n[12]=1;let r=$e(n),o=new Uint8Array(4);if(o[0]=r>>>24,o[1]=r>>>16,o[2]=r>>>8,o[3]=r&255,t){let l=We(e);return e.set(n,l),e.set(o,l+13),e}else{let l=new Uint8Array(4);l[0]=0,l[1]=0,l[2]=0,l[3]=9;let s=new Uint8Array(54);return s.set(e,0),s.set(l,33),s.set(n,37),s.set(o,50),s}}var me="[modern-screenshot]",C=typeof window<"u",Ve=C&&"Worker"in window,je=C&&"atob"in window,ii=C&&"btoa"in window,j=C?window.navigator?.userAgent:"",fe=j.includes("Chrome"),B=j.includes("AppleWebKit")&&!fe,z=j.includes("Firefox"),ze=e=>e&&"__CONTEXT__"in e,qe=e=>e.constructor.name==="CSSFontFaceRule",Xe=e=>e.constructor.name==="CSSImportRule",S=e=>e.nodeType===1,_=e=>typeof e.className=="object",pe=e=>e.tagName==="image",Ye=e=>e.tagName==="use",R=e=>S(e)&&typeof e.style<"u"&&!_(e),Ke=e=>e.nodeType===8,Je=e=>e.nodeType===3,L=e=>e.tagName==="IMG",k=e=>e.tagName==="VIDEO",Qe=e=>e.tagName==="CANVAS",Ze=e=>e.tagName==="TEXTAREA",et=e=>e.tagName==="INPUT",tt=e=>e.tagName==="STYLE",it=e=>e.tagName==="SCRIPT",nt=e=>e.tagName==="SELECT",rt=e=>e.tagName==="SLOT",ot=e=>e.tagName==="IFRAME",st=(...e)=>console.warn(me,...e);function lt(e){let i=e?.createElement?.("canvas");return i&&(i.height=i.width=1),!!i&&"toDataURL"in i&&!!i.toDataURL("image/webp").includes("image/webp")}var V=e=>e.startsWith("data:");function be(e,i){if(e.match(/^[a-z]+:\/\//i))return e;if(C&&e.match(/^\/\//))return window.location.protocol+e;if(e.match(/^[a-z]+:/i)||!C)return e;let t=F().implementation.createHTMLDocument(),n=t.createElement("base"),r=t.createElement("a");return t.head.appendChild(n),t.body.appendChild(r),i&&(n.href=i),r.href=e,r.href}function F(e){return(e&&S(e)?e?.ownerDocument:e)??window.document}var U="http://www.w3.org/2000/svg";function at(e,i,t){let n=F(t).createElementNS(U,"svg");return n.setAttributeNS(null,"width",e.toString()),n.setAttributeNS(null,"height",i.toString()),n.setAttributeNS(null,"viewBox",`0 0 ${e} ${i}`),n}function ct(e,i){let t=new XMLSerializer().serializeToString(e);return i&&(t=t.replace(/[\u0000-\u0008\v\f\u000E-\u001F\uD800-\uDFFF\uFFFE\uFFFF]/gu,"")),`data:image/svg+xml;charset=utf-8,${encodeURIComponent(t)}`}async function ht(e,i="image/png",t=1){try{return await new Promise((n,r)=>{e.toBlob(o=>{o?n(o):r(new Error("Blob is null"))},i,t)})}catch(n){if(je)return dt(e.toDataURL(i,t));throw n}}function dt(e){let[i,t]=e.split(","),n=i.match(/data:(.+);/)?.[1]??void 0,r=window.atob(t),o=r.length,l=new Uint8Array(o);for(let s=0;s<o;s+=1)l[s]=r.charCodeAt(s);return new Blob([l],{type:n})}function Ee(e,i){return new Promise((t,n)=>{let r=new FileReader;r.onload=()=>t(r.result),r.onerror=()=>n(r.error),r.onabort=()=>n(new Error(`Failed read blob to ${i}`)),i==="dataUrl"?r.readAsDataURL(e):i==="arrayBuffer"&&r.readAsArrayBuffer(e)})}var ut=e=>Ee(e,"dataUrl"),gt=e=>Ee(e,"arrayBuffer");function H(e,i){let t=F(i).createElement("img");return t.decoding="sync",t.loading="eager",t.src=e,t}function x(e,i){return new Promise(t=>{let{timeout:n,ownerDocument:r,onError:o,onWarn:l}=i??{},s=typeof e=="string"?H(e,F(r)):e,c=null,h=null;function a(){t(s),c&&clearTimeout(c),h?.()}if(n&&(c=setTimeout(a,n)),k(s)){let d=s.currentSrc||s.src;if(!d)return s.poster?x(s.poster,i).then(t):a();if(s.readyState>=2)return a();let u=a,m=g=>{l?.("Failed video load",d,g),o?.(g),a()};h=()=>{s.removeEventListener("loadeddata",u),s.removeEventListener("error",m)},s.addEventListener("loadeddata",u,{once:!0}),s.addEventListener("error",m,{once:!0})}else{let d=pe(s)?s.href.baseVal:s.currentSrc||s.src;if(!d)return a();let u=async()=>{if(L(s)&&"decode"in s)try{await s.decode()}catch(g){l?.("Failed to decode image, trying to render anyway",s.dataset.originalSrc||d,g)}a()},m=g=>{l?.("Failed image load",s.dataset.originalSrc||d,g),a()};if(L(s)&&s.complete)return u();h=()=>{s.removeEventListener("load",u),s.removeEventListener("error",m)},s.addEventListener("load",u,{once:!0}),s.addEventListener("error",m,{once:!0})}})}async function mt(e,i){R(e)&&(L(e)||k(e)?await x(e,i):await Promise.all(["img","video"].flatMap(t=>Array.from(e.querySelectorAll(t)).map(n=>x(n,i)))))}var ve=function(){let i=0,t=()=>`0000${(Math.random()*36**4<<0).toString(36)}`.slice(-4);return()=>(i+=1,`u${t()}${i}`)}();function we(e){return e?.split(",").map(i=>i.trim().replace(/"|'/g,"").toLowerCase()).filter(Boolean)}var re=0;function ft(e){let i=`${me}[#${re}]`;return re++,{time:t=>e&&console.time(`${i} ${t}`),timeEnd:t=>e&&console.timeEnd(`${i} ${t}`),warn:(...t)=>e&&st(...t)}}function pt(e){return{cache:e?"no-cache":"force-cache"}}async function q(e,i){return ze(e)?e:bt(e,{...i,autoDestruct:!0})}async function bt(e,i){let{scale:t=1,workerUrl:n,workerNumber:r=1}=i||{},o=!!i?.debug,l=i?.features??!0,s=e.ownerDocument??(C?window.document:void 0),c=e.ownerDocument?.defaultView??(C?window:void 0),h=new Map,a={width:0,height:0,quality:1,type:"image/png",scale:t,backgroundColor:null,style:null,filter:null,maximumCanvasSize:0,timeout:3e4,progress:null,debug:o,fetch:{requestInit:pt(i?.fetch?.bypassingCache),placeholderImage:"data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",bypassingCache:!1,...i?.fetch},fetchFn:null,font:{},drawImageInterval:100,workerUrl:null,workerNumber:r,onCloneNode:null,onEmbedNode:null,onCreateForeignObjectSvg:null,includeStyleProperties:null,autoDestruct:!1,...i,__CONTEXT__:!0,log:ft(o),node:e,ownerDocument:s,ownerWindow:c,dpi:t===1?null:96*t,svgStyleElement:ye(s),svgDefsElement:s?.createElementNS(U,"defs"),svgStyles:new Map,defaultComputedStyles:new Map,workers:[...Array.from({length:Ve&&n&&r?r:0})].map(()=>{try{let m=new Worker(n);return m.onmessage=async g=>{let{url:f,result:p}=g.data;p?h.get(f)?.resolve?.(p):h.get(f)?.reject?.(new Error(`Error receiving message from worker: ${f}`))},m.onmessageerror=g=>{let{url:f}=g.data;h.get(f)?.reject?.(new Error(`Error receiving message from worker: ${f}`))},m}catch(m){return a.log.warn("Failed to new Worker",m),null}}).filter(Boolean),fontFamilies:new Map,fontCssTexts:new Map,acceptOfImage:`${[lt(s)&&"image/webp","image/svg+xml","image/*","*/*"].filter(Boolean).join(",")};q=0.8`,requests:h,drawImageCount:0,tasks:[],features:l,isEnable:m=>m==="restoreScrollPosition"?typeof l=="boolean"?!1:l[m]??!1:typeof l=="boolean"?l:l[m]??!0};a.log.time("wait until load"),await mt(e,{timeout:a.timeout,onWarn:a.log.warn}),a.log.timeEnd("wait until load");let{width:d,height:u}=Et(e,a);return a.width=d,a.height=u,a}function ye(e){if(!e)return;let i=e.createElement("style"),t=i.ownerDocument.createTextNode(`
-.______background-clip--text {
-  background-clip: text;
-  -webkit-background-clip: text;
+/* ═══════════════════════════════════════════
+   GALLERY
+═══════════════════════════════════════════ */
+function handleGallery(inp) {
+  const files = Array.from(inp.files).slice(0, 6);
+  ST.gallery = [];
+  document.getElementById('gal-thumbs').innerHTML = '';
+  let loaded = 0;
+  files.forEach((f, i) => {
+    const r = new FileReader();
+    r.onload = e => {
+      ST.gallery[i] = e.target.result;
+      loaded++;
+      renderGalThumb(e.target.result, i);
+      if (loaded === files.length) updateCard();
+    };
+    r.readAsDataURL(f);
+  });
 }
-`);return i.appendChild(t),i}function Et(e,i){let{width:t,height:n}=i;if(S(e)&&(!t||!n)){let r=e.getBoundingClientRect();t=t||r.width||Number(e.getAttribute("width"))||0,n=n||r.height||Number(e.getAttribute("height"))||0}return{width:t,height:n}}async function vt(e,i){let{log:t,timeout:n,drawImageCount:r,drawImageInterval:o}=i;t.time("image to canvas");let l=await x(e,{timeout:n,onWarn:i.log.warn}),{canvas:s,context2d:c}=wt(e.ownerDocument,i),h=()=>{try{c?.drawImage(l,0,0,s.width,s.height)}catch(a){i.log.warn("Failed to drawImage",a)}};if(h(),i.isEnable("fixSvgXmlDecode"))for(let a=0;a<r;a++)await new Promise(d=>{setTimeout(()=>{h(),d()},a+o)});return i.drawImageCount=0,t.timeEnd("image to canvas"),s}function wt(e,i){let{width:t,height:n,scale:r,backgroundColor:o,maximumCanvasSize:l}=i,s=e.createElement("canvas");s.width=Math.floor(t*r),s.height=Math.floor(n*r),s.style.width=`${t}px`,s.style.height=`${n}px`,l&&(s.width>l||s.height>l)&&(s.width>l&&s.height>l?s.width>s.height?(s.height*=l/s.width,s.width=l):(s.width*=l/s.height,s.height=l):s.width>l?(s.height*=l/s.width,s.width=l):(s.width*=l/s.height,s.height=l));let c=s.getContext("2d");return c&&o&&(c.fillStyle=o,c.fillRect(0,0,s.width,s.height)),{canvas:s,context2d:c}}function Se(e,i){if(e.ownerDocument)try{let o=e.toDataURL();if(o!=="data:,")return H(o,e.ownerDocument)}catch(o){i.log.warn("Failed to clone canvas",o)}let t=e.cloneNode(!1),n=e.getContext("2d"),r=t.getContext("2d");try{return n&&r&&r.putImageData(n.getImageData(0,0,e.width,e.height),0,0),t}catch(o){i.log.warn("Failed to clone canvas",o)}return t}function yt(e,i){try{if(e?.contentDocument?.body)return X(e.contentDocument.body,i)}catch(t){i.log.warn("Failed to clone iframe",t)}return e.cloneNode(!1)}function St(e){let i=e.cloneNode(!1);return e.currentSrc&&e.currentSrc!==e.src&&(i.src=e.currentSrc,i.srcset=""),i.loading==="lazy"&&(i.loading="eager"),i}async function Tt(e,i){if(e.ownerDocument&&!e.currentSrc&&e.poster)return H(e.poster,e.ownerDocument);let t=e.cloneNode(!1);t.crossOrigin="anonymous",e.currentSrc&&e.currentSrc!==e.src&&(t.src=e.currentSrc);let n=t.ownerDocument;if(n){let r=!0;if(await x(t,{onError:()=>r=!1,onWarn:i.log.warn}),!r)return e.poster?H(e.poster,e.ownerDocument):t;t.currentTime=e.currentTime,await new Promise(l=>{t.addEventListener("seeked",l,{once:!0})});let o=n.createElement("canvas");o.width=e.offsetWidth,o.height=e.offsetHeight;try{let l=o.getContext("2d");l&&l.drawImage(t,0,0,o.width,o.height)}catch(l){return i.log.warn("Failed to clone video",l),e.poster?H(e.poster,e.ownerDocument):t}return Se(o,i)}return t}function At(e,i){return Qe(e)?Se(e,i):ot(e)?yt(e,i):L(e)?St(e):k(e)?Tt(e,i):e.cloneNode(!1)}function Ct(e){let i=e.sandbox;if(!i){let{ownerDocument:t}=e;try{t&&(i=t.createElement("iframe"),i.id=`__SANDBOX__-${ve()}`,i.width="0",i.height="0",i.style.visibility="hidden",i.style.position="fixed",t.body.appendChild(i),i.contentWindow?.document.write('<!DOCTYPE html><meta charset="UTF-8"><title></title><body>'),e.sandbox=i)}catch(n){e.log.warn("Failed to getSandBox",n)}}return i}var Ht=["width","height","-webkit-text-fill-color"],Lt=["stroke","fill"];function Te(e,i,t){let{defaultComputedStyles:n}=t,r=e.nodeName.toLowerCase(),o=_(e)&&r!=="svg",l=o?Lt.map(f=>[f,e.getAttribute(f)]).filter(([,f])=>f!==null):[],s=[o&&"svg",r,l.map((f,p)=>`${f}=${p}`).join(","),i].filter(Boolean).join(":");if(n.has(s))return n.get(s);let h=Ct(t)?.contentWindow;if(!h)return new Map;let a=h?.document,d,u;o?(d=a.createElementNS(U,"svg"),u=d.ownerDocument.createElementNS(d.namespaceURI,r),l.forEach(([f,p])=>{u.setAttributeNS(null,f,p)}),d.appendChild(u)):d=u=a.createElement(r),u.textContent=" ",a.body.appendChild(d);let m=h.getComputedStyle(u,i),g=new Map;for(let f=m.length,p=0;p<f;p++){let b=m.item(p);Ht.includes(b)||g.set(b,m.getPropertyValue(b))}return a.body.removeChild(d),n.set(s,g),g}function Ae(e,i,t){let n=new Map,r=[],o=new Map;if(t)for(let s of t)l(s);else for(let s=e.length,c=0;c<s;c++){let h=e.item(c);l(h)}for(let s=r.length,c=0;c<s;c++)o.get(r[c])?.forEach((h,a)=>n.set(a,h));function l(s){let c=e.getPropertyValue(s),h=e.getPropertyPriority(s),a=s.lastIndexOf("-"),d=a>-1?s.substring(0,a):void 0;if(d){let u=o.get(d);u||(u=new Map,o.set(d,u)),u.set(s,[c,h])}i.get(s)===c&&!h||(d?r.push(d):n.set(s,[c,h]))}return n}function Rt(e,i,t,n){let{ownerWindow:r,includeStyleProperties:o,currentParentNodeStyle:l}=n,s=i.style,c=r.getComputedStyle(e),h=Te(e,null,n);l?.forEach((d,u)=>{h.delete(u)});let a=Ae(c,h,o);a.delete("transition-property"),a.delete("all"),a.delete("d"),a.delete("content"),t&&(a.delete("margin-top"),a.delete("margin-right"),a.delete("margin-bottom"),a.delete("margin-left"),a.delete("margin-block-start"),a.delete("margin-block-end"),a.delete("margin-inline-start"),a.delete("margin-inline-end"),a.set("box-sizing",["border-box",""])),a.get("background-clip")?.[0]==="text"&&i.classList.add("______background-clip--text"),fe&&(a.has("font-kerning")||a.set("font-kerning",["normal",""]),(a.get("overflow-x")?.[0]==="hidden"||a.get("overflow-y")?.[0]==="hidden")&&a.get("text-overflow")?.[0]==="ellipsis"&&e.scrollWidth===e.clientWidth&&a.set("text-overflow",["clip",""]));for(let d=s.length,u=0;u<d;u++)s.removeProperty(s.item(u));return a.forEach(([d,u],m)=>{s.setProperty(m,d,u)}),a}function xt(e,i){(Ze(e)||et(e)||nt(e))&&i.setAttribute("value",e.value)}var Nt=[":before",":after"],_t=[":-webkit-scrollbar",":-webkit-scrollbar-button",":-webkit-scrollbar-thumb",":-webkit-scrollbar-track",":-webkit-scrollbar-track-piece",":-webkit-scrollbar-corner",":-webkit-resizer"];function It(e,i,t,n,r){let{ownerWindow:o,svgStyleElement:l,svgStyles:s,currentNodeStyle:c}=n;if(!l||!o)return;function h(a){let d=o.getComputedStyle(e,a),u=d.getPropertyValue("content");if(!u||u==="none")return;r?.(u),u=u.replace(/(')|(")|(counter\(.+\))/g,"");let m=[ve()],g=Te(e,a,n);c?.forEach((E,y)=>{g.delete(y)});let f=Ae(d,g,n.includeStyleProperties);f.delete("content"),f.delete("-webkit-locale"),f.get("background-clip")?.[0]==="text"&&i.classList.add("______background-clip--text");let p=[`content: '${u}';`];if(f.forEach(([E,y],A)=>{p.push(`${A}: ${E}${y?" !important":""};`)}),p.length===1)return;try{i.className=[i.className,...m].join(" ")}catch(E){n.log.warn("Failed to copyPseudoClass",E);return}let b=p.join(`
-  `),w=s.get(b);w||(w=[],s.set(b,w)),w.push(`.${m[0]}:${a}`)}Nt.forEach(h),t&&_t.forEach(h)}var oe=new Set(["symbol"]);async function se(e,i,t,n,r){if(S(t)&&(tt(t)||it(t))||n.filter&&!n.filter(t))return;oe.has(i.nodeName)||oe.has(t.nodeName)?n.currentParentNodeStyle=void 0:n.currentParentNodeStyle=n.currentNodeStyle;let o=await X(t,n,!1,r);n.isEnable("restoreScrollPosition")&&Mt(e,o),i.appendChild(o)}async function le(e,i,t,n){let r=(S(e)?e.shadowRoot?.firstChild:void 0)??e.firstChild;for(let o=r;o;o=o.nextSibling)if(!Ke(o))if(S(o)&&rt(o)&&typeof o.assignedNodes=="function"){let l=o.assignedNodes();for(let s=0;s<l.length;s++)await se(e,i,l[s],t,n)}else await se(e,i,o,t,n)}function Mt(e,i){if(!R(e)||!R(i))return;let{scrollTop:t,scrollLeft:n}=e;if(!t&&!n)return;let{transform:r}=i.style,o=new DOMMatrix(r),{a:l,b:s,c,d:h}=o;o.a=1,o.b=0,o.c=0,o.d=1,o.translateSelf(-n,-t),o.a=l,o.b=s,o.c=c,o.d=h,i.style.transform=o.toString()}function Dt(e,i){let{backgroundColor:t,width:n,height:r,style:o}=i,l=e.style;if(t&&l.setProperty("background-color",t,"important"),n&&l.setProperty("width",`${n}px`,"important"),r&&l.setProperty("height",`${r}px`,"important"),o)for(let s in o)l[s]=o[s]}var Pt=/^[\w-:]+$/;async function X(e,i,t=!1,n){let{ownerDocument:r,ownerWindow:o,fontFamilies:l}=i;if(r&&Je(e))return n&&/\S/.test(e.data)&&n(e.data),r.createTextNode(e.data);if(r&&o&&S(e)&&(R(e)||_(e))){let c=await At(e,i);if(i.isEnable("removeAbnormalAttributes")){let g=c.getAttributeNames();for(let f=g.length,p=0;p<f;p++){let b=g[p];Pt.test(b)||c.removeAttribute(b)}}let h=i.currentNodeStyle=Rt(e,c,t,i);t&&Dt(c,i);let a=!1;if(i.isEnable("copyScrollbar")){let g=[h.get("overflow-x")?.[0],h.get("overflow-y")?.[0]];a=g.includes("scroll")||(g.includes("auto")||g.includes("overlay"))&&(e.scrollHeight>e.clientHeight||e.scrollWidth>e.clientWidth)}let d=h.get("text-transform")?.[0],u=we(h.get("font-family")?.[0]),m=u?g=>{d==="uppercase"?g=g.toUpperCase():d==="lowercase"?g=g.toLowerCase():d==="capitalize"&&(g=g[0].toUpperCase()+g.substring(1)),u.forEach(f=>{let p=l.get(f);p||l.set(f,p=new Set),g.split("").forEach(b=>p.add(b))})}:void 0;return It(e,c,a,i,m),xt(e,c),k(e)||await le(e,c,i,m),c}let s=e.cloneNode(!1);return await le(e,s,i),s}function Ot(e){if(e.ownerDocument=void 0,e.ownerWindow=void 0,e.svgStyleElement=void 0,e.svgDefsElement=void 0,e.svgStyles.clear(),e.defaultComputedStyles.clear(),e.sandbox){try{e.sandbox.remove()}catch(i){e.log.warn("Failed to destroyContext",i)}e.sandbox=void 0}e.workers=[],e.fontFamilies.clear(),e.fontCssTexts.clear(),e.requests.clear(),e.tasks=[]}function Bt(e){let{url:i,timeout:t,responseType:n,...r}=e,o=new AbortController,l=t?setTimeout(()=>o.abort(),t):void 0;return fetch(i,{signal:o.signal,...r}).then(s=>{if(!s.ok)throw new Error("Failed fetch, not 2xx response",{cause:s});switch(n){case"arrayBuffer":return s.arrayBuffer();case"dataUrl":return s.blob().then(ut);case"text":default:return s.text()}}).finally(()=>clearTimeout(l))}function N(e,i){let{url:t,requestType:n="text",responseType:r="text",imageDom:o}=i,l=t,{timeout:s,acceptOfImage:c,requests:h,fetchFn:a,fetch:{requestInit:d,bypassingCache:u,placeholderImage:m},font:g,workers:f,fontFamilies:p}=e;n==="image"&&(B||z)&&e.drawImageCount++;let b=h.get(t);if(!b){u&&u instanceof RegExp&&u.test(l)&&(l+=(/\?/.test(l)?"&":"?")+new Date().getTime());let w=n.startsWith("font")&&g&&g.minify,E=new Set;w&&n.split(";")[1].split(",").forEach(P=>{p.has(P)&&p.get(P).forEach(te=>E.add(te))});let y=w&&E.size,A={url:l,timeout:s,responseType:y?"arrayBuffer":r,headers:n==="image"?{accept:c}:void 0,...d};b={type:n,resolve:void 0,reject:void 0,response:null},b.response=(async()=>{if(a&&n==="image"){let T=await a(t);if(T)return T}return!B&&t.startsWith("http")&&f.length?new Promise((T,P)=>{f[h.size&f.length-1].postMessage({rawUrl:t,...A}),b.resolve=T,b.reject=P}):Bt(A)})().catch(T=>{if(h.delete(t),n==="image"&&m)return e.log.warn("Failed to fetch image base64, trying to use placeholder image",l),typeof m=="string"?m:m(o);throw T}),h.set(t,b)}return b.response}async function Ce(e,i,t,n){if(!He(e))return e;for(let[r,o]of kt(e,i))try{let l=await N(t,{url:o,requestType:n?"image":"text",responseType:"dataUrl"});e=e.replace(Ft(r),`$1${l}$3`)}catch(l){t.log.warn("Failed to fetch css data url",r,l)}return e}function He(e){return/url\((['"]?)([^'"]+?)\1\)/.test(e)}var Le=/url\((['"]?)([^'"]+?)\1\)/g;function kt(e,i){let t=[];return e.replace(Le,(n,r,o)=>(t.push([o,be(o,i)]),n)),t.filter(([n])=>!V(n))}function Ft(e){let i=e.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1");return new RegExp(`(url\\(['"]?)(${i})(['"]?\\))`,"g")}var Ut=["background-image","border-image-source","-webkit-border-image","-webkit-mask-image","list-style-image"];function $t(e,i){return Ut.map(t=>{let n=e.getPropertyValue(t);return!n||n==="none"?null:((B||z)&&i.drawImageCount++,Ce(n,null,i,!0).then(r=>{!r||n===r||e.setProperty(t,r,e.getPropertyPriority(t))}))}).filter(Boolean)}function Wt(e,i){if(L(e)){let t=e.currentSrc||e.src;if(!V(t))return[N(i,{url:t,imageDom:e,requestType:"image",responseType:"dataUrl"}).then(n=>{n&&(e.srcset="",e.dataset.originalSrc=t,e.src=n||"")})];(B||z)&&i.drawImageCount++}else if(_(e)&&!V(e.href.baseVal)){let t=e.href.baseVal;return[N(i,{url:t,imageDom:e,requestType:"image",responseType:"dataUrl"}).then(n=>{n&&(e.dataset.originalSrc=t,e.href.baseVal=n||"")})]}return[]}function Gt(e,i){let{ownerDocument:t,svgDefsElement:n}=i,r=e.getAttribute("href")??e.getAttribute("xlink:href");if(!r)return[];let[o,l]=r.split("#");if(l){let s=`#${l}`,c=t?.querySelector(`svg ${s}`);if(o&&e.setAttribute("href",s),n?.querySelector(s))return[];if(c)return n?.appendChild(c.cloneNode(!0)),[];if(o)return[N(i,{url:o,responseType:"text"}).then(h=>{n?.insertAdjacentHTML("beforeend",h)})]}return[]}function Re(e,i){let{tasks:t}=i;S(e)&&((L(e)||pe(e))&&t.push(...Wt(e,i)),Ye(e)&&t.push(...Gt(e,i))),R(e)&&t.push(...$t(e.style,i)),e.childNodes.forEach(n=>{Re(n,i)})}async function Vt(e,i){let{ownerDocument:t,svgStyleElement:n,fontFamilies:r,fontCssTexts:o,tasks:l,font:s}=i;if(!(!t||!n||!r.size))if(s&&s.cssText){let c=ce(s.cssText,i);n.appendChild(t.createTextNode(`${c}
-`))}else{let c=Array.from(t.styleSheets).filter(a=>{try{return"cssRules"in a&&!!a.cssRules.length}catch(d){return i.log.warn(`Error while reading CSS rules from ${a.href}`,d),!1}});await Promise.all(c.flatMap(a=>Array.from(a.cssRules).map(async(d,u)=>{if(Xe(d)){let m=u+1,g=d.href,f="";try{f=await N(i,{url:g,requestType:"text",responseType:"text"})}catch(b){i.log.warn(`Error fetch remote css import from ${g}`,b)}let p=f.replace(Le,(b,w,E)=>b.replace(E,be(E,g)));for(let b of zt(p))try{a.insertRule(b,b.startsWith("@import")?m+=1:a.cssRules.length)}catch(w){i.log.warn("Error inserting rule from remote css import",{rule:b,error:w})}}}))),c.flatMap(a=>Array.from(a.cssRules)).filter(a=>qe(a)&&He(a.style.getPropertyValue("src"))&&we(a.style.getPropertyValue("font-family"))?.some(d=>r.has(d))).forEach(a=>{let d=a,u=o.get(d.cssText);u?n.appendChild(t.createTextNode(`${u}
-`)):l.push(Ce(d.cssText,d.parentStyleSheet?d.parentStyleSheet.href:null,i).then(m=>{m=ce(m,i),o.set(d.cssText,m),n.appendChild(t.createTextNode(`${m}
-`))}))})}}var jt=/(\/\*[\s\S]*?\*\/)/g,ae=/((@.*?keyframes [\s\S]*?){([\s\S]*?}\s*?)})/gi;function zt(e){if(e==null)return[];let i=[],t=e.replace(jt,"");for(;;){let o=ae.exec(t);if(!o)break;i.push(o[0])}t=t.replace(ae,"");let n=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi,r=new RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");for(;;){let o=n.exec(t);if(o)r.lastIndex=n.lastIndex;else if(o=r.exec(t),o)n.lastIndex=r.lastIndex;else break;i.push(o[0])}return i}var qt=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,Xt=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function ce(e,i){let{font:t}=i,n=t?t?.preferredFormat:void 0;return n?e.replace(Xt,r=>{for(;;){let[o,,l]=qt.exec(r)||[];if(!l)return"";if(l===n)return`src: ${o};`}}):e}async function Yt(e,i){let t=await q(e,i);if(S(t.node)&&_(t.node))return t.node;let{ownerDocument:n,log:r,tasks:o,svgStyleElement:l,svgDefsElement:s,svgStyles:c,font:h,progress:a,autoDestruct:d,onCloneNode:u,onEmbedNode:m,onCreateForeignObjectSvg:g}=t;r.time("clone node");let f=await X(t.node,t,!0);if(l&&n){let y="";c.forEach((A,T)=>{y+=`${A.join(`,
-`)} {
-  ${T}
+function renderGalThumb(src, i) {
+  const wrap = document.createElement('div');
+  wrap.className = 'gal-thumb';
+  wrap.innerHTML = `<img src="${src}" alt=""/><button class="del-btn" onclick="removeGalPhoto(${i})">✕</button>`;
+  document.getElementById('gal-thumbs').appendChild(wrap);
 }
-`}),l.appendChild(n.createTextNode(y))}r.timeEnd("clone node"),await u?.(f),h!==!1&&S(f)&&(r.time("embed web font"),await Vt(f,t),r.timeEnd("embed web font")),r.time("embed node"),Re(f,t);let p=o.length,b=0,w=async()=>{for(;;){let y=o.pop();if(!y)break;try{await y}catch(A){t.log.warn("Failed to run task",A)}a?.(++b,p)}};a?.(b,p),await Promise.all([...Array.from({length:4})].map(w)),r.timeEnd("embed node"),await m?.(f);let E=Kt(f,t);return s&&E.insertBefore(s,E.children[0]),l&&E.insertBefore(l,E.children[0]),d&&Ot(t),await g?.(E),E}function Kt(e,i){let{width:t,height:n}=i,r=at(t,n,e.ownerDocument),o=r.ownerDocument.createElementNS(r.namespaceURI,"foreignObject");return o.setAttributeNS(null,"x","0%"),o.setAttributeNS(null,"y","0%"),o.setAttributeNS(null,"width","100%"),o.setAttributeNS(null,"height","100%"),o.append(e),r.appendChild(o),r}async function Jt(e,i){let t=await q(e,i),n=await Yt(t),r=ct(n,t.isEnable("removeControlCharacter"));t.autoDestruct||(t.svgStyleElement=ye(t.ownerDocument),t.svgDefsElement=t.ownerDocument?.createElementNS(U,"defs"),t.svgStyles.clear());let o=H(r,n.ownerDocument);return await vt(o,t)}async function Y(e,i){let t=await q(e,i),{log:n,type:r,quality:o,dpi:l}=t,s=await Jt(t);n.time("canvas to blob");let c=await ht(s,r,o);if(["image/png","image/jpeg"].includes(r)&&l){let h=await gt(c.slice(0,33)),a=new Uint8Array(h);return r==="image/png"?a=Ge(a,l):r==="image/jpeg"&&(a=Fe(a,l)),n.timeEnd("canvas to blob"),new Blob([a,c.slice(33)],{type:r})}return n.timeEnd("canvas to blob"),c}var I={METADATA:"data-replit-metadata",COMPONENT_NAME:"data-component-name"};function xe(e){if(e.startsWith("http://localhost:"))return!0;try{let i=new URL(e);return v.ALLOWED_PARENT_DOMAINS.some(t=>i.hostname===t.slice(1)||i.hostname.endsWith(t))}catch{return!1}}function K(e){if(!e)return null;let i=document.elementFromPoint(e.clientX,e.clientY);return i instanceof HTMLElement?i:null}function Qt(e,i=300){if(!e)return"";let t=String(e);return t.length<=i?t:t.slice(0,i)+"..."}function W(e){let i=e.getAttribute(I.COMPONENT_NAME)??e.tagName.toLowerCase();return Qt(i,50)}function J(e){return e.className.toString?e.className.toString():String(e.className)}function Ne(e,i=80){let t="";for(let n=0;n<e.childNodes.length;n++){let r=e.childNodes[n];if(r.nodeType===Node.TEXT_NODE&&(t+=r.textContent??"",t.length>i))return t.slice(0,i)+"..."}return t.trim()}var Zt=new Set(["script","style","noscript","link","meta","br","svg"]);function _e(e){let i={children:[],parent:null};return Object.defineProperty(i,"parent",{value:e,writable:!0,enumerable:!1,configurable:!0}),i}function Ie(e,i,t,n){let r=_e(i),o={tagName:e.tagName.toLowerCase(),textContent:Ne(e),id:e.id||void 0,className:J(e)||void 0,nodeId:t.get(e),relatedElements:r};n.set(e,o);for(let l=0;l<e.children.length;l++)Ie(e.children[l],o,t,n)}var $=class{ids=new WeakMap;nextId=0;get(i){let t=this.ids.get(i);if(t!==void 0)return t;let n=this.nextId++;return this.ids.set(i,n),n}};function Q(e,i,t,n,r){let o=t.get(e),l=_e(i),s=l.children,c={tagName:e.tagName.toLowerCase(),textContent:Ne(e),id:e.id||void 0,className:J(e)||void 0,nodeId:o,relatedElements:l};n.set(e,c);for(let h=0;h<e.children.length;h++){let a=e.children[h],d=a.tagName.toLowerCase();if(a!==r){if(d==="svg"){Ie(a,c,t,n);continue}Zt.has(d)||s.push(Q(a,c,t,n,r))}}return c}function Z(e,i){let t=window.getComputedStyle(e),n=f=>f.toLowerCase()==="currentcolor"?t.color:f,r=n(t.borderTopColor),o=n(t.borderRightColor),l=n(t.borderBottomColor),s=n(t.borderLeftColor),c=e.nextElementSibling,h=e.parentElement?.parentElement??null,a={backgroundColor:t.backgroundColor,borderTopColor:r,borderRightColor:o,borderBottomColor:l,borderLeftColor:s,borderTopLeftRadius:t.borderTopLeftRadius,borderTopRightRadius:t.borderTopRightRadius,borderBottomRightRadius:t.borderBottomRightRadius,borderBottomLeftRadius:t.borderBottomLeftRadius,borderTopWidth:t.borderTopWidth,borderRightWidth:t.borderRightWidth,borderBottomWidth:t.borderBottomWidth,borderLeftWidth:t.borderLeftWidth,color:t.color,display:t.display,position:t.position,width:t.width,height:t.height,fontSize:t.fontSize,fontFamily:t.fontFamily,fontWeight:t.fontWeight,margin:t.margin,padding:t.padding,opacity:t.opacity,textAlign:t.textAlign},d=i.get(e),u=e.parentElement?i.get(e.parentElement)??null:null,m={children:d?.relatedElements.children??[],parent:d?.relatedElements.parent??u,nextSibling:c?i.get(c)??void 0:void 0,grandParent:h?i.get(h)??void 0:void 0};return{tagName:e.tagName.toLowerCase(),nodeId:d?.nodeId,elementPath:e.getAttribute(I.METADATA)??"",elementName:W(e),textContent:e.textContent??"",originalTextContent:e.getAttribute("data-original-text")?decodeURIComponent(e.getAttribute("data-original-text")??""):void 0,srcAttribute:e.getAttribute("src")??"",hasChildElements:e.childElementCount>0,id:e.id,className:J(e),computedStyles:a,textAlign:t.textAlign,relatedElements:m}}async function Me(e){try{let t=window.getComputedStyle(e).backgroundColor;return De(t)&&(t=window.getComputedStyle(document.documentElement).backgroundColor),await Y(e,{type:"image/png",backgroundColor:t})}catch(i){console.error("[replit-cartographer] Failed to take screenshot:",i);return}}function De(e){return e==="transparent"||e==="rgba(0, 0, 0, 0)"||e.endsWith(", 0)")||e.endsWith(",0)")}async function Pe(){try{let e=document.documentElement,i=window.getComputedStyle(e).backgroundColor,t=De(i)?"#ffffff":i;return await Y(e,{type:"image/png",backgroundColor:t})}catch(e){console.error("[replit-cartographer] Failed to take page screenshot:",e);return}}function ee(e){let i=e.getBoundingClientRect(),t=window.innerHeight,n=window.innerWidth;return i.bottom>0&&i.top<t&&i.right>0&&i.left<n}function M(e,i=v.MAX_SIBLING_HIGHLIGHTERS,t=!1){let o=e.getAttribute(I.METADATA);if(!o)return[];let l=`[${I.METADATA}="${o}"]`,s=document,c=e.parentElement;c&&c.childElementCount>50&&(s=c);let h=s.querySelectorAll(l),a=Math.min(i,5e3),d=[],u=0;for(let m=0;m<h.length&&u<a;m++){let g=h[m];if(g instanceof HTMLElement&&g!==e){if(t&&!ee(g))continue;d.push(g),u++}}return d}function Oe(e,i,t){let n=e.children;for(let r=0;r<n.length;r++)if(t.value+=1,t.value>i||Oe(n[r],i,t))return!0;return!1}function Be(e){let i={value:0};return Oe(e,v.MAX_DESCENDANTS_FOR_SCREENSHOT,i)}var D=class{selectedElement=null;selectedSiblingElements=[];visibleSelectedSiblingElements=[];isActive=!1;lastHighlightedElement=null;enableEditing=!1;shadowHost=null;shadowRoot=null;hoverHighlighter=null;hoverLabel=null;selectedHighlighter=null;selectedLabel=null;hoverSiblingHighlighters=[];selectedSiblingHighlighters=[];mutationObserver=null;stableIds=new $;nodeMap=new Map;throttledRecalculate=null;constructor(){this.setupMessageListener(),this.observeLightDarkModeSwitch(),this.notifyScriptLoaded(),this.throttledRecalculate=this.throttleRAF(this.recalculateSelectedElement.bind(this))}throttleRAF(i){let t=null,n=null;return(...r)=>{n=r,t===null&&(t=requestAnimationFrame(()=>{n!==null&&i(...n),t=null,n=null}))}}isPureTextElement(i){if(!i||!(i instanceof HTMLElement))return!1;let t=i.tagName.toLowerCase();return t==="style"||t==="script"||t==="img"||i.childElementCount>0?!1:Array.from(i.childNodes).every(r=>r.nodeType===Node.TEXT_NODE)}initializeHighlighter(){this.shadowHost=document.createElement("div"),this.shadowHost.style.all="initial",this.shadowRoot=this.shadowHost.attachShadow({mode:"open"}),document.body.appendChild(this.shadowHost);let i=document.createElement("style");i.textContent=ne,this.shadowRoot.appendChild(i);let t=document.createElement("style");t.textContent=ie,document.head.appendChild(t),this.hoverHighlighter=document.createElement("div"),this.hoverLabel=document.createElement("div"),this.hoverHighlighter.className="beacon-highlighter beacon-hover-highlighter",this.hoverLabel.className="beacon-label beacon-hover-label",this.selectedHighlighter=document.createElement("div"),this.selectedLabel=document.createElement("div"),this.selectedHighlighter.className="beacon-highlighter beacon-selected-highlighter",this.selectedLabel.className="beacon-label beacon-selected-label",this.shadowRoot.appendChild(this.selectedHighlighter),this.shadowRoot.appendChild(this.selectedLabel),this.shadowRoot.appendChild(this.hoverHighlighter),this.shadowRoot.appendChild(this.hoverLabel)}setupMessageListener(){window.addEventListener("message",this.handleMessage.bind(this))}notifyScriptLoaded(){this.postMessageToParent({type:"SELECTOR_SCRIPT_LOADED",timestamp:Date.now(),version:O})}postMessageToParent(i){window.parent&&window.parent.postMessage(i,"*")}handleMouseMove=i=>{if(this.isActive&&this.hoverHighlighter){let t=K(i);if(!t||t===this.hoverHighlighter||t===this.selectedHighlighter||t===this.shadowHost||this.selectedSiblingHighlighters.includes(t)||this.hoverSiblingHighlighters.includes(t)){this.hideHighlight(this.hoverHighlighter,this.hoverLabel),this.lastHighlightedElement=null,this.clearHoverSiblingHighlighters();return}if(t===this.selectedElement){this.hideHighlight(this.hoverHighlighter,this.hoverLabel),this.lastHighlightedElement=null,this.clearHoverSiblingHighlighters();return}this.lastHighlightedElement&&this.lastHighlightedElement!==t&&this.lastHighlightedElement!==this.selectedElement&&this.lastHighlightedElement.removeAttribute("contenteditable"),this.lastHighlightedElement=t,this.updateHighlighterPosition(t,this.hoverHighlighter,this.hoverLabel)}};handleMouseLeave=()=>{this.isActive&&(this.hoverHighlighter&&(this.hoverHighlighter.style.opacity="0"),this.hoverLabel&&(this.hoverLabel.style.opacity="0"),this.hoverSiblingHighlighters.length>0&&this.clearHoverSiblingHighlighters(),this.lastHighlightedElement&&this.lastHighlightedElement!==this.selectedElement&&this.lastHighlightedElement.removeAttribute("contenteditable"))};calculateLabelPosition(i,t){return t<28?{top:`${t}px`,left:`${i.left}px`,transform:"none",marginTop:"2px"}:{top:`${t}px`,left:`${i.left}px`,transform:"translateY(-100%)",marginTop:"-4px"}}updateHighlighterPosition(i,t,n){if(!t||!n)return;let r=M(i,v.MAX_SIBLING_HIGHLIGHTERS,!1);this.enableEditing&&r.length<=1&&i===this.selectedElement&&this.isPureTextElement(i)&&i.setAttribute("contenteditable","plaintext-only");let o=i.getBoundingClientRect(),l=window.innerHeight,s=Math.max(0,o.top),c=Math.min(l,o.bottom),h=Math.max(0,c-s);Object.assign(t.style,{opacity:h>0?"1":"0",top:`${s}px`,left:`${o.left}px`,width:`${o.width}px`,height:`${h}px`}),n.textContent=W(i);let a=this.calculateLabelPosition(o,s);Object.assign(n.style,{...a,opacity:h>0?"1":"0"}),t===this.selectedHighlighter?this.highlightSelectedSiblings(i):this.highlightHoverSiblings(i)}hideHighlight(i,t){i&&(i.style.opacity="0"),t&&(t.style.opacity="0");let n=i===this.hoverHighlighter,r=i===this.selectedHighlighter;n&&this.clearHoverSiblingHighlighters(),r&&this.clearSelectedSiblingHighlighters()}handleClick=async i=>{if(!this.isActive)return;i.preventDefault(),i.stopPropagation();let t=K(i);if((!t||t===this.hoverHighlighter||t===this.selectedHighlighter||t===this.shadowHost)&&(t=this.lastHighlightedElement),!t||t===this.selectedElement)return;this.unselectCurrentElement(),this.clearSelectedSiblingHighlighters(),this.selectedElement=t;let n=M(t),r=n.length>0;r&&this.highlightSelectedSiblings(t),t.hasAttribute("data-original-text")||t.setAttribute("data-original-text",encodeURIComponent(t.textContent??"")),!t.hasAttribute("data-original-style")&&t.hasAttribute("style")&&t.setAttribute("data-original-style",encodeURIComponent(t.getAttribute("style")??"")),!t.hasAttribute("data-original-src")&&t.hasAttribute("src")&&t.setAttribute("data-original-src",encodeURIComponent(t.getAttribute("src")??"")),!r&&this.enableEditing&&this.isPureTextElement(t)&&(this.selectedElement.setAttribute("contenteditable","plaintext-only"),this.selectedElement.focus()),this.selectedHighlighter&&this.selectedLabel&&(this.selectedHighlighter.style.outlineStyle="solid",this.selectedHighlighter.style.opacity="1",this.selectedHighlighter.style.pointerEvents="none",this.selectedLabel.style.opacity="1",this.selectedLabel.textContent=W(t)),this.hoverHighlighter&&(this.hoverHighlighter.style.opacity="0",this.hoverHighlighter.style.pointerEvents="none"),this.hoverLabel&&(this.hoverLabel.style.opacity="0"),this.clearHoverSiblingHighlighters(),this.updateHighlighterPosition(t,this.selectedHighlighter,this.selectedLabel),this.nodeMap=new Map,Q(document.body,null,this.stableIds,this.nodeMap,this.shadowHost);let o=Z(t,this.nodeMap),l;if(!Be(t))try{l=await Me(t)}catch(s){console.error("[replit-cartographer] Error capturing element screenshot:",s)}this.observeSelectedElement(),this.postMessageToParent({type:"ELEMENT_SELECTED",payload:{...o,screenshotBlob:l??void 0,siblingCount:r?n.length:0},timestamp:Date.now()})};restoreElements(){document.querySelectorAll('[data-replit-dirty="true"]').forEach(t=>{if(t.hasAttribute("data-original-text")){if(t.textContent!==decodeURIComponent(t.getAttribute("data-original-text")||"")){let n=decodeURIComponent(t.getAttribute("data-original-text")||"");t.textContent=n}t.removeAttribute("data-original-text")}if(t.hasAttribute("data-original-style")){let n=decodeURIComponent(t.getAttribute("data-original-style")||"");t.setAttribute("style",n),t.removeAttribute("data-original-style")}else t.removeAttribute("style");if(t.hasAttribute("data-original-src")&&t.getAttribute("src")!==decodeURIComponent(t.getAttribute("data-original-src")||"")){let n=decodeURIComponent(t.getAttribute("data-original-src")||"");t.setAttribute("src",n),t.removeAttribute("data-original-src")}t.removeAttribute("data-replit-dirty")})}unselectCurrentElement(){if(this.restoreElements(),this.selectedElement){if(this.selectedElement.removeAttribute("contenteditable"),this.selectedElement.hasAttribute("data-original-style")){let i=decodeURIComponent(this.selectedElement.getAttribute("data-original-style")||"");this.selectedElement.setAttribute("style",i),this.selectedElement.removeAttribute("data-original-style")}if(this.selectedElement.hasAttribute("data-original-src")&&this.selectedElement.getAttribute("src")!==decodeURIComponent(this.selectedElement.getAttribute("data-original-src")||"")){let i=decodeURIComponent(this.selectedElement.getAttribute("data-original-src")||"");this.selectedElement.setAttribute("src",i),this.selectedElement.removeAttribute("data-original-src")}this.selectedElement=null}this.clearSelectedSiblingHighlighters(),this.mutationObserver&&(this.mutationObserver.disconnect(),this.mutationObserver=null)}handleMessage=i=>{if(!xe(i.origin))return;let t=i.data;if(!(!t||typeof t!="object"))switch(t.type){case"TOGGLE_REPLIT_VISUAL_EDITOR":{this.handleVisualEditorToggle(t);break}case"CLEAR_SELECTION":{this.unselectCurrentElement(),this.hideHighlight(this.selectedHighlighter,this.selectedLabel);break}case"UPDATE_SELECTED_ELEMENT":{if(!this.selectedElement)return;let{attributes:n}=t;[this.selectedElement,...this.selectedSiblingElements].forEach(o=>{n.style!==void 0&&(o.setAttribute("style",n.style),o.setAttribute("data-replit-dirty","true")),n.textContent!==void 0&&(o.textContent=n.textContent,o.setAttribute("data-replit-dirty","true")),n.className!==void 0&&(o.className=n.className,o.setAttribute("data-replit-dirty","true")),n.src!==void 0&&(o.setAttribute("src",n.src),o.setAttribute("data-replit-dirty","true"))}),this.updateHighlighterPosition(this.selectedElement,this.selectedHighlighter,this.selectedLabel),this.selectedSiblingElements.length>0&&(this.clearHighlighters(this.selectedSiblingHighlighters),this.selectedSiblingHighlighters=[],this.selectedSiblingHighlighters=this.highlightElements(this.selectedSiblingElements));break}case"CLEAR_ELEMENT_DIRTY":{this.selectedElement&&this.selectedElement.removeAttribute("data-replit-dirty");break}case"APPLY_THEME_PREVIEW":{this.handleApplyThemePreview(t);break}case"CLEAR_THEME_PREVIEW":{this.handleClearThemePreview();break}case"SCREENSHOT_PAGE":{this.handleScreenshotPage(t.requestId);break}}};handleApplyThemePreview(i){if(i.type!=="APPLY_THEME_PREVIEW")return;let t=document.getElementById(v.THEME_PREVIEW_STYLE_ID);t||(t=document.createElement("style"),t.id=v.THEME_PREVIEW_STYLE_ID,document.head.appendChild(t)),t.textContent=i.themeContent}handleClearThemePreview(){let i=document.getElementById(v.THEME_PREVIEW_STYLE_ID);i&&i.remove()}async handleScreenshotPage(i){try{let t=await Pe();this.postMessageToParent({type:"SCREENSHOT_PAGE_RESULT",timestamp:Date.now(),requestId:i,screenshotBlob:t})}catch(t){console.error("[replit-cartographer] Error capturing page screenshot:",t),this.postMessageToParent({type:"SCREENSHOT_PAGE_RESULT",timestamp:Date.now(),requestId:i,error:t instanceof Error?t.message:"Unknown screenshot error"})}}handleVisualEditorToggle(i){if(i.type!=="TOGGLE_REPLIT_VISUAL_EDITOR")return;let t=!!i.enabled;this.enableEditing=!!i.enableEditing,t?(window.dispatchEvent(new CustomEvent("replit-init-tailwind")),this.postMessageToParent({type:"REPLIT_VISUAL_EDITOR_ENABLED",timestamp:Date.now()})):this.postMessageToParent({type:"REPLIT_VISUAL_EDITOR_DISABLED",timestamp:Date.now()}),this.isActive!==t&&(this.isActive=t,this.toggleEventListeners(t))}observeSelectedElement(){if(this.selectedElement){if(!this.isPureTextElement(this.selectedElement)){this.mutationObserver&&(this.mutationObserver.disconnect(),this.mutationObserver=null);return}this.mutationObserver&&this.mutationObserver.disconnect(),this.mutationObserver=new MutationObserver(i=>{if(i.some(n=>n.type==="characterData")&&this.selectedElement){this.selectedElement.setAttribute("data-replit-dirty","true");let n=Z(this.selectedElement,this.nodeMap);this.postMessageToParent({type:"ELEMENT_TEXT_CHANGED",payload:n,timestamp:Date.now()}),this.updateHighlighterPosition(this.selectedElement,this.selectedHighlighter,this.selectedLabel)}}),this.mutationObserver.observe(this.selectedElement,{characterData:!0,childList:!1,attributes:!1,subtree:!0})}}observeLightDarkModeSwitch(){let i=new MutationObserver(n=>{n.forEach(r=>{r.type==="attributes"&&r.attributeName==="class"&&(r.target.classList.contains("dark")?this.postMessageToParent({type:"DARK_MODE_USED",timestamp:Date.now()}):this.postMessageToParent({type:"LIGHT_MODE_USED",timestamp:Date.now()}))})}),t=document.documentElement;i.observe(t,{attributes:!0,attributeFilter:["class"],childList:!1,subtree:!1})}recalculateSelectedElement=()=>{this.isActive&&(this.selectedElement&&this.updateHighlighterPosition(this.selectedElement,this.selectedHighlighter,this.selectedLabel),this.lastHighlightedElement&&this.updateHighlighterPosition(this.lastHighlightedElement,this.hoverHighlighter,this.hoverLabel),this.selectedSiblingElements.length>0&&this.updateSiblingHighlighterPositions())};updateSiblingHighlighterPositions(){for(let i=0;i<this.selectedSiblingHighlighters.length;i++){let t=this.selectedSiblingHighlighters[i],n=this.visibleSelectedSiblingElements[i];if(!t||!n)continue;let r=n.getBoundingClientRect(),o=window.innerHeight,l=Math.max(0,r.top),s=Math.min(o,r.bottom),c=Math.max(0,s-l);Object.assign(t.style,{opacity:c>0?"1":"0",top:`${l}px`,left:`${r.left}px`,width:`${r.width}px`,height:`${c}px`})}}handleKeyDown=i=>{this.isActive&&(i.key==="Escape"||i.key==="Esc")&&this.handleVisualEditorToggle({type:"TOGGLE_REPLIT_VISUAL_EDITOR",enabled:!1,timestamp:Date.now()})};toggleEventListeners(i){i?(this.initializeHighlighter(),this.enableDisabledElements(),document.addEventListener("mousemove",this.handleMouseMove),document.addEventListener("mouseleave",this.handleMouseLeave),document.addEventListener("click",this.handleClick,!0),document.addEventListener("keydown",this.handleKeyDown),this.throttledRecalculate&&(window.addEventListener("resize",this.throttledRecalculate),window.addEventListener("scroll",this.throttledRecalculate,!0))):(this.restoreDisabledElements(),this.restoreElements(),document.removeEventListener("mousemove",this.handleMouseMove),document.removeEventListener("click",this.handleClick,!0),document.removeEventListener("mouseleave",this.handleMouseLeave),document.removeEventListener("keydown",this.handleKeyDown),this.throttledRecalculate&&(window.removeEventListener("resize",this.throttledRecalculate),window.removeEventListener("scroll",this.throttledRecalculate,!0)),this.mutationObserver&&(this.mutationObserver.disconnect(),this.mutationObserver=null),this.selectedElement&&(this.selectedElement.removeAttribute("contenteditable"),this.selectedElement.removeAttribute("data-original-text"),document.querySelectorAll('[contenteditable="plaintext-only"]').forEach(t=>{t.removeAttribute("contenteditable")})),this.clearSelectedSiblingHighlighters(),this.clearHoverSiblingHighlighters(),this.hoverHighlighter?.remove(),this.hoverLabel?.remove(),this.selectedHighlighter?.remove(),this.selectedLabel?.remove(),this.shadowHost?.remove(),this.hoverHighlighter=null,this.hoverLabel=null,this.selectedHighlighter=null,this.selectedLabel=null,this.shadowHost=null,this.shadowRoot=null,this.selectedElement=null)}clearHighlighters(i){return i.forEach(t=>{t.remove()}),[]}clearHoverSiblingHighlighters(){this.hoverSiblingHighlighters=this.clearHighlighters(this.hoverSiblingHighlighters)}clearSelectedSiblingHighlighters(){this.selectedSiblingElements.forEach(i=>{i.removeAttribute("contenteditable")}),this.selectedSiblingElements=[],this.visibleSelectedSiblingElements=[],this.selectedSiblingHighlighters=this.clearHighlighters(this.selectedSiblingHighlighters)}highlightElements(i){if(!this.shadowRoot||i.length===0)return[];let t=[];return i.forEach(n=>{let r=document.createElement("div");r.className="beacon-highlighter beacon-sibling-highlighter",this.shadowRoot?.appendChild(r),t.push(r);let o=n.getBoundingClientRect(),l=window.innerHeight,s=Math.max(0,o.top),c=Math.min(l,o.bottom),h=Math.max(0,c-s);Object.assign(r.style,{opacity:h>0?"1":"0",top:`${s}px`,left:`${o.left}px`,width:`${o.width}px`,height:`${h}px`})}),t}highlightHoverSiblings(i){this.clearHoverSiblingHighlighters();let t=M(i,v.MAX_SIBLING_HIGHLIGHTERS,!0);this.hoverSiblingHighlighters=this.highlightElements(t)}highlightSelectedSiblings(i){this.clearSelectedSiblingHighlighters();let t=M(i),n=t.filter(r=>ee(r));this.selectedSiblingElements=t,this.visibleSelectedSiblingElements=n,this.selectedSiblingHighlighters=this.highlightElements(n)}enableDisabledElements(){document.querySelectorAll("button[disabled], input[disabled]").forEach(i=>{i.removeAttribute("disabled"),i.setAttribute("data-replit-disabled","")})}restoreDisabledElements(){document.querySelectorAll("[data-replit-disabled]").forEach(i=>{i.removeAttribute("data-replit-disabled"),i.setAttribute("disabled","")})}};if(typeof window<"u")try{window.REPLIT_BEACON_VERSION||(window.REPLIT_BEACON_VERSION=O,new D)}catch(e){console.error("[replit-beacon] Failed to initialize:",e)}})();
-</script>
-    <script>(function() {
-  var initialized = false;
+function removeGalPhoto(i) {
+  ST.gallery.splice(i, 1);
+  // re-render thumbs
+  const container = document.getElementById('gal-thumbs');
+  container.innerHTML = '';
+  ST.gallery.forEach((src, idx) => renderGalThumb(src, idx));
+  updateCard();
+}
 
-  function loadTailwind() {
-    if (initialized) { return; }
-    initialized = true;
+/* ═══════════════════════════════════════════
+   DRESS CODE — FULL COLOUR PALETTE SYSTEM
+═══════════════════════════════════════════ */
 
-        var script = document.createElement('script');
-        script.src = "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.14";
+// 40-colour full palette
+const DC_PALETTE = [
+  // Reds & pinks
+  {c:'#FF0000',l:false},{c:'#DC143C',l:false},{c:'#B22222',l:false},{c:'#8B0000',l:false},
+  {c:'#FF69B4',l:false},{c:'#FF1493',l:false},{c:'#C71585',l:false},{c:'#FFB6C1',l:true},
+  // Oranges & yellows
+  {c:'#FF6347',l:false},{c:'#FF4500',l:false},{c:'#FFA500',l:false},{c:'#FF8C00',l:false},
+  {c:'#FFD700',l:true},{c:'#FFFF00',l:true},{c:'#F0E68C',l:true},{c:'#FFF8DC',l:true},
+  // Greens
+  {c:'#006400',l:false},{c:'#228B22',l:false},{c:'#2E8B57',l:false},{c:'#3CB371',l:false},
+  {c:'#90EE90',l:true},{c:'#98FB98',l:true},{c:'#00FA9A',l:true},{c:'#7CFC00',l:true},
+  // Blues & teals
+  {c:'#00008B',l:false},{c:'#0000CD',l:false},{c:'#4169E1',l:false},{c:'#1E90FF',l:false},
+  {c:'#00CED1',l:false},{c:'#20B2AA',l:false},{c:'#87CEEB',l:true},{c:'#E0FFFF',l:true},
+  // Purples & lavender
+  {c:'#4B0082',l:false},{c:'#7c5cbf',l:false},{c:'#9370DB',l:false},{c:'#DA70D6',l:false},
+  // Neutrals
+  {c:'#C9A84C',l:false},{c:'#D2691E',l:false},{c:'#F5F5DC',l:true},{c:'#FFFFFF',l:true}
+];
 
-        if (window.REPLIT_APP_TAILWIND_CONFIG) {
-          script.setAttribute('data-config', JSON.stringify(window.REPLIT_APP_TAILWIND_CONFIG));
-        }
+function buildDcPalette(key) {
+  const container = document.getElementById('dc-'+key+'-palette');
+  if (!container) return;
+  container.innerHTML = '';
+  DC_PALETTE.forEach(({c, l}) => {
+    const d = document.createElement('div');
+    d.className = 'dc-dot' + (l ? ' light' : '');
+    d.style.background = c;
+    d.style.borderColor = l ? '#ccc' : 'transparent';
+    d.title = c;
+    if (ST.dcColors[key]?.includes(c)) d.classList.add('active');
+    d.onclick = () => toggleDcDot(key, c, d);
+    container.appendChild(d);
+  });
+}
 
-        document.head.appendChild(script);
+function toggleDcDot(key, color, dotEl) {
+  if (!ST.dcColors[key]) ST.dcColors[key] = [];
+  const arr = ST.dcColors[key];
+  const idx = arr.indexOf(color);
+  if (idx === -1) { arr.push(color); dotEl.classList.add('active'); }
+  else { arr.splice(idx, 1); dotEl.classList.remove('active'); }
+  renderChosenDots(key);
+}
+
+function addCustomDcColor(key) {
+  const inp = document.getElementById('dc-'+key+'-custom');
+  if (!inp) return;
+  const color = inp.value;
+  if (!ST.dcColors[key]) ST.dcColors[key] = [];
+  if (!ST.dcColors[key].includes(color)) {
+    ST.dcColors[key].push(color);
+    renderChosenDots(key);
+    // also mark dot if visible in palette
+    const dots = document.querySelectorAll('#dc-'+key+'-palette .dc-dot');
+    dots.forEach(d => { if (d.style.background === color) d.classList.add('active'); });
   }
+}
 
-  // Listen for the beacon requesting tailwind initialization.
-  window.addEventListener('replit-init-tailwind', function() {
-    if (window.REPLIT_APP_TAILWIND_CONFIG) {
-      loadTailwind();
-    } else {
-      // Config not ready yet — wait for the config-ready event, but proceed
-      // without a config after 1 second.  The config is optional (projects
-      // without a tailwind config file will never fire the ready event).
-      var configTimeout = setTimeout(function() { loadTailwind(); }, 1000);
-      window.addEventListener('replit-tailwind-config-ready', function() {
-        clearTimeout(configTimeout);
-        loadTailwind();
-      }, { once: true });
+function removeChosenDcColor(key, color) {
+  if (!ST.dcColors[key]) return;
+  ST.dcColors[key] = ST.dcColors[key].filter(c => c !== color);
+  renderChosenDots(key);
+  // un-mark in palette
+  const dots = document.querySelectorAll('#dc-'+key+'-palette .dc-dot');
+  dots.forEach(d => {
+    if (d.style.background === color || d.getAttribute('data-color') === color) {
+      d.classList.remove('active');
     }
   });
-})();</script>
-    <script type="text/javascript" src="/@replit/vite-plugin-dev-banner/banner-script.js" id="replit-dev-banner"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx?t=1774241327017"></script>
-  <script src="https://replit-cdn.com/replit-pill/replit-pill.global.js" data-repl-id="ee2df605-6555-4072-9a68-ca8ebb70b14c"></script></body>
+}
+
+function renderChosenDots(key) {
+  const container = document.getElementById('dc-'+key+'-sel');
+  if (!container) return;
+  const arr = ST.dcColors[key] || [];
+  container.innerHTML = arr.map(c => {
+    const isLight = ['#FFFFFF','#FFFF00','#F0E68C','#FFF8DC','#F5F5DC','#E0FFFF','#98FB98','#90EE90','#98FB98','#7CFC00','#00FA9A','#87CEEB','#FFB6C1'].includes(c.toUpperCase()) || ['#ffffff','#f5f5dc','#fff8dc','#f0e68c','#e0ffff'].includes(c.toLowerCase());
+    return `<div class="dc-chosen-dot" style="background:${c};border-color:${isLight?'#bbb':'rgba(0,0,0,.15)'}" title="Click to remove" onclick="removeChosenDcColor('${key}','${c}')"></div>`;
+  }).join('');
+}
+
+// custom dress code functions
+let dcFuncCount = 0;
+const DC_EMOJIS = ['🎊','🎉','🎈','🎵','🥂','🌺','💃','🎭','🎀','🌸'];
+
+function addDcFunction() {
+  dcFuncCount++;
+  const key = 'custom_dc_' + dcFuncCount;
+  ST.dcColors[key] = [];
+  const container = document.getElementById('dc-custom-events');
+  const div = document.createElement('div');
+  div.className = 'dc-event';
+  div.id = 'dce-' + key;
+  const em = DC_EMOJIS[(dcFuncCount - 1) % DC_EMOJIS.length];
+  div.innerHTML = `
+    <div class="dc-event-head">
+      <span class="dc-event-em">${em}</span>
+      <input class="dc-event-name-input" id="dcname-${key}" placeholder="Function name (e.g. Sangeet, Reception…)" oninput="updateCard()"/>
+      <button class="dc-event-del" onclick="removeDcFunction('${key}')" title="Remove">✕</button>
+    </div>
+    <div class="fi">
+      <label>Choose Colours</label>
+      <div class="dc-full-palette" id="dc-${key}-palette"></div>
+      <div class="dc-custom-row">
+        <input type="color" class="dc-custom-pick" id="dc-${key}-custom" value="#c9a84c"/>
+        <button class="dc-add-color-btn" onclick="addCustomDcColor('${key}')">+ Add Colour</button>
+      </div>
+      <div class="dc-chosen" id="dc-${key}-chosen">
+        <span class="dc-chosen-label">Selected:</span>
+        <div class="dc-chosen-dots" id="dc-${key}-sel"></div>
+      </div>
+    </div>
+    <div class="fi">
+      <label>Attire Description</label>
+      <input class="dc-code-input" id="dc-${key}-note" placeholder="e.g. Lehenga, indo-western, kurta…" oninput="updateCard()"/>
+    </div>`;
+  container.appendChild(div);
+  buildDcPalette(key);
+}
+
+function removeDcFunction(key) {
+  delete ST.dcColors[key];
+  const el = document.getElementById('dce-' + key);
+  if (el) el.remove();
+  updateCard();
+}
+
+function initDressCode() {
+  ['haldi','mehandi','wedding'].forEach(k => buildDcPalette(k));
+}
+
+
+/* ═══════════════════════════════════════════
+   STICKERS
+═══════════════════════════════════════════ */
+let dragStkEm = '';
+function dragStk(e, em) { dragStkEm = em; e.dataTransfer.setData('text/plain', em); }
+function dropStk(e) {
+  e.preventDefault();
+  const stage = document.getElementById('cstage');
+  const rect = stage.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+  const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+  ST.stickers.push({ em: dragStkEm, x, y });
+  renderStickers();
+}
+function renderStickers() {
+  const layer = document.getElementById('sticker-layer');
+  layer.innerHTML = '';
+  ST.stickers.forEach((stk, i) => {
+    const el = document.createElement('div');
+    el.className = 'placed-stk';
+    el.textContent = stk.em;
+    el.style.cssText = `left:${stk.x}%;top:${stk.y}%;position:absolute;font-size:1.4rem;cursor:pointer;transform:translate(-50%,-50%);z-index:20`;
+    el.title = 'Double-click to remove';
+    el.ondblclick = () => { ST.stickers.splice(i,1); renderStickers(); };
+    layer.appendChild(el);
+  });
+}
+function clearStickers() { ST.stickers = []; renderStickers(); }
+
+/* ═══════════════════════════════════════════
+   BORDER PATTERNS
+═══════════════════════════════════════════ */
+let ST_borderColor = '#c9a84c';
+
+function setBorder(name, el) {
+  ST.border = name;
+  document.querySelectorAll('.bopt').forEach(b => b.classList.remove('sel'));
+  if (el) el.classList.add('sel');
+  renderBorder('card-border-layer');
+}
+
+function setBorderColor(color, el) {
+  ST_borderColor = color;
+  document.querySelectorAll('.bcol-dot').forEach(b => b.classList.remove('sel'));
+  if (el) el.classList.add('sel');
+  renderBorder('card-border-layer');
+}
+
+function renderBorder(layerId) {
+  const layer = document.getElementById(layerId);
+  if (!layer) return;
+  layer.innerHTML = '';
+  if (!ST.border || ST.border === 'none') return;
+  const svg = buildBorderSVG(ST.border, ST_borderColor);
+  layer.innerHTML = svg;
+}
+
+function renderBorderOnShare(layerId, borderName, color) {
+  const layer = document.getElementById(layerId);
+  if (!layer) return;
+  layer.innerHTML = '';
+  if (!borderName || borderName === 'none') return;
+  layer.innerHTML = buildBorderSVG(borderName, color);
+}
+
+function buildBorderSVG(name, col) {
+  const c = col || '#c9a84c';
+  // We use a 100%×100% SVG with viewBox matching a 3:4 card ratio (300×400)
+  const W = 300, H = 400;
+  let inner = '';
+
+  if (name === 'rangoli') {
+    inner = rangoliBorder(W, H, c);
+  } else if (name === 'paisley') {
+    inner = paisleyBorder(W, H, c);
+  } else if (name === 'floral') {
+    inner = floralBorder(W, H, c);
+  } else if (name === 'mandala') {
+    inner = mandalaBorder(W, H, c);
+  } else if (name === 'mughal') {
+    inner = mughalBorder(W, H, c);
+  } else if (name === 'lotus') {
+    inner = lotusBorder(W, H, c);
+  } else if (name === 'diya') {
+    inner = diyaBorder(W, H, c);
+  } else if (name === 'geometric') {
+    inner = geometricBorder(W, H, c);
+  }
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6">${inner}</svg>`;
+}
+
+/* ── RANGOLI border ── */
+function rangoliBorder(W, H, c) {
+  let s = '';
+  const C2 = hexMix(c, '#c17a6f');
+  // dots along top & bottom
+  const topY = 18, botY = H - 18;
+  for (let x = 20; x <= W - 20; x += 22) {
+    const r = (Math.round(x/22) % 3 === 1) ? 5 : 3.5;
+    const col = (Math.round(x/22) % 3 === 1) ? C2 : c;
+    s += `<circle cx="${x}" cy="${topY}" r="${r}" fill="${col}" opacity=".75"/>`;
+    s += `<circle cx="${x}" cy="${botY}" r="${r}" fill="${col}" opacity=".75"/>`;
+  }
+  // dots along left & right
+  for (let y = 40; y <= H - 40; y += 22) {
+    const r = (Math.round(y/22) % 3 === 1) ? 5 : 3.5;
+    const col = (Math.round(y/22) % 3 === 1) ? C2 : c;
+    s += `<circle cx="18" cy="${y}" r="${r}" fill="${col}" opacity=".75"/>`;
+    s += `<circle cx="${W-18}" cy="${y}" r="${r}" fill="${col}" opacity=".75"/>`;
+  }
+  // corner diamonds
+  [[20,20],[W-20,20],[20,H-20],[W-20,H-20]].forEach(([cx,cy]) => {
+    s += `<polygon points="${cx},${cy-8} ${cx+8},${cy} ${cx},${cy+8} ${cx-8},${cy}" fill="${C2}" opacity=".85"/>`;
+    s += `<polygon points="${cx},${cy-4} ${cx+4},${cy} ${cx},${cy+4} ${cx-4},${cy}" fill="${c}" opacity=".9"/>`;
+  });
+  // outer glow ring
+  s += `<rect x="8" y="8" width="${W-16}" height="${H-16}" rx="6" fill="none" stroke="${c}" stroke-width=".8" opacity=".25"/>`;
+  return s;
+}
+
+/* ── PAISLEY border ── */
+function paisleyBorder(W, H, c) {
+  let s = '';
+  const C2 = hexMix(c, '#a385d6');
+  // paisley drop shapes along top
+  for (let x = 24; x <= W - 24; x += 36) {
+    s += `<path d="M${x},28 Q${x},10 ${x+8},10 Q${x+16},10 ${x+16},20 Q${x+16},30 ${x+8},32 Q${x+2},32 ${x},28Z" fill="${C2}" opacity=".6"/>`;
+    s += `<circle cx="${x+8}" cy="${12}" r="3" fill="${c}" opacity=".8"/>`;
+  }
+  // bottom (inverted)
+  for (let x = 24; x <= W - 24; x += 36) {
+    s += `<path d="M${x},${H-28} Q${x},${H-10} ${x+8},${H-10} Q${x+16},${H-10} ${x+16},${H-20} Q${x+16},${H-30} ${x+8},${H-32} Q${x+2},${H-32} ${x},${H-28}Z" fill="${C2}" opacity=".6"/>`;
+    s += `<circle cx="${x+8}" cy="${H-12}" r="3" fill="${c}" opacity=".8"/>`;
+  }
+  // left side
+  for (let y = 50; y <= H - 50; y += 36) {
+    s += `<path d="M28,${y} Q10,${y} 10,${y+8} Q10,${y+16} 20,${y+16} Q30,${y+16} 32,${y+8} Q32,${y+2} 28,${y}Z" fill="${C2}" opacity=".6"/>`;
+    s += `<circle cx="12" cy="${y+8}" r="3" fill="${c}" opacity=".8"/>`;
+  }
+  // right side
+  for (let y = 50; y <= H - 50; y += 36) {
+    s += `<path d="M${W-28},${y} Q${W-10},${y} ${W-10},${y+8} Q${W-10},${y+16} ${W-20},${y+16} Q${W-30},${y+16} ${W-32},${y+8} Q${W-32},${y+2} ${W-28},${y}Z" fill="${C2}" opacity=".6"/>`;
+    s += `<circle cx="${W-12}" cy="${y+8}" r="3" fill="${c}" opacity=".8"/>`;
+  }
+  // thin double border
+  s += `<rect x="6" y="6" width="${W-12}" height="${H-12}" rx="4" fill="none" stroke="${c}" stroke-width="1" opacity=".3"/>`;
+  s += `<rect x="10" y="10" width="${W-20}" height="${H-20}" rx="3" fill="none" stroke="${c}" stroke-width=".5" opacity=".2"/>`;
+  return s;
+}
+
+/* ── FLORAL border ── */
+function floralBorder(W, H, c) {
+  let s = '';
+  const C2 = hexMix(c, '#3d7a52');
+  // flower helper
+  function flower(cx, cy, r) {
+    let f = `<circle cx="${cx}" cy="${cy}" r="${r*0.55}" fill="${c}" opacity=".85"/>`;
+    for (let a = 0; a < 360; a += 60) {
+      const rad = a * Math.PI / 180;
+      const px = cx + r * Math.cos(rad), py = cy + r * Math.sin(rad);
+      f += `<ellipse cx="${px}" cy="${py}" rx="${r*0.45}" ry="${r*0.3}" fill="${c}" opacity=".55" transform="rotate(${a} ${px} ${py})"/>`;
+    }
+    return f;
+  }
+  // flowers along top & bottom
+  for (let x = 26; x <= W - 26; x += 34) {
+    s += flower(x, 20, 10);
+    s += flower(x, H - 20, 10);
+  }
+  // flowers along left & right
+  for (let y = 50; y <= H - 50; y += 34) {
+    s += flower(20, y, 10);
+    s += flower(W - 20, y, 10);
+  }
+  // vine connecting top flowers
+  s += `<path d="M16,20`;
+  for (let x = 26; x <= W - 26; x += 34) s += ` Q${x-8},14 ${x},20 Q${x+8},26 ${x+17},20`;
+  s += `" fill="none" stroke="${C2}" stroke-width="1.2" opacity=".5"/>`;
+  // vine connecting bottom
+  s += `<path d="M16,${H-20}`;
+  for (let x = 26; x <= W - 26; x += 34) s += ` Q${x-8},${H-14} ${x},${H-20} Q${x+8},${H-26} ${x+17},${H-20}`;
+  s += `" fill="none" stroke="${C2}" stroke-width="1.2" opacity=".5"/>`;
+  return s;
+}
+
+/* ── MANDALA border ── */
+function mandalaBorder(W, H, c) {
+  let s = '';
+  const C2 = hexMix(c, '#c17a6f');
+  // double border lines
+  s += `<rect x="8" y="8" width="${W-16}" height="${H-16}" rx="5" fill="none" stroke="${c}" stroke-width="1.5" opacity=".45"/>`;
+  s += `<rect x="14" y="14" width="${W-28}" height="${H-28}" rx="3" fill="none" stroke="${c}" stroke-width=".7" opacity=".3"/>`;
+  // corner mandala
+  function mandalaCorner(cx, cy) {
+    let m = '';
+    [16,11,7,4].forEach((r, i) => {
+      m += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${i%2===0?c:C2}" stroke-width="${i<2?1:.7}" opacity="${.65-.1*i}"/>`;
+    });
+    // spokes
+    for (let a = 0; a < 360; a += 45) {
+      const rad = a * Math.PI / 180;
+      m += `<line x1="${cx}" y1="${cy}" x2="${cx+16*Math.cos(rad)}" y2="${cy+16*Math.sin(rad)}" stroke="${c}" stroke-width=".6" opacity=".4"/>`;
+    }
+    m += `<circle cx="${cx}" cy="${cy}" r="3" fill="${c}" opacity=".9"/>`;
+    return m;
+  }
+  s += mandalaCorner(22, 22);
+  s += mandalaCorner(W - 22, 22);
+  s += mandalaCorner(22, H - 22);
+  s += mandalaCorner(W - 22, H - 22);
+  // mid-side small circles
+  [[W/2,10],[W/2,H-10],[10,H/2],[W-10,H/2]].forEach(([cx,cy]) => {
+    s += `<circle cx="${cx}" cy="${cy}" r="6" fill="none" stroke="${c}" stroke-width="1" opacity=".5"/>`;
+    s += `<circle cx="${cx}" cy="${cy}" r="2.5" fill="${c}" opacity=".7"/>`;
+  });
+  return s;
+}
+
+/* ── MUGHAL border ── */
+function mughalBorder(W, H, c) {
+  let s = '';
+  const C2 = hexMix(c, '#a385d6');
+  const aw = 60; // arch width
+  // top arches
+  for (let x = 0; x + aw <= W; x += aw) {
+    const cx = x + aw / 2;
+    s += `<path d="M${x+4},0 Q${cx},32 ${x+aw-4},0" fill="${C2}" opacity=".15"/>`;
+    s += `<path d="M${x+4},0 Q${cx},32 ${x+aw-4},0" fill="none" stroke="${c}" stroke-width="1.4" opacity=".65"/>`;
+    s += `<circle cx="${cx}" cy="14" r="3.5" fill="${c}" opacity=".8"/>`;
+  }
+  // bottom arches (inverted)
+  for (let x = 0; x + aw <= W; x += aw) {
+    const cx = x + aw / 2;
+    s += `<path d="M${x+4},${H} Q${cx},${H-32} ${x+aw-4},${H}" fill="${C2}" opacity=".15"/>`;
+    s += `<path d="M${x+4},${H} Q${cx},${H-32} ${x+aw-4},${H}" fill="none" stroke="${c}" stroke-width="1.4" opacity=".65"/>`;
+    s += `<circle cx="${cx}" cy="${H-14}" r="3.5" fill="${c}" opacity=".8"/>`;
+  }
+  // side pillars
+  s += `<line x1="0" y1="0" x2="0" y2="${H}" stroke="${c}" stroke-width="2" opacity=".5"/>`;
+  s += `<line x1="${W}" y1="0" x2="${W}" y2="${H}" stroke="${c}" stroke-width="2" opacity=".5"/>`;
+  // keystone diamonds top/bottom
+  [[W/2,4],[W/2,H-4]].forEach(([cx,cy]) => {
+    s += `<polygon points="${cx},${cy} ${cx+6},${cy+8} ${cx},${cy+16} ${cx-6},${cy+8}" fill="${c}" opacity=".9"/>`;
+  });
+  return s;
+}
+
+/* ── LOTUS border ── */
+function lotusBorder(W, H, c) {
+  let s = '';
+  const C2 = hexMix(c, '#fff');
+  function lotusRow(y, flip) {
+    const sign = flip ? 1 : -1;
+    for (let x = 16; x <= W - 16; x += 28) {
+      // center petal
+      s += `<path d="M${x},${y} Q${x},${y+sign*22} ${x+8},${y+sign*24} Q${x+16},${y+sign*22} ${x+16},${y}Z" fill="${c}" opacity=".7"/>`;
+      // side petals
+      s += `<path d="M${x},${y} Q${x-6},${y+sign*18} ${x+4},${y+sign*20} Q${x+10},${y+sign*16} ${x+8},${y}Z" fill="${C2}" opacity=".55"/>`;
+      s += `<path d="M${x+16},${y} Q${x+22},${y+sign*18} ${x+12},${y+sign*20} Q${x+6},${y+sign*16} ${x+8},${y}Z" fill="${C2}" opacity=".55"/>`;
+    }
+  }
+  lotusRow(0, true);
+  lotusRow(H, false);
+  // left/right vines
+  s += `<path d="M0,40 Q12,60 0,80 Q12,100 0,120 Q12,140 0,160 Q12,180 0,200 Q12,220 0,240 Q12,260 0,280 Q12,300 0,320 Q12,340 0,360" fill="none" stroke="${c}" stroke-width="1.4" opacity=".5"/>`;
+  s += `<path d="M${W},40 Q${W-12},60 ${W},80 Q${W-12},100 ${W},120 Q${W-12},140 ${W},160 Q${W-12},180 ${W},200 Q${W-12},220 ${W},240 Q${W-12},260 ${W},280 Q${W-12},300 ${W},320 Q${W-12},340 ${W},360" fill="none" stroke="${c}" stroke-width="1.4" opacity=".5"/>`;
+  // small leaf buds along vines
+  for (let y = 60; y < H - 40; y += 40) {
+    s += `<ellipse cx="8" cy="${y}" rx="7" ry="4" fill="${c}" opacity=".4" transform="rotate(-40 8 ${y})"/>`;
+    s += `<ellipse cx="${W-8}" cy="${y}" rx="7" ry="4" fill="${c}" opacity=".4" transform="rotate(40 ${W-8} ${y})"/>`;
+  }
+  return s;
+}
+
+/* ── DIYA border ── */
+function diyaBorder(W, H, c) {
+  let s = '';
+  const flame = '#FF8C42';
+  function diya(cx, cy, rot) {
+    s += `<g transform="rotate(${rot} ${cx} ${cy})">`;
+    s += `<ellipse cx="${cx}" cy="${cy+4}" rx="10" ry="5" fill="${c}" opacity=".8"/>`;
+    s += `<path d="M${cx-3},${cy+2} Q${cx},${cy-10} ${cx+3},${cy+2}" fill="${flame}" opacity=".9"/>`;
+    s += `<path d="M${cx-1},${cy} Q${cx},${cy-5} ${cx+1},${cy}" fill="#FFE066" opacity=".8"/>`;
+    s += `</g>`;
+  }
+  // top row
+  for (let x = 24; x <= W - 24; x += 38) diya(x, 16, 0);
+  // bottom row
+  for (let x = 24; x <= W - 24; x += 38) diya(x, H - 16, 180);
+  // left col
+  for (let y = 52; y <= H - 52; y += 38) diya(16, y, -90);
+  // right col
+  for (let y = 52; y <= H - 52; y += 38) diya(W - 16, y, 90);
+  // string/garland lines
+  s += `<path d="M14,16`;
+  for (let x = 24; x <= W - 24; x += 38) s += ` Q${x},8 ${x+19},16`;
+  s += `" fill="none" stroke="${c}" stroke-width=".8" stroke-dasharray="4 3" opacity=".4"/>`;
+  s += `<path d="M14,${H-16}`;
+  for (let x = 24; x <= W - 24; x += 38) s += ` Q${x},${H-8} ${x+19},${H-16}`;
+  s += `" fill="none" stroke="${c}" stroke-width=".8" stroke-dasharray="4 3" opacity=".4"/>`;
+  return s;
+}
+
+/* ── GEOMETRIC border ── */
+function geometricBorder(W, H, c) {
+  let s = '';
+  const C2 = hexMix(c, '#7c5cbf');
+  // outer + inner double lines
+  s += `<rect x="6" y="6" width="${W-12}" height="${H-12}" fill="none" stroke="${c}" stroke-width="2" opacity=".6"/>`;
+  s += `<rect x="12" y="12" width="${W-24}" height="${H-24}" fill="none" stroke="${c}" stroke-width=".8" opacity=".4"/>`;
+  s += `<rect x="16" y="16" width="${W-32}" height="${H-32}" fill="none" stroke="${C2}" stroke-width=".5" opacity=".3"/>`;
+  // corner squares
+  const csz = 22;
+  [[6,6],[W-6-csz,6],[6,H-6-csz],[W-6-csz,H-6-csz]].forEach(([x,y]) => {
+    s += `<rect x="${x}" y="${y}" width="${csz}" height="${csz}" fill="${c}" opacity=".15"/>`;
+    s += `<line x1="${x}" y1="${y+csz/2}" x2="${x+csz}" y2="${y+csz/2}" stroke="${c}" stroke-width="1" opacity=".7"/>`;
+    s += `<line x1="${x+csz/2}" y1="${y}" x2="${x+csz/2}" y2="${y+csz}" stroke="${c}" stroke-width="1" opacity=".7"/>`;
+    s += `<circle cx="${x+csz/2}" cy="${y+csz/2}" r="3.5" fill="${c}" opacity=".85"/>`;
+  });
+  // mid-side diamonds
+  [[W/2,6],[W/2,H-6],[6,H/2],[W-6,H/2]].forEach(([cx,cy]) => {
+    s += `<polygon points="${cx},${cy} ${cx+9},${cy+9} ${cx},${cy+18} ${cx-9},${cy+9}" fill="${c}" opacity=".7"/>`;
+  });
+  // repeating triangles along top & bottom
+  for (let x = 30; x <= W - 30; x += 18) {
+    s += `<polygon points="${x},6 ${x+6},14 ${x-6},14" fill="${C2}" opacity=".45"/>`;
+    s += `<polygon points="${x},${H-6} ${x+6},${H-14} ${x-6},${H-14}" fill="${C2}" opacity=".45"/>`;
+  }
+  // repeating triangles along sides
+  for (let y = 30; y <= H - 30; y += 18) {
+    s += `<polygon points="6,${y} 14,${y+6} 14,${y-6}" fill="${C2}" opacity=".45"/>`;
+    s += `<polygon points="${W-6},${y} ${W-14},${y+6} ${W-14},${y-6}" fill="${C2}" opacity=".45"/>`;
+  }
+  return s;
+}
+
+/* ── Utility: mix two hex colours ── */
+function hexMix(h1, h2) {
+  try {
+    const parse = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+    const [r1,g1,b1] = parse(h1.length===7?h1:'#c9a84c');
+    const [r2,g2,b2] = parse(h2.length===7?h2:'#c17a6f');
+    const r = Math.round((r1+r2)/2), g = Math.round((g1+g2)/2), b = Math.round((b1+b2)/2);
+    return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+  } catch(e) { return h1; }
+}
+
+/* ═══════════════════════════════════════════
+   PIANO
+═══════════════════════════════════════════ */
+const NOTE_FREQS = {48:130.81,49:138.59,50:146.83,51:155.56,52:164.81,53:174.61,54:184.99,55:196,56:207.65,57:220,58:233.08,59:246.94,60:261.63,61:277.18,62:293.66,63:311.13,64:329.63,65:349.23,66:369.99,67:392,68:415.3,69:440,70:466.16,71:493.88,72:523.25,73:554.37,74:587.33,75:622.25,76:659.25,77:698.46,78:739.99,79:783.99,80:830.61,81:880,82:932.33,83:987.77,84:1046.5};
+let audioCtx = null;
+function getCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function playNote(midi, dur=0.5) {
+  const ctx = getCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'triangle';
+  osc.frequency.value = NOTE_FREQS[midi] || 440;
+  gain.gain.setValueAtTime(0.4, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + dur);
+}
+function buildPiano() {
+  const container = document.getElementById('piano-keys');
+  if (!container) return;
+  // One octave + a bit: C4 to C6
+  const keys = [
+    {midi:60,type:'w'},{midi:61,type:'b'},
+    {midi:62,type:'w'},{midi:63,type:'b'},
+    {midi:64,type:'w'},
+    {midi:65,type:'w'},{midi:66,type:'b'},
+    {midi:67,type:'w'},{midi:68,type:'b'},
+    {midi:69,type:'w'},{midi:70,type:'b'},
+    {midi:71,type:'w'},
+    {midi:72,type:'w'},{midi:73,type:'b'},
+    {midi:74,type:'w'},{midi:75,type:'b'},
+    {midi:76,type:'w'}
+  ];
+  keys.forEach(k => {
+    const el = document.createElement('div');
+    el.className = k.type === 'w' ? 'wkey' : 'bkey';
+    el.dataset.midi = k.midi;
+    el.onmousedown = () => {
+      playNote(k.midi, 0.6);
+      el.classList.add('playing');
+      setTimeout(() => el.classList.remove('playing'), 200);
+      // float note emoji
+      const note = document.createElement('div');
+      note.className = 'music-note-anim';
+      note.textContent = ['♩','♪','♫','♬'][Math.floor(Math.random()*4)];
+      note.style.cssText = `position:absolute;left:${el.offsetLeft}px;top:20px;color:#c9a84c;pointer-events:none;z-index:50;font-size:1.2rem`;
+      container.appendChild(note);
+      setTimeout(() => note.remove(), 1200);
+    };
+    container.appendChild(el);
+  });
+}
+let melodyTimer = null;
+function setMelody(name, el) {
+  ST.melody = name;
+  document.querySelectorAll('.melbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function playMelody() {
+  const notes = MELODIES[ST.melody];
+  if (!notes || !notes.length) { alert('Select a melody preset first'); return; }
+  const bpm = parseInt(document.getElementById('tempo-sl').value);
+  const dur = 60 / bpm * 0.85;
+  notes.forEach((midi, i) => {
+    setTimeout(() => playNote(midi, dur), i * (60000 / bpm));
+  });
+}
+function autoPlayMelody() {
+  const notes = MELODIES[ST.melody];
+  if (!notes || !notes.length) return;
+  const bpm = ST.tempo || 80;
+  notes.forEach((midi, i) => {
+    setTimeout(() => playNote(midi, 60/bpm*0.85), i * (60000/bpm) + 1200);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   CARD UPDATE
+═══════════════════════════════════════════ */
+function buildEvListHTML() {
+  const defs = [
+    {id:'ev-wedding',em:'💍',name:'Wedding'},
+    {id:'ev-haldi',em:'🌻',name:'Haldi'},
+    {id:'ev-mehandi',em:'🌿',name:'Mehandi'},
+    {id:'ev-sangeet',em:'🎵',name:'Sangeet'},
+    {id:'ev-reception',em:'🥂',name:'Reception'},
+  ];
+  let html = '';
+  defs.forEach(ev => {
+    const c = document.getElementById(ev.id); if (!c || !c.classList.contains('on')) return;
+    const dt = document.getElementById(ev.id+'-date')?.value;
+    const vn = document.getElementById(ev.id+'-venue')?.value;
+    if (!dt && !vn) return;
+    const ds = dt ? new Date(dt+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '';
+    html += `<div class="evrow"><span class="evem">${ev.em}</span><div><div class="evnm">${ev.name}</div><div class="evdt">${ds}${vn?' · '+vn:''}</div></div></div>`;
+  });
+  document.querySelectorAll('[id^="evc"]').forEach(c => {
+    if (!c.classList.contains('on')) return;
+    const nm = c.querySelector('[id$="-nm"]')?.value || 'Event';
+    const dt = c.querySelector('[id$="-dt"]')?.value;
+    const vn = c.querySelector('[id$="-vn"]')?.value;
+    if (!dt && !vn) return;
+    const ds = dt ? new Date(dt+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '';
+    html += `<div class="evrow"><span class="evem">🎊</span><div><div class="evnm">${nm}</div><div class="evdt">${ds}${vn?' · '+vn:''}</div></div></div>`;
+  });
+  return html;
+}
+
+function updateCard() {
+  const bride = document.getElementById('f-bride')?.value || '';
+  const groom = document.getElementById('f-groom')?.value || '';
+  const msg = document.getElementById('f-msg')?.value || '';
+  const dear = document.getElementById('f-dear')?.value || '';
+  const accent = document.getElementById('f-accent')?.value || '#c9a84c';
+  const ff = "'"+ST.font+"', 'Cormorant Garamond', serif";
+
+  const setEl = (id, text, styles) => {
+    const el = document.getElementById(id); if (!el) return;
+    if (text !== null && text !== undefined) el.textContent = text;
+    if (styles) Object.assign(el.style, styles);
+  };
+
+  setEl('cd-bride', bride||'Eleanor', {fontFamily:ff, color:'#fff'});
+  setEl('cd-groom', groom||'Alexander', {fontFamily:ff, color:'#fff'});
+  setEl('cd-and', null, {color:accent});
+  setEl('cd-msg', msg, {});
+  document.querySelectorAll('#card-el .cdiv span').forEach(s => s.style.color = accent);
+
+  const dEl = document.getElementById('cd-dear');
+  if (dear) { dEl.textContent = 'Dear '+dear+','; dEl.style.display = 'block'; }
+  else dEl.style.display = 'none';
+
+  document.getElementById('card-el').style.background = THEMES[ST.theme];
+
+  const cp = document.getElementById('cd-photo');
+  if (ST.photo) { cp.src = ST.photo; cp.style.display = 'block'; }
+  else cp.style.display = 'none';
+
+  // gallery strip on card
+  const gal = document.getElementById('cd-gallery');
+  gal.innerHTML = '';
+  ST.gallery.slice(0,3).forEach(src => {
+    const img = document.createElement('img');
+    img.src = src;
+    gal.appendChild(img);
+  });
+  gal.style.display = ST.gallery.length ? 'flex' : 'none';
+
+  document.getElementById('cd-evs').innerHTML = buildEvListHTML();
+  renderStickers();
+  renderBorder('card-border-layer');
+  applyAnim();
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+function clearPetals() { document.querySelectorAll('#card-el .petal').forEach(p => p.remove()); }
+function applyAnim() {
+  const stage = document.getElementById('cstage');
+  const ct = document.querySelector('#card-el .cct');
+  if (!stage || !ct) return;
+  stage.classList.remove('ag');
+  ct.classList.remove('af','az');
+  clearPetals();
+  if (ST.anim==='fade') { void ct.offsetWidth; ct.classList.add('af'); }
+  else if (ST.anim==='zoom') { void ct.offsetWidth; ct.classList.add('az'); }
+  else if (ST.anim==='glow') stage.classList.add('ag');
+  else if (ST.anim==='petals') spawnPetals('card-el');
+}
+function spawnPetals(cardId) {
+  const card = document.getElementById(cardId); if (!card) return;
+  const cols = ['#c9a84c','#e8d5a0','#f5e6e0','#a385d6','#c17a6f'];
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div'); p.className = 'petal';
+    p.style.cssText = `left:${Math.random()*100}%;top:-20px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${7+Math.random()*8}px;height:${10+Math.random()*12}px;animation-duration:${3+Math.random()*4}s;animation-delay:${Math.random()*5}s`;
+    card.appendChild(p);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SHARE LINK
+═══════════════════════════════════════════ */
+function buildParams() {
+  const p = new URLSearchParams();
+  p.set('view','1');
+  p.set('bride', document.getElementById('f-bride').value);
+  p.set('groom', document.getElementById('f-groom').value);
+  p.set('msg', document.getElementById('f-msg').value);
+  p.set('dear', document.getElementById('f-dear').value||'');
+  p.set('theme', ST.theme);
+  p.set('font', ST.font);
+  p.set('anim', ST.anim);
+  p.set('accent', (document.getElementById('f-accent').value||'#c9a84c').replace('#',''));
+  p.set('border', ST.border||'none');
+  p.set('bcolor', ST_borderColor.replace('#',''));
+  p.set('melody', ST.melody);
+  p.set('tempo', document.getElementById('tempo-sl')?.value||80);
+  // events
+  ['wedding','haldi','mehandi','sangeet','reception'].forEach(ev => {
+    const c = document.getElementById('ev-'+ev);
+    if (c && c.classList.contains('on')) {
+      p.set('ev_'+ev, (document.getElementById('ev-'+ev+'-date')?.value||'')+'|'+(document.getElementById('ev-'+ev+'-venue')?.value||''));
+    }
+  });
+  // dress code — fixed events
+  ['haldi','mehandi','wedding'].forEach(ev => {
+    const colors = ST.dcColors[ev] || [];
+    const note = document.getElementById('dc-'+ev+'-note')?.value || '';
+    if (colors.length || note) {
+      p.set('dc_'+ev, colors.join('~') + '||' + encodeURIComponent(note));
+    }
+  });
+  // dress code — custom functions
+  let customDcArr = [];
+  document.querySelectorAll('[id^="dce-custom_dc_"]').forEach(el => {
+    const key = el.id.replace('dce-','');
+    const name = document.getElementById('dcname-'+key)?.value || 'Function';
+    const colors = ST.dcColors[key] || [];
+    const note = document.getElementById('dc-'+key+'-note')?.value || '';
+    if (name || colors.length || note) {
+      customDcArr.push(name + ':::' + colors.join('~') + '||' + encodeURIComponent(note));
+    }
+  });
+  if (customDcArr.length) p.set('dc_custom', customDcArr.join('####'));
+  // stickers
+  if (ST.stickers.length) p.set('stickers', JSON.stringify(ST.stickers));
+  return p;
+}
+function genLink() {
+  const url = window.location.origin+window.location.pathname+'?'+buildParams().toString();
+  document.getElementById('share-url').value = url;
+  // also regenerate QR if visible
+  if (document.getElementById('qr-wrap').style.display !== 'none') buildQR(url);
+}
+function copyLink() {
+  const el = document.getElementById('share-url');
+  el.select(); document.execCommand('copy');
+  alert('✓ Link copied! Share it with your guests.');
+}
+
+/* ═══════════════════════════════════════════
+   QR CODE
+═══════════════════════════════════════════ */
+function showQR() {
+  let url = document.getElementById('share-url').value;
+  if (url.includes('Click')) { genLink(); url = document.getElementById('share-url').value; }
+  document.getElementById('qr-wrap').style.display = 'flex';
+  buildQR(url);
+}
+function buildQR(url) {
+  const box = document.getElementById('qr-box');
+  box.innerHTML = '';
+  new QRCode(box, { text: url, width:160, height:160, colorDark:'#2d2438', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H });
+}
+function dlQR() {
+  const canvas = document.querySelector('#qr-box canvas');
+  if (!canvas) { alert('Generate QR first'); return; }
+  const a = document.createElement('a');
+  a.download = 'wedding-invite-qr.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+/* ═══════════════════════════════════════════
+   DOWNLOAD
+═══════════════════════════════════════════ */
+function dlPNG(cardId) {
+  const card = document.getElementById(cardId);
+  html2canvas(card, {scale:3, useCORS:true, logging:false, allowTaint:true}).then(c => {
+    const a = document.createElement('a');
+    a.download = 'wedding-invite.png'; a.href = c.toDataURL('image/png'); a.click();
+  });
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE PREVIEW
+═══════════════════════════════════════════ */
+function openPrev() { document.getElementById('ppanel').classList.add('open'); document.body.style.overflow='hidden'; }
+function closePrev() { document.getElementById('ppanel').classList.remove('open'); document.body.style.overflow=''; }
+
+/* ═══════════════════════════════════════════
+   SHARE PAGE
+═══════════════════════════════════════════ */
+function loadSharePage(p) {
+  const bride = p.get('bride')||'Eleanor';
+  const groom = p.get('groom')||'Alexander';
+  const msg = p.get('msg')||'Together with their families, invite you to share in the joy of our celebration.';
+  const dear = p.get('dear')||'';
+  const theme = parseInt(p.get('theme')||'0');
+  const font = p.get('font')||'Cormorant Garamond';
+  const anim = p.get('anim')||'petals';
+  const accent = '#'+(p.get('accent')||'c9a84c');
+  const melody = p.get('melody')||'none';
+  ST.melody = melody;
+  ST.tempo = parseInt(p.get('tempo')||80);
+  const borderName = p.get('border')||'none';
+  const borderCol = '#'+(p.get('bcolor')||'c9a84c');
+
+  document.getElementById('s-names').innerHTML = `<em>${bride} &amp; ${groom}</em>`;
+  if (dear) { document.getElementById('s-dear').textContent='Dear '+dear+','; document.getElementById('s-dear').style.display='block'; }
+
+  // wedding date + countdown
+  const evW = p.get('ev_wedding');
+  if (evW) {
+    const dt = evW.split('|')[0];
+    if (dt) {
+      const wDate = new Date(dt+'T00:00:00');
+      const ds = wDate.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      document.getElementById('s-dateline').textContent = ds;
+      startCountdown(wDate);
+    }
+  }
+
+  // card content
+  const ff = "'"+font+"', 'Cormorant Garamond', serif";
+  document.getElementById('s-bride').textContent = bride;
+  document.getElementById('s-bride').style.fontFamily = ff;
+  document.getElementById('s-groom').textContent = groom;
+  document.getElementById('s-groom').style.fontFamily = ff;
+  document.getElementById('s-and').style.color = accent;
+  document.getElementById('s-msg').textContent = msg;
+  document.querySelectorAll('#s-card-el .cdiv span').forEach(s => s.style.color = accent);
+  if (dear) { const dc=document.getElementById('s-dear-c'); dc.textContent='Dear '+dear+','; dc.style.display='block'; }
+  document.getElementById('s-card-el').style.background = THEMES[theme];
+
+  // events
+  const evDefs=[{key:'ev_wedding',em:'💍',name:'Wedding'},{key:'ev_haldi',em:'🌻',name:'Haldi'},{key:'ev_mehandi',em:'🌿',name:'Mehandi'},{key:'ev_sangeet',em:'🎵',name:'Sangeet'},{key:'ev_reception',em:'🥂',name:'Reception'}];
+  let evHtml='';
+  evDefs.forEach(ev => {
+    const val = p.get(ev.key); if (!val) return;
+    const [dt,vn] = val.split('|');
+    if (!dt && !vn) return;
+    const ds = dt ? new Date(dt+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '';
+    evHtml += `<div class="evrow"><span class="evem">${ev.em}</span><div><div class="evnm">${ev.name}</div><div class="evdt">${ds}${vn?' · '+vn:''}</div></div></div>`;
+  });
+  document.getElementById('s-evs').innerHTML = evHtml;
+
+  // dress code
+  const dcFixed = [
+    {key:'dc_haldi',   label:'Haldi',   em:'🌻'},
+    {key:'dc_mehandi', label:'Mehandi', em:'🌿'},
+    {key:'dc_wedding', label:'Wedding', em:'💍'}
+  ];
+  let dcHtml = '', hasDc = false;
+  dcFixed.forEach(dc => {
+    const val = p.get(dc.key); if (!val) return;
+    const sepIdx = val.indexOf('||');
+    const colorsRaw = sepIdx > -1 ? val.slice(0, sepIdx) : val;
+    const noteEnc   = sepIdx > -1 ? val.slice(sepIdx + 2) : '';
+    const colors = colorsRaw ? colorsRaw.split('~').filter(Boolean) : [];
+    const note = noteEnc ? decodeURIComponent(noteEnc) : '';
+    if (!colors.length && !note) return;
+    hasDc = true;
+    const dots = colors.map(c => `<span class="s-dc-dot" style="background:${c};border:1px solid rgba(0,0,0,.12);width:18px;height:18px;border-radius:50%;display:inline-block;margin:1px"></span>`).join('');
+    dcHtml += `<div class="s-dc-card">
+      <div class="dc-event-name">${dc.em} ${dc.label}</div>
+      <div class="s-dc-dots" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:6px 0">${dots}</div>
+      <div class="s-dc-attire">${note || ''}</div>
+    </div>`;
+  });
+  // custom functions
+  const customDcRaw = p.get('dc_custom');
+  if (customDcRaw) {
+    customDcRaw.split('####').forEach(chunk => {
+      if (!chunk) return;
+      const sepName = chunk.indexOf(':::');
+      const name = sepName > -1 ? chunk.slice(0, sepName) : 'Function';
+      const rest  = sepName > -1 ? chunk.slice(sepName + 3) : chunk;
+      const sepIdx = rest.indexOf('||');
+      const colorsRaw = sepIdx > -1 ? rest.slice(0, sepIdx) : rest;
+      const noteEnc   = sepIdx > -1 ? rest.slice(sepIdx + 2) : '';
+      const colors = colorsRaw ? colorsRaw.split('~').filter(Boolean) : [];
+      const note = noteEnc ? decodeURIComponent(noteEnc) : '';
+      if (!name && !colors.length && !note) return;
+      hasDc = true;
+      const dots = colors.map(c => `<span class="s-dc-dot" style="background:${c};border:1px solid rgba(0,0,0,.12);width:18px;height:18px;border-radius:50%;display:inline-block;margin:1px"></span>`).join('');
+      dcHtml += `<div class="s-dc-card">
+        <div class="dc-event-name">🎊 ${name}</div>
+        <div class="s-dc-dots" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:6px 0">${dots}</div>
+        <div class="s-dc-attire">${note || ''}</div>
+      </div>`;
+    });
+  }
+  if (hasDc) {
+    document.getElementById('s-dc-cards').innerHTML = dcHtml;
+    document.getElementById('s-dresscode').style.display = 'block';
+  }
+
+  // stickers
+  const stkRaw = p.get('stickers');
+  if (stkRaw) {
+    try {
+      const stks = JSON.parse(stkRaw);
+      const layer = document.getElementById('s-sticker-layer');
+      stks.forEach(stk => {
+        const el = document.createElement('div');
+        el.style.cssText = `position:absolute;left:${stk.x}%;top:${stk.y}%;font-size:1.4rem;transform:translate(-50%,-50%);pointer-events:none;z-index:20`;
+        el.textContent = stk.em;
+        layer.appendChild(el);
+      });
+    } catch(e){}
+  }
+
+  if (anim==='petals') setTimeout(()=>spawnPetals('s-card-el'), 1600);
+  // render border
+  renderBorderOnShare('s-card-border-layer', borderName, borderCol);
+}
+
+/* ═══════════════════════════════════════════
+   COUNTDOWN
+═══════════════════════════════════════════ */
+function startCountdown(targetDate) {
+  const wrap = document.getElementById('s-countdown');
+  function tick() {
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) { wrap.style.display='none'; return; }
+    wrap.style.display = 'flex';
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-days').textContent = days;
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ═══════════════════════════════════════════
+   GALLERY ON SHARE PAGE (called after reveal)
+═══════════════════════════════════════════ */
+function buildShareGallery(images) {
+  if (!images || !images.length) return;
+  const grid = document.getElementById('s-gal-grid');
+  grid.innerHTML = '';
+  images.forEach(src => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.onclick = () => openLightbox(src);
+    grid.appendChild(img);
+  });
+  document.getElementById('s-gallery').style.display = 'block';
+}
+function openLightbox(src) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ═══════════════════════════════════════════
+   ENVELOPE & FIREWORKS
+═══════════════════════════════════════════ */
+let envOpened = false;
+function openEnv() {
+  if (envOpened) return;
+  envOpened = true;
+  const env = document.getElementById('env');
+  env.classList.add('open');
+  document.getElementById('s-hint').style.display = 'none';
+
+  // Play melody
+  autoPlayMelody();
+
+  setTimeout(() => {
+    env.style.transition = 'opacity .5s, transform .5s';
+    env.style.opacity = '0';
+    env.style.transform = 'scale(.85) translateY(-10px)';
+    setTimeout(() => {
+      env.style.display = 'none';
+      document.getElementById('card-reveal').classList.add('show');
+      launchFireworks();
+      // Gallery stored in sessionStorage (set from creator page via localStorage)
+      const galRaw = sessionStorage.getItem('egreet_gallery');
+      if (galRaw) { try { buildShareGallery(JSON.parse(galRaw)); } catch(e){} }
+    }, 500);
+  }, 850);
+}
+
+function launchFireworks() {
+  const canvas = document.getElementById('fw-canvas');
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const cols = ['#c9a84c','#a385d6','#7c5cbf','#e8d5a0','#c17a6f','#fff','#f0ebf8','#e8a0b4'];
+  const particles = [];
+  for (let b=0; b<10; b++) {
+    setTimeout(() => {
+      const cx = 80+Math.random()*(canvas.width-160);
+      const cy = 60+Math.random()*(canvas.height*.5);
+      for (let i=0; i<65; i++) {
+        const angle=Math.random()*Math.PI*2, spd=2+Math.random()*5.5;
+        particles.push({x:cx,y:cy,vx:Math.cos(angle)*spd,vy:Math.sin(angle)*spd-1.5,alpha:1,size:2+Math.random()*3,color:cols[Math.floor(Math.random()*cols.length)],g:.1});
+      }
+    }, b*260);
+  }
+  let fr=0;
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.alpha-=.013; p.vx*=.98; p.vy*=.98;
+      ctx.save(); ctx.globalAlpha=Math.max(0,p.alpha); ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); ctx.restore();
+    });
+    fr++;
+    if (fr<220) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+  }
+  requestAnimationFrame(draw);
+}
+
+/* ═══════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════ */
+init();
+</script>
+</body>
 </html>
