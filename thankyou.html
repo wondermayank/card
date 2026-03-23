@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Thank You Card Maker — by THunderTechnology</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;color:#2d2438;min-height:100vh;overflow-x:hidden}
+
+/* ── PAGE MODES ── */
+#page-maker{background:#faf8f5;display:block}
+#page-share{display:none;min-height:100vh;flex-direction:column;background:#faf8f5}
+#page-share.show{display:flex}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;background:#fff;border-bottom:1px solid #e8e0f0;position:sticky;top:0;z-index:200;box-shadow:0 2px 14px rgba(124,92,191,.08)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#7c5cbf;display:flex;align-items:center;gap:8px}
+.logo span{color:#c9a84c}
+.logo-tag{font-size:.58rem;color:#a385d6;font-family:'Jost',sans-serif;font-weight:500;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-link{font-size:.82rem;color:#7c5cbf;text-decoration:none;font-weight:500;border:1.5px solid #e2d9f0;padding:7px 16px;border-radius:50px;transition:.2s;background:none;cursor:pointer;font-family:'Jost',sans-serif}
+.nav-link:hover{border-color:#7c5cbf;background:#f0ebf8}
+
+/* ── HERO ── */
+.hero{min-height:calc(100vh - 57px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;position:relative;overflow:hidden;background:linear-gradient(150deg,#1a1428 0%,#2d4a3e 50%,#f0f5f0 100%)}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(201,168,76,.07) 1px,transparent 1px);background-size:28px 28px}
+.hero-glyph{position:absolute;font-family:'Great Vibes',cursive;font-size:clamp(8rem,22vw,20rem);color:rgba(255,255,255,.03);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;user-select:none;white-space:nowrap}
+.hero-inner{position:relative;z-index:2}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:6px 20px;border-radius:40px;margin-bottom:26px;backdrop-filter:blur(8px)}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,7vw,5.2rem);color:#fff;line-height:1.08;margin-bottom:14px}
+.hero h1 em{color:#e8d5a0;font-style:italic}
+.hero p{color:rgba(255,255,255,.6);font-size:clamp(.95rem,2vw,1.12rem);max-width:460px;margin:0 auto 40px;line-height:1.75;font-family:'Cormorant Garamond',serif;font-style:italic}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#2d4a3e;padding:16px 40px;border-radius:50px;font-size:1rem;font-weight:600;cursor:pointer;border:none;transition:.25s;box-shadow:0 10px 40px rgba(0,0,0,.2);font-family:'Jost',sans-serif}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 16px 50px rgba(0,0,0,.28)}
+.hero-cta svg{width:18px;height:18px;transition:.2s}
+.hero-cta:hover svg{transform:translateX(4px)}
+.hero-chips{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap;justify-content:center}
+.chip{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);padding:7px 14px;border-radius:40px;color:rgba(255,255,255,.72);font-size:.76rem;display:flex;align-items:center;gap:5px}
+
+/* ── MAKER LAYOUT ── */
+#maker{display:none;max-width:1140px;margin:0 auto;padding:36px 16px 100px}
+@media(min-width:900px){#maker{padding:44px 28px 100px}}
+.maker-body{display:grid;gap:24px}
+@media(min-width:900px){.maker-body{grid-template-columns:1fr 380px;align-items:start}}
+
+/* ── FORM PANEL ── */
+.fpanel{background:#fff;border-radius:16px;border:1px solid #e8e0f0;box-shadow:0 4px 24px rgba(45,74,62,.07);overflow:hidden;margin-bottom:20px}
+.fpanel:last-child{margin-bottom:0}
+.ph{padding:18px 24px 13px;border-bottom:1px solid #e8e0f0;display:flex;align-items:center;gap:10px}
+.ph-icon{font-size:1.3rem}
+.ph h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:#2d2438;flex:1}
+.ph p{color:#6a7a6a;font-size:.82rem;margin-top:3px}
+.pb{padding:20px 24px}
+.fi{margin-bottom:17px}
+.fi:last-child{margin-bottom:0}
+.fi label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#7a8a7a;margin-bottom:6px}
+.opt-tag{font-weight:400;color:#7c9e7c;text-transform:none;letter-spacing:0;font-size:.72rem}
+.fi input,.fi textarea,.fi select{width:100%;padding:11px 14px;border:1.5px solid #e0ece0;border-radius:10px;font-family:'Jost',sans-serif;font-size:.88rem;background:#f8fbf8;color:#2d2438;outline:none;transition:.2s;resize:vertical}
+.fi input:focus,.fi textarea:focus,.fi select:focus{border-color:#3d7a52;box-shadow:0 0 0 3px rgba(61,122,82,.1)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.frow{grid-template-columns:1fr}}
+
+/* ── MESSAGE SUGGESTIONS ── */
+.suggestions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sug-btn{padding:8px 14px;border:1.5px solid #c8e0c8;border-radius:20px;background:#f0f8f0;color:#2d4a3e;font-family:'Jost',sans-serif;font-size:.78rem;cursor:pointer;transition:.2s;line-height:1.3;text-align:left}
+.sug-btn:hover{border-color:#3d7a52;background:#e0f0e0;color:#1a3a28}
+.sug-label{font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a8a7a;margin-bottom:8px;display:block}
+
+/* ── PHOTO UPLOAD ── */
+.phu{border:2px dashed #d0e8d0;border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.2s;text-align:center;background:#f8fbf8}
+.phu:hover{border-color:#3d7a52;background:#f0f8f0}
+.phu input{display:none}
+.phu-icon{width:48px;height:48px;background:#e8f4e8;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.phu-txt{font-size:.8rem;color:#7a8a7a}
+.phu-lnk{font-size:.78rem;color:#3d7a52;font-weight:500}
+#photo-prev{width:80px;height:80px;border-radius:50%;object-fit:cover;display:none;border:3px solid #7ca87c}
+
+/* ── THEME PICKER ── */
+.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:400px){.theme-grid{grid-template-columns:repeat(3,1fr)}}
+.tsw{aspect-ratio:4/3;border-radius:10px;cursor:pointer;border:2.5px solid transparent;transition:.2s;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px}
+.tsw:hover{transform:scale(1.05);z-index:1}
+.tsw.sel{border-color:#3d7a52;box-shadow:0 0 0 3px rgba(61,122,82,.25)}
+.tsw .tck{position:absolute;top:5px;right:5px;width:18px;height:18px;background:#3d7a52;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.65rem;color:#fff}
+.tsw.sel .tck{display:flex}
+.tsw span{font-size:.58rem;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:.03em;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+/* themes */
+.th0{background:linear-gradient(135deg,#1a3a28,#3d7a52)}
+.th1{background:linear-gradient(135deg,#2c1810,#8b4513)}
+.th2{background:linear-gradient(135deg,#1a1a38,#4a3a8a)}
+.th3{background:linear-gradient(135deg,#2a1428,#8a3a6a)}
+.th4{background:linear-gradient(135deg,#181830,#2a4a8a)}
+.th5{background:linear-gradient(135deg,#2a2818,#7a6030)}
+.th6{background:linear-gradient(135deg,#f0e8e0,#d4b8a0)}
+.th7{background:linear-gradient(135deg,#0e1520,#1a2a40)}
+
+/* ── CARD STYLE ── */
+.card-style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.csw{border:2px solid #e0ece0;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:.2s;background:#f8fbf8}
+.csw:hover{border-color:#7ca87c}
+.csw.sel{border-color:#3d7a52;background:#e8f4e8}
+.csw .cs-preview{font-size:1.5rem;margin-bottom:4px}
+.csw .cs-name{font-size:.67rem;color:#7a8a7a;font-weight:500}
+
+/* ── BUTTONS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:.2s;letter-spacing:.02em;width:100%;margin-bottom:10px}
+.btn:last-child{margin-bottom:0}
+.bg{background:#3d7a52;color:#fff;box-shadow:0 4px 14px rgba(61,122,82,.28)}
+.bg:hover{background:#2d5a3e;transform:translateY(-1px)}
+.bdk{background:#2d2438;color:#fff}
+.bdk:hover{background:#1a1020}
+.bol{background:transparent;color:#3d7a52;border:1.5px solid #3d7a52}
+.bol:hover{background:#e8f4e8}
+
+/* ── SHARE BOX ── */
+.sbox{background:#e8f4e8;border:1px solid #c8e0c8;border-radius:12px;padding:14px;margin-bottom:14px}
+.sbox p{font-size:.74rem;color:#5a7a5a;margin-bottom:7px;font-weight:500}
+.slrow{display:flex;gap:7px}
+.slrow input{flex:1;font-size:.74rem;background:#fff;cursor:text;min-width:0;padding:9px 12px;border:1.5px solid #c8e0c8;border-radius:8px;font-family:'Jost',sans-serif;color:#2d2438;outline:none}
+.cpbtn{padding:9px 13px;background:#3d7a52;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.78rem;white-space:nowrap;font-family:'Jost',sans-serif;transition:.2s}
+.cpbtn:hover{background:#2d5a3e}
+
+/* ── PREVIEW PANEL ── */
+.ppanel{display:flex;flex-direction:column;gap:14px;position:sticky;top:80px;height:fit-content}
+.plbl{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:#7a8a7a;text-align:center}
+.card-stage{width:100%;max-width:340px;margin:0 auto;aspect-ratio:4/3;border-radius:18px;overflow:hidden;box-shadow:0 16px 50px rgba(29,58,40,.18),0 0 0 1px rgba(255,255,255,.4);position:relative}
+
+/* ── THE CARD ── */
+#ty-card{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:28px 26px;background:linear-gradient(135deg,#1a3a28,#3d7a52);transition:background .4s}
+
+/* card border layer */
+#card-border-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+
+/* card content */
+.card-inner{position:relative;z-index:5;text-align:center;width:100%}
+.card-to{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:4px;font-family:'Jost',sans-serif}
+.card-recipient{font-family:'Great Vibes',cursive;font-size:clamp(1.6rem,5vw,2.4rem);color:#e8d5a0;line-height:1.15;margin-bottom:8px}
+.card-heart{font-size:1rem;color:rgba(255,255,255,.4);margin-bottom:10px;letter-spacing:4px}
+.card-title-text{font-family:'Cormorant Garamond',serif;font-size:clamp(1rem,3vw,1.4rem);color:#fff;font-weight:600;margin-bottom:10px;letter-spacing:.04em}
+.card-divider{display:flex;align-items:center;gap:8px;margin:10px 0;opacity:.35}
+.card-divider hr{flex:1;border:none;border-top:1px solid rgba(255,255,255,.7)}
+.card-divider span{font-size:.9rem;color:#e8d5a0}
+.card-message{font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(255,255,255,.78);font-size:clamp(.75rem,2vw,.9rem);line-height:1.65;white-space:pre-wrap;margin-bottom:10px}
+.card-from-row{margin-top:8px}
+.card-from-label{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);font-family:'Jost',sans-serif}
+.card-from{font-family:'Cormorant Garamond',serif;font-size:clamp(.95rem,2.5vw,1.2rem);color:#e8d5a0;font-weight:600}
+.card-reason{font-size:.65rem;color:rgba(255,255,255,.5);margin-top:3px;font-family:'Jost',sans-serif;letter-spacing:.04em}
+#card-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2.5px solid rgba(255,255,255,.3);margin-bottom:10px;display:none}
+
+/* decorative corner SVGs */
+.cc{position:absolute;width:52px;height:52px;opacity:.4;pointer-events:none}
+.cc svg{width:100%;height:100%}
+.cc-tl{top:6px;left:6px}.cc-tr{top:6px;right:6px;transform:scaleX(-1)}
+.cc-bl{bottom:6px;left:6px;transform:scaleY(-1)}.cc-br{bottom:6px;right:6px;transform:scale(-1)}
+.cframe{position:absolute;inset:8px;border:1px solid rgba(255,255,255,.12);border-radius:10px;pointer-events:none;z-index:3}
+
+/* card style variants */
+.style-minimal .card-heart{display:none}
+.style-classic .cc{opacity:.6}
+.style-modern .cframe{border-radius:4px;border-color:rgba(255,255,255,.2)}
+.style-floral .card-message::before,.style-floral .card-message::after{content:'❋  ';color:rgba(255,255,255,.3)}
+
+/* petal animation */
+.petal{position:absolute;border-radius:50% 0 50% 0;opacity:0;pointer-events:none;animation:pfall linear infinite}
+@keyframes pfall{0%{opacity:0;transform:translateY(-10%) rotate(0)}10%{opacity:.7}90%{opacity:.4}100%{opacity:0;transform:translateY(110%) rotate(480deg)}}
+
+/* ── MOBILE PREVIEW ── */
+.mob-prev-btn{display:none;position:fixed;bottom:18px;right:18px;z-index:150;background:#3d7a52;color:#fff;border:none;border-radius:50px;padding:12px 20px;font-family:'Jost',sans-serif;font-size:.84rem;font-weight:500;cursor:pointer;box-shadow:0 6px 20px rgba(61,122,82,.4);align-items:center;gap:7px}
+@media(min-width:900px){.ppanel{display:flex!important}.pact{display:flex!important}.clsbtn{display:none!important}.mob-prev-btn{display:none!important}}
+@media(max-width:899px){.mob-prev-btn{display:flex}.ppanel{display:none;position:fixed;inset:0;z-index:400;background:rgba(5,15,8,.88);align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(8px)}.ppanel.open{display:flex!important;flex-direction:column}.ppanel.open .card-stage{max-width:300px}.clsbtn{display:flex!important}.pact{display:none}}
+.clsbtn{display:none;position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:36px;height:36px;font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center;z-index:10;backdrop-filter:blur(4px)}
+.pact{display:flex;gap:10px;max-width:340px;margin:0 auto;width:100%}
+.bsm{flex:1;margin:0!important;padding:10px 12px;font-size:.8rem}
+
+/* ── SHARE PAGE ── */
+.s-nav{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;background:#fff;border-bottom:1px solid #e0ece0;box-shadow:0 2px 12px rgba(61,122,82,.07)}
+.s-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 16px 60px;position:relative;overflow:hidden;background:#faf8f5}
+.s-main::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(61,122,82,.05) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(201,168,76,.04) 0%,transparent 60%)}
+
+/* envelope */
+.env-wrap{position:relative;width:min(340px,88vw);height:min(220px,57vw);margin:0 auto 22px;cursor:pointer;perspective:800px}
+.env-body{width:100%;height:100%;border-radius:14px;background:linear-gradient(145deg,#fff,#f0f8f0);box-shadow:0 10px 40px rgba(29,58,40,.16),0 2px 8px rgba(29,58,40,.07);position:relative;overflow:hidden;border:1.5px solid #c8e0c8;transition:.3s}
+.env-wrap:hover .env-body{transform:scale(1.01)}
+.env-flap{position:absolute;top:0;left:0;right:0;height:55%;background:linear-gradient(160deg,#d8eed8,#b8d8b8);clip-path:polygon(0 0,100% 0,50% 100%);border-radius:14px 14px 0 0;transform-origin:top center;transition:transform .75s cubic-bezier(.4,0,.2,1);z-index:8}
+.env-wrap.open .env-flap{transform:rotateX(-185deg)}
+.env-el{position:absolute;bottom:0;left:0;width:52%;height:58%;background:linear-gradient(135deg,#c8e0c8,#b0ceb0);clip-path:polygon(0 100%,100% 46%,0 0);z-index:2}
+.env-er{position:absolute;bottom:0;right:0;width:52%;height:58%;background:linear-gradient(225deg,#c0d8c0,#a8c8a8);clip-path:polygon(100% 100%,0 46%,100% 0);z-index:2}
+.env-eb{position:absolute;bottom:0;left:0;right:0;height:56%;background:linear-gradient(180deg,#d0e8d0,#b8d0b8);clip-path:polygon(0 100%,50% 0,100% 100%);z-index:3}
+.env-seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:12;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#3d7a52,#5a9a6e);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 16px rgba(61,122,82,.4);transition:.3s}
+.env-wrap.open .env-seal{opacity:0;transform:translate(-50%,-50%) scale(0)}
+.click-hint{text-align:center;color:#7a8a7a;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:24px;animation:ph 2s ease-in-out infinite}
+@keyframes ph{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* card reveal on share page */
+.card-reveal{width:min(340px,86vw);margin:0 auto;opacity:0;transform:translateY(28px) scale(.92);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1);pointer-events:none}
+.card-reveal.show{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
+.s-card-stage{width:100%;aspect-ratio:4/3;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(29,58,40,.22);margin-bottom:20px;position:relative}
+#s-ty-card{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 26px;position:relative;overflow:hidden;background:linear-gradient(135deg,#1a3a28,#3d7a52)}
+
+/* download section */
+.dl-area{text-align:center}
+.dl-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#2d2438;margin-bottom:12px}
+.dl-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.dlbtn{display:flex;align-items:center;gap:7px;padding:12px 22px;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.86rem;font-weight:500;cursor:pointer;transition:.2s}
+.dlbtn:hover{transform:translateY(-1px)}
+.dlg{background:#3d7a52;color:#fff;box-shadow:0 4px 14px rgba(61,122,82,.28)}
+.dlg:hover{background:#2d5a3e}
+.dld{background:#2d2438;color:#fff}
+.dld:hover{background:#1a1020}
+
+/* fireworks */
+#fw-canvas{position:fixed;inset:0;pointer-events:none;z-index:500;display:none}
+
+/* footer */
+footer{background:#1a2820;color:#8aaa8a;text-align:center;padding:24px 20px;font-size:.8rem;margin-top:auto}
+footer a{color:#c8e8a0;text-decoration:none}
+footer a:hover{text-decoration:underline}
+.fb{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#fff;margin-bottom:4px}
+.fb span{color:#c9a84c}
+.fb-sub{font-size:.64rem;color:#4a6a4a;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.hrt{color:#c17a6f;animation:hb 1.4s ease-in-out infinite;display:inline-block}
+@keyframes hb{0%,100%{transform:scale(1)}14%{transform:scale(1.28)}28%{transform:scale(1)}42%{transform:scale(1.18)}70%{transform:scale(1)}}
+
+/* share-to-new-tab opener banner on share page */
+.s-dear-line{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:#7a8a7a;margin-bottom:8px;text-align:center}
+.s-names-line{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:#2d2438;text-align:center;margin-bottom:4px}
+.s-names-line em{color:#3d7a52;font-style:italic}
+.s-sub-line{text-align:center;color:#7a8a7a;font-size:.85rem;margin-bottom:26px}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     MAKER PAGE
+══════════════════════════════════ -->
+<div id="page-maker">
+
+<nav>
+  <div class="logo">thank you<span>card</span> <span class="logo-tag">by THunderTechnology</span></div>
+  <div class="nav-right">
+    <a href="https://wondermayank.github.io/card/wedding" class="nav-link">💌 Wedding Cards</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glyph">Thank You</div>
+  <div class="hero-inner">
+    <div class="hero-badge">✦ Thank You Card Maker</div>
+    <h1>Express Your<br/><em>Heartfelt Gratitude</em></h1>
+    <p>Create beautiful personalised thank you cards in seconds. Share with loved ones or download.</p>
+    <button class="hero-cta" onclick="showMaker()">
+      Create Your Card
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </button>
+    <div class="hero-chips">
+      <div class="chip">🎨 8 Themes</div>
+      <div class="chip">✍️ Message Suggestions</div>
+      <div class="chip">📸 Add Photo</div>
+      <div class="chip">🔗 Share Link</div>
+      <div class="chip">⬇ Download PNG</div>
+    </div>
+  </div>
+</section>
+
+<!-- MAKER -->
+<div id="maker">
+  <div class="maker-body">
+
+    <!-- ═══ FORM COLUMN ═══ -->
+    <div>
+
+      <!-- RECIPIENT -->
+      <div class="fpanel">
+        <div class="ph"><span class="ph-icon">💌</span><div><h2>Recipient Information</h2><p style="color:#7a8a7a;font-size:.82rem;margin-top:3px">Who are you thanking?</p></div></div>
+        <div class="pb">
+          <div class="fi">
+            <label>To <span style="color:#3d7a52">*</span></label>
+            <input type="text" id="f-to" placeholder="e.g. Priya &amp; Rohit, Grandma, The Team…" oninput="updateCard()"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- MESSAGE -->
+      <div class="fpanel">
+        <div class="ph"><span class="ph-icon">✍️</span><div><h2>Your Message</h2><p style="color:#7a8a7a;font-size:.82rem;margin-top:3px">Write from the heart or pick a suggestion</p></div></div>
+        <div class="pb">
+          <div class="fi">
+            <label>Message <span style="color:#3d7a52">*</span></label>
+            <textarea id="f-msg" rows="4" placeholder="Write your heartfelt message here…" oninput="updateCard()"></textarea>
+          </div>
+          <div class="fi">
+            <span class="sug-label">Quick Suggestions</span>
+            <div class="suggestions" id="suggestions-wrap">
+              <!-- populated by JS based on reason -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FROM / REASON / PHOTO -->
+      <div class="fpanel">
+        <div class="ph"><span class="ph-icon">👤</span><div><h2>Your Information</h2><p style="color:#7a8a7a;font-size:.82rem;margin-top:3px">Your name, reason and optional photo</p></div></div>
+        <div class="pb">
+          <div class="frow">
+            <div class="fi">
+              <label>From <span style="color:#3d7a52">*</span></label>
+              <input type="text" id="f-from" placeholder="Your name" oninput="updateCard()"/>
+            </div>
+            <div class="fi">
+              <label>Reason for Thanks</label>
+              <select id="f-reason" onchange="updateSuggestions();updateCard()">
+                <option value="">Select reason…</option>
+                <option value="wedding-gift">Wedding Gift</option>
+                <option value="birthday-gift">Birthday Gift</option>
+                <option value="hospitality">Hospitality</option>
+                <option value="support">Support &amp; Help</option>
+                <option value="work">Work / Collaboration</option>
+                <option value="donation">Donation</option>
+                <option value="friendship">Friendship</option>
+                <option value="general">General Thanks</option>
+              </select>
+            </div>
+          </div>
+          <div class="fi">
+            <label>Photo <span class="opt-tag">(Optional)</span></label>
+            <div class="phu" onclick="document.getElementById('ph-inp').click()">
+              <img id="photo-prev" src="" alt=""/>
+              <div class="phu-icon" id="phu-ico">📷</div>
+              <div class="phu-txt">Add your photo or together photo</div>
+              <div class="phu-lnk">Choose file</div>
+              <input type="file" id="ph-inp" accept="image/*" onchange="handlePhoto(this)"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THEME & STYLE -->
+      <div class="fpanel">
+        <div class="ph"><span class="ph-icon">🎨</span><div><h2>Theme &amp; Style</h2><p style="color:#7a8a7a;font-size:.82rem;margin-top:3px">Choose a colour palette and card style</p></div></div>
+        <div class="pb">
+          <div class="fi">
+            <label>Colour Theme</label>
+            <div class="theme-grid">
+              <div class="tsw th0 sel" onclick="setTheme(0,this)"><div class="tck">✓</div><span>Forest</span></div>
+              <div class="tsw th1" onclick="setTheme(1,this)"><div class="tck">✓</div><span>Terracotta</span></div>
+              <div class="tsw th2" onclick="setTheme(2,this)"><div class="tck">✓</div><span>Royal</span></div>
+              <div class="tsw th3" onclick="setTheme(3,this)"><div class="tck">✓</div><span>Berry</span></div>
+              <div class="tsw th4" onclick="setTheme(4,this)"><div class="tck">✓</div><span>Ocean</span></div>
+              <div class="tsw th5" onclick="setTheme(5,this)"><div class="tck">✓</div><span>Golden</span></div>
+              <div class="tsw th6" onclick="setTheme(6,this)"><div class="tck">✓</div><span>Ivory</span></div>
+              <div class="tsw th7" onclick="setTheme(7,this)"><div class="tck">✓</div><span>Midnight</span></div>
+            </div>
+          </div>
+          <div class="fi">
+            <label>Card Style</label>
+            <div class="card-style-grid">
+              <div class="csw sel" onclick="setStyle('classic',this)"><div class="cs-preview">✦</div><div class="cs-name">Classic</div></div>
+              <div class="csw" onclick="setStyle('minimal',this)"><div class="cs-preview">—</div><div class="cs-name">Minimal</div></div>
+              <div class="csw" onclick="setStyle('floral',this)"><div class="cs-preview">🌸</div><div class="cs-name">Floral</div></div>
+            </div>
+          </div>
+          <div class="fi">
+            <label>Accent Colour</label>
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="color" id="f-accent" value="#e8d5a0" oninput="updateCard()" style="width:42px;height:36px;border-radius:8px;border:1.5px solid #d0e8d0;cursor:pointer;padding:2px;background:none"/>
+              <span style="font-size:.78rem;color:#7a8a7a">Name and detail colour on card</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHARE -->
+      <div class="fpanel">
+        <div class="ph"><span class="ph-icon">🔗</span><div><h2>Share &amp; Download</h2><p style="color:#7a8a7a;font-size:.82rem;margin-top:3px">Share your card or save it</p></div></div>
+        <div class="pb">
+          <div class="sbox">
+            <p>🔗 Share link — recipient clicks the envelope to open their card</p>
+            <div class="slrow">
+              <input type="text" id="share-url" readonly value="Click 'Generate Share Link' to create…"/>
+              <button class="cpbtn" onclick="copyLink()">Copy</button>
+            </div>
+          </div>
+          <button class="btn bg" onclick="genLink()">🔗 Generate Share Link</button>
+          <button class="btn bdk" onclick="dlPNG()">⬇ Download PNG</button>
+        </div>
+      </div>
+
+    </div><!-- end form col -->
+
+    <!-- ═══ PREVIEW PANEL ═══ -->
+    <div class="ppanel" id="ppanel">
+      <button class="clsbtn" onclick="closePrev()">✕</button>
+      <div class="plbl">Live Preview</div>
+      <div class="card-stage" id="card-stage">
+        <div id="ty-card">
+          <!-- corners -->
+          <div class="cc cc-tl"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+          <div class="cc cc-tr"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+          <div class="cc cc-bl"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+          <div class="cc cc-br"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+          <div class="cframe"></div>
+          <svg id="card-border-svg" viewBox="0 0 400 300" preserveAspectRatio="none"></svg>
+
+          <div class="card-inner">
+            <img id="card-photo" src="" alt=""/>
+            <div class="card-to" id="c-to-label">With love &amp; gratitude, to</div>
+            <div class="card-recipient" id="c-to">Someone Special</div>
+            <div class="card-heart" id="c-heart">— ♥ —</div>
+            <div class="card-title-text" id="c-title">Thank You</div>
+            <div class="card-divider"><hr/><span id="c-div-sym">❧</span><hr/></div>
+            <div class="card-message" id="c-msg">Your kindness means more than words can express.</div>
+            <div class="card-from-row">
+              <div class="card-from-label">With gratitude,</div>
+              <div class="card-from" id="c-from">Your Name</div>
+              <div class="card-reason" id="c-reason"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pact">
+        <button class="btn bdk bsm" onclick="dlPNG()">⬇ PNG</button>
+        <button class="btn bol bsm" style="border-color:#3d7a52;color:#3d7a52" onclick="genLink();alert('Link generated! Go to Share section.')">🔗 Link</button>
+      </div>
+    </div>
+
+  </div>
+</div><!-- end maker -->
+
+<button class="mob-prev-btn" id="mob-btn" onclick="openPrev()" style="display:none">👁 Preview Card</button>
+
+<footer>
+  <div class="fb">thank you<span>card</span></div>
+  <div class="fb-sub">by THunderTechnology</div>
+  <div>Made with <span class="hrt">♥</span> by <a href="https://wondermayank.github.io" target="_blank">Wondermayank</a> &nbsp;|&nbsp; <a href="https://wondermayank.github.io/thundertechnology/" target="_blank">THunderTechnology</a></div>
+  <div style="margin-top:5px;opacity:.35;font-size:.7rem">© 2025 THunderTechnology</div>
+</footer>
+</div><!-- #page-maker -->
+
+
+<!-- ══════════════════════════════════
+     SHARE / VIEW PAGE
+══════════════════════════════════ -->
+<div id="page-share">
+<canvas id="fw-canvas"></canvas>
+
+<nav class="s-nav">
+  <div class="logo" style="font-size:1.25rem">thank you<span>card</span></div>
+  <button class="nav-link" onclick="showMakerPage()" style="font-size:.8rem">✨ Create Yours Free</button>
+</nav>
+
+<div class="s-main">
+  <div class="s-dear-line" id="s-dear-line" style="display:none"></div>
+  <div class="s-names-line" id="s-names-line"><em>Someone Special</em></div>
+  <div class="s-sub-line" id="s-sub-line">has received a thank you card</div>
+
+  <!-- ENVELOPE -->
+  <div class="env-wrap" id="env" onclick="openEnv()">
+    <div class="env-body">
+      <div class="env-flap"></div>
+      <div class="env-el"></div>
+      <div class="env-er"></div>
+      <div class="env-eb"></div>
+      <div class="env-seal">💚</div>
+    </div>
+  </div>
+  <div class="click-hint" id="s-hint">👆 Click the envelope to open your card 👆</div>
+
+  <!-- CARD REVEAL -->
+  <div class="card-reveal" id="card-reveal">
+    <div class="s-card-stage">
+      <div id="s-ty-card">
+        <div class="cc cc-tl"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+        <div class="cc cc-tr"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+        <div class="cc cc-bl"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+        <div class="cc cc-br"><svg viewBox="0 0 52 52" fill="none"><path d="M2 2 Q2 26 26 26" stroke="rgba(255,255,255,.22)" stroke-width="1" fill="none"/><circle cx="8" cy="8" r="3" fill="rgba(232,213,160,.55)"/><circle cx="2" cy="16" r="1.6" fill="rgba(232,213,160,.3)"/><circle cx="16" cy="2" r="1.6" fill="rgba(232,213,160,.3)"/></svg></div>
+        <div class="cframe"></div>
+        <svg id="s-card-border-svg" viewBox="0 0 400 300" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4"></svg>
+
+        <div class="card-inner">
+          <img id="s-card-photo" src="" alt="" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2.5px solid rgba(255,255,255,.3);margin-bottom:10px;display:none"/>
+          <div class="card-to" id="s-c-to-label">With love &amp; gratitude, to</div>
+          <div class="card-recipient" id="s-c-to">Someone Special</div>
+          <div class="card-heart" id="s-c-heart">— ♥ —</div>
+          <div class="card-title-text" id="s-c-title">Thank You</div>
+          <div class="card-divider"><hr/><span id="s-c-div-sym">❧</span><hr/></div>
+          <div class="card-message" id="s-c-msg">Your kindness means more than words can express.</div>
+          <div class="card-from-row">
+            <div class="card-from-label">With gratitude,</div>
+            <div class="card-from" id="s-c-from">Your Name</div>
+            <div class="card-reason" id="s-c-reason"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dl-area">
+      <div class="dl-title">💾 Save this card</div>
+      <div class="dl-row">
+        <button class="dlbtn dlg" onclick="dlSharePNG()">⬇ Download PNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="fb">thank you<span> card</span></div>
+  <div class="fb-sub">by THunderTechnology</div>
+  <div>Made with <span class="hrt">♥</span> by <a href="https://wondermayank.github.io" target="_blank">Wondermayank</a></div>
+  <div style="margin-top:5px;opacity:.35;font-size:.7rem">© 2025 THunderTechnology</div>
+</footer>
+</div><!-- #page-share -->
+
+
+<script>
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+const ST = { theme: 0, style: 'classic', accent: '#e8d5a0', photo: '' };
+
+const THEMES = [
+  'linear-gradient(135deg,#1a3a28,#3d7a52)',
+  'linear-gradient(135deg,#2c1810,#8b4513)',
+  'linear-gradient(135deg,#1a1a38,#4a3a8a)',
+  'linear-gradient(135deg,#2a1428,#8a3a6a)',
+  'linear-gradient(135deg,#181830,#2a4a8a)',
+  'linear-gradient(135deg,#2a2818,#7a6030)',
+  'linear-gradient(135deg,#f0e8e0,#d4b8a0)',
+  'linear-gradient(135deg,#0e1520,#1a2a40)',
+];
+
+const REASONS_MAP = {
+  'wedding-gift': ['for your beautiful wedding gift — it means the world to us 🌸', 'for celebrating this milestone with us and showering us with love 💍', 'for your generous gift and for being such an important part of our special day ✨'],
+  'birthday-gift': ['for making my birthday extra special with your thoughtful gift 🎂', 'for remembering my birthday and for the wonderful surprise 🎉', 'for the lovely birthday wishes and the beautiful gift — you made my day 🥳'],
+  'hospitality': ['for opening your home and heart to us — we felt so welcome 🏡', 'for your warmth, hospitality and the wonderful memories we made together 🌿', 'for being such a generous and gracious host — we are truly grateful 🙏'],
+  'support': ['for standing by my side when I needed it most — your support means everything 💚', 'for your kindness, strength and unwavering support through it all 🌟', 'for being there for me — your care and encouragement kept me going 🤗'],
+  'work': ['for your hard work, dedication and collaboration on this project 🤝', 'for your invaluable contribution — this could not have happened without you 🏆', 'for your expertise, commitment and going above and beyond — truly appreciated 🌟'],
+  'donation': ['for your generous contribution — it makes a real difference 💛', 'for your kindness and support for this cause — thank you from the heart 🙏', 'for your thoughtful donation and for believing in this cause with us 🌍'],
+  'friendship': ['for being such a wonderful friend — life is better with you in it 💚', 'for always being there, for listening and for making every moment brighter 🌟', 'for your friendship, loyalty and all the beautiful memories we share 💫'],
+  'general': ['for your kindness and generosity — it truly made a difference 🙏', 'for your thoughtfulness and care — it touched my heart deeply 💚', 'for being so wonderful — words cannot fully express how grateful I am ✨'],
+};
+
+const REASON_LABELS = {
+  'wedding-gift': 'For your wedding gift',
+  'birthday-gift': 'For the birthday gift',
+  'hospitality': 'For your hospitality',
+  'support': 'For your support',
+  'work': 'For the collaboration',
+  'donation': 'For your donation',
+  'friendship': 'For your friendship',
+  'general': 'With heartfelt gratitude',
+};
+
+/* ═══════════════════════════════
+   PAGE ROUTING
+═══════════════════════════════ */
+function init() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('view') === '1') {
+    document.getElementById('page-maker').style.display = 'none';
+    document.getElementById('page-share').classList.add('show');
+    loadSharePage(p);
+  } else {
+    updateSuggestions();
+    updateCard();
+  }
+}
+function showMakerPage() { window.location.href = window.location.pathname; }
+
+/* ═══════════════════════════════
+   SHOW MAKER
+═══════════════════════════════ */
+function showMaker() {
+  document.getElementById('maker').style.display = 'block';
+  if (window.innerWidth < 900) document.getElementById('mob-btn').style.display = 'flex';
+  setTimeout(() => document.getElementById('maker').scrollIntoView({ behavior: 'smooth' }), 50);
+}
+
+/* ═══════════════════════════════
+   THEME & STYLE
+═══════════════════════════════ */
+function setTheme(i, el) {
+  ST.theme = i;
+  document.querySelectorAll('.tsw').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  updateCard();
+}
+function setStyle(s, el) {
+  ST.style = s;
+  document.querySelectorAll('.csw').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  updateCard();
+}
+
+/* ═══════════════════════════════
+   PHOTO
+═══════════════════════════════ */
+function handlePhoto(inp) {
+  const f = inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    ST.photo = e.target.result;
+    document.getElementById('phu-ico').style.display = 'none';
+    const p = document.getElementById('photo-prev');
+    p.src = ST.photo; p.style.display = 'block';
+    updateCard();
+  };
+  r.readAsDataURL(f);
+}
+
+/* ═══════════════════════════════
+   MESSAGE SUGGESTIONS
+═══════════════════════════════ */
+function updateSuggestions() {
+  const reason = document.getElementById('f-reason')?.value || '';
+  const wrap = document.getElementById('suggestions-wrap');
+  const msgs = REASONS_MAP[reason] || REASONS_MAP['general'];
+  wrap.innerHTML = msgs.map((m, i) =>
+    `<button class="sug-btn" onclick="useSuggestion(${i},'${reason}')">Suggestion ${i + 1}<br/><span style="font-size:.7rem;opacity:.7;font-style:italic">${m.slice(0, 48)}…</span></button>`
+  ).join('');
+}
+function useSuggestion(i, reason) {
+  const key = reason || document.getElementById('f-reason')?.value || 'general';
+  const msgs = REASONS_MAP[key] || REASONS_MAP['general'];
+  const to = document.getElementById('f-to')?.value || '';
+  document.getElementById('f-msg').value = 'Dear ' + (to || 'you') + ',\n\nThank you so much ' + msgs[i];
+  updateCard();
+}
+
+/* ═══════════════════════════════
+   CARD UPDATE
+═══════════════════════════════ */
+function updateCard() {
+  const to     = document.getElementById('f-to')?.value || '';
+  const msg    = document.getElementById('f-msg')?.value || '';
+  const from   = document.getElementById('f-from')?.value || '';
+  const reason = document.getElementById('f-reason')?.value || '';
+  const accent = document.getElementById('f-accent')?.value || '#e8d5a0';
+
+  applyCardData('ty-card', { to, msg, from, reason, accent });
+  renderBorderSVG('card-border-svg', accent);
+}
+
+function applyCardData(cardId, { to, msg, from, reason, accent }) {
+  const card = document.getElementById(cardId); if (!card) return;
+
+  // background
+  card.style.background = THEMES[ST.theme];
+
+  // style class
+  card.className = card.className.replace(/style-\w+/g, '').trim();
+  if (ST.style) card.classList.add('style-' + ST.style);
+
+  // text
+  setT(cardId === 'ty-card' ? 'c-to' : 's-c-to', to || 'Someone Special', { color: accent });
+  setT(cardId === 'ty-card' ? 'c-msg' : 's-c-msg', msg || 'Your kindness means more than words can express.');
+  setT(cardId === 'ty-card' ? 'c-from' : 's-c-from', from || 'Your Name', { color: accent });
+
+  // accent colour on elements
+  const prefix = cardId === 'ty-card' ? 'c' : 's-c';
+  const andEl = document.getElementById(prefix + '-div-sym');
+  if (andEl) andEl.style.color = accent;
+  const recipEl = document.getElementById(prefix + '-to');
+  if (recipEl) recipEl.style.color = accent;
+  const fromEl = document.getElementById(prefix + '-from');
+  if (fromEl) fromEl.style.color = accent;
+
+  // reason
+  const reasonEl = document.getElementById(prefix + '-reason');
+  if (reasonEl) {
+    reasonEl.textContent = reason ? REASON_LABELS[reason] || '' : '';
+    reasonEl.style.display = reason ? 'block' : 'none';
+  }
+
+  // photo
+  const photoId = cardId === 'ty-card' ? 'card-photo' : 's-card-photo';
+  const photoEl = document.getElementById(photoId);
+  if (photoEl) {
+    if (ST.photo) { photoEl.src = ST.photo; photoEl.style.display = 'block'; }
+    else photoEl.style.display = 'none';
+  }
+}
+
+function setT(id, text, styles) {
+  const el = document.getElementById(id); if (!el) return;
+  el.textContent = text;
+  if (styles) Object.assign(el.style, styles);
+}
+
+/* ═══════════════════════════════
+   BORDER SVG (landscape 4:3)
+═══════════════════════════════ */
+function renderBorderSVG(svgId, color) {
+  const svgEl = document.getElementById(svgId); if (!svgEl) return;
+  const c = color || '#e8d5a0';
+  const W = 400, H = 300;
+
+  // Build border based on style
+  let inner = '';
+  if (ST.style === 'classic') {
+    inner = classicBorder(W, H, c);
+  } else if (ST.style === 'minimal') {
+    inner = minimalBorder(W, H, c);
+  } else if (ST.style === 'floral') {
+    inner = floralBorder(W, H, c);
+  }
+  svgEl.innerHTML = inner;
+}
+
+function classicBorder(W, H, c) {
+  let s = '';
+  // double rect frame
+  s += `<rect x="6" y="6" width="${W-12}" height="${H-12}" rx="6" fill="none" stroke="${c}" stroke-width="1.2" opacity=".35"/>`;
+  s += `<rect x="11" y="11" width="${W-22}" height="${H-22}" rx="4" fill="none" stroke="${c}" stroke-width=".5" opacity=".2"/>`;
+  // corner ornaments
+  function corner(x, y, flip) {
+    const sx = flip % 2 === 0 ? 1 : -1, sy = flip < 2 ? 1 : -1;
+    const ox = flip % 2 === 0 ? x : x, oy = flip < 2 ? y : y;
+    s += `<g transform="translate(${ox},${oy}) scale(${sx},${sy})">`;
+    s += `<path d="M0,0 Q12,0 12,12" fill="none" stroke="${c}" stroke-width="1.2" opacity=".5"/>`;
+    s += `<circle cx="6" cy="6" r="2.5" fill="${c}" opacity=".55"/>`;
+    s += `<circle cx="0" cy="0" r="1.5" fill="${c}" opacity=".4"/>`;
+    s += `</g>`;
+  }
+  corner(6, 6, 0);
+  corner(W - 6, 6, 1);
+  corner(6, H - 6, 2);
+  corner(W - 6, H - 6, 3);
+  // mid-side diamonds
+  [[W/2, 6], [W/2, H-6], [6, H/2], [W-6, H/2]].forEach(([cx, cy]) => {
+    s += `<polygon points="${cx},${cy-5} ${cx+5},${cy} ${cx},${cy+5} ${cx-5},${cy}" fill="${c}" opacity=".5"/>`;
+  });
+  return s;
+}
+
+function minimalBorder(W, H, c) {
+  let s = '';
+  // single fine line
+  s += `<rect x="8" y="8" width="${W-16}" height="${H-16}" rx="4" fill="none" stroke="${c}" stroke-width=".7" opacity=".3"/>`;
+  // corner ticks
+  const tick = 14;
+  [[8,8],[W-8,8],[8,H-8],[W-8,H-8]].forEach(([x,y]) => {
+    const dx = x === 8 ? 1 : -1, dy = y === 8 ? 1 : -1;
+    s += `<line x1="${x}" y1="${y}" x2="${x + dx * tick}" y2="${y}" stroke="${c}" stroke-width="1.5" opacity=".55"/>`;
+    s += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y + dy * tick}" stroke="${c}" stroke-width="1.5" opacity=".55"/>`;
+  });
+  return s;
+}
+
+function floralBorder(W, H, c) {
+  let s = '';
+  const c2 = mixHex(c, '#5a9a6e');
+  function flower(cx, cy, r) {
+    s += `<circle cx="${cx}" cy="${cy}" r="${r*.5}" fill="${c}" opacity=".8"/>`;
+    for (let a = 0; a < 360; a += 60) {
+      const rad = a * Math.PI / 180;
+      const px = cx + r * Math.cos(rad), py = cy + r * Math.sin(rad);
+      s += `<ellipse cx="${px}" cy="${py}" rx="${r*.4}" ry="${r*.25}" fill="${c}" opacity=".5" transform="rotate(${a} ${px} ${py})"/>`;
+    }
+  }
+  // top & bottom flower rows
+  for (let x = 22; x <= W - 22; x += 30) {
+    flower(x, 14, 8); flower(x, H - 14, 8);
+  }
+  // left & right flower cols
+  for (let y = 38; y <= H - 38; y += 30) {
+    flower(14, y, 8); flower(W - 14, y, 8);
+  }
+  // vine top
+  s += `<path d="M14,14`;
+  for (let x = 22; x <= W - 22; x += 30) s += ` Q${x-6},8 ${x},14 Q${x+6},20 ${x+15},14`;
+  s += `" fill="none" stroke="${c2}" stroke-width="1" opacity=".4"/>`;
+  // vine bottom
+  s += `<path d="M14,${H-14}`;
+  for (let x = 22; x <= W - 22; x += 30) s += ` Q${x-6},${H-8} ${x},${H-14} Q${x+6},${H-20} ${x+15},${H-14}`;
+  s += `" fill="none" stroke="${c2}" stroke-width="1" opacity=".4"/>`;
+  return s;
+}
+
+function mixHex(h1, h2) {
+  try {
+    const p = h => [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+    const [r1,g1,b1]=p(h1.length===7?h1:'#e8d5a0');
+    const [r2,g2,b2]=p(h2.length===7?h2:'#5a9a6e');
+    return '#'+[Math.round((r1+r2)/2),Math.round((g1+g2)/2),Math.round((b1+b2)/2)].map(v=>v.toString(16).padStart(2,'0')).join('');
+  } catch(e){return h1;}
+}
+
+/* ═══════════════════════════════
+   SHARE LINK
+═══════════════════════════════ */
+function buildParams() {
+  const p = new URLSearchParams();
+  p.set('view', '1');
+  p.set('to',     document.getElementById('f-to').value || '');
+  p.set('msg',    document.getElementById('f-msg').value || '');
+  p.set('from',   document.getElementById('f-from').value || '');
+  p.set('reason', document.getElementById('f-reason').value || '');
+  p.set('theme',  ST.theme);
+  p.set('style',  ST.style);
+  p.set('accent', (document.getElementById('f-accent').value || '#e8d5a0').replace('#', ''));
+  // Note: photo not in URL (too large)
+  return p;
+}
+function genLink() {
+  const url = window.location.origin + window.location.pathname + '?' + buildParams().toString();
+  document.getElementById('share-url').value = url;
+  window.open(url, '_blank');
+}
+function copyLink() {
+  const el = document.getElementById('share-url');
+  if (el.value.includes('Click')) { genLink(); return; }
+  el.select(); document.execCommand('copy');
+  alert('✓ Link copied!');
+}
+
+/* ═══════════════════════════════
+   DOWNLOAD
+═══════════════════════════════ */
+function dlPNG() {
+  const card = document.getElementById('ty-card');
+  html2canvas(card, { scale: 3, useCORS: true, logging: false, allowTaint: true }).then(c => {
+    const a = document.createElement('a');
+    a.download = 'thankyou-card.png'; a.href = c.toDataURL('image/png'); a.click();
+  });
+}
+function dlSharePNG() {
+  const card = document.getElementById('s-ty-card');
+  html2canvas(card, { scale: 3, useCORS: true, logging: false, allowTaint: true }).then(c => {
+    const a = document.createElement('a');
+    a.download = 'thankyou-card.png'; a.href = c.toDataURL('image/png'); a.click();
+  });
+}
+
+/* ═══════════════════════════════
+   MOBILE PREVIEW
+═══════════════════════════════ */
+function openPrev()  { document.getElementById('ppanel').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closePrev() { document.getElementById('ppanel').classList.remove('open'); document.body.style.overflow = ''; }
+
+/* ═══════════════════════════════
+   SHARE PAGE
+═══════════════════════════════ */
+function loadSharePage(p) {
+  const to     = p.get('to') || 'Someone Special';
+  const msg    = p.get('msg') || 'Your kindness means more than words can express.';
+  const from   = p.get('from') || '';
+  const reason = p.get('reason') || '';
+  const theme  = parseInt(p.get('theme') || '0');
+  const style  = p.get('style') || 'classic';
+  const accent = '#' + (p.get('accent') || 'e8d5a0');
+
+  ST.theme = theme;
+  ST.style = style;
+
+  // header
+  document.getElementById('s-names-line').innerHTML = `<em>${to}</em>`;
+  if (from) {
+    document.getElementById('s-dear-line').textContent = from + ' has sent you a thank you card';
+    document.getElementById('s-dear-line').style.display = 'block';
+  }
+  if (reason) document.getElementById('s-sub-line').textContent = REASON_LABELS[reason] || 'has received a thank you card';
+
+  // populate share card
+  const sCard = document.getElementById('s-ty-card');
+  sCard.style.background = THEMES[theme];
+  sCard.className = sCard.className.replace(/style-\w+/g, '').trim();
+  sCard.classList.add('style-' + style);
+
+  document.getElementById('s-c-to').textContent = to;
+  document.getElementById('s-c-to').style.color = accent;
+  document.getElementById('s-c-msg').textContent = msg;
+  document.getElementById('s-c-from').textContent = from || '—';
+  document.getElementById('s-c-from').style.color = accent;
+  document.getElementById('s-c-div-sym').style.color = accent;
+  const rEl = document.getElementById('s-c-reason');
+  if (rEl && reason) { rEl.textContent = REASON_LABELS[reason] || ''; rEl.style.display = 'block'; }
+
+  renderBorderSVGDirect('s-card-border-svg', style, accent);
+}
+
+function renderBorderSVGDirect(svgId, style, color) {
+  const svgEl = document.getElementById(svgId); if (!svgEl) return;
+  const W = 400, H = 300;
+  let inner = '';
+  if (style === 'classic') inner = classicBorder(W, H, color);
+  else if (style === 'minimal') inner = minimalBorder(W, H, color);
+  else if (style === 'floral') inner = floralBorder(W, H, color);
+  svgEl.innerHTML = inner;
+}
+
+/* ═══════════════════════════════
+   ENVELOPE & FIREWORKS
+═══════════════════════════════ */
+let envOpened = false;
+function openEnv() {
+  if (envOpened) return;
+  envOpened = true;
+  const env = document.getElementById('env');
+  env.classList.add('open');
+  document.getElementById('s-hint').style.display = 'none';
+  setTimeout(() => {
+    env.style.transition = 'opacity .5s, transform .5s';
+    env.style.opacity = '0';
+    env.style.transform = 'scale(.85) translateY(-10px)';
+    setTimeout(() => {
+      env.style.display = 'none';
+      document.getElementById('card-reveal').classList.add('show');
+      launchFireworks();
+    }, 500);
+  }, 850);
+}
+
+function launchFireworks() {
+  const canvas = document.getElementById('fw-canvas');
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const cols = ['#3d7a52','#c9a84c','#7ca87c','#e8d5a0','#5aaa6a','#fff','#c0e8c0','#a0c8a0'];
+  const particles = [];
+  for (let b = 0; b < 8; b++) {
+    setTimeout(() => {
+      const cx = 80 + Math.random() * (canvas.width - 160);
+      const cy = 60 + Math.random() * (canvas.height * .5);
+      for (let i = 0; i < 55; i++) {
+        const angle = Math.random() * Math.PI * 2, spd = 1.5 + Math.random() * 5;
+        particles.push({ x: cx, y: cy, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd - 1.5, alpha: 1, size: 2 + Math.random() * 3, color: cols[Math.floor(Math.random() * cols.length)], g: .1 });
+      }
+    }, b * 260);
+  }
+  let fr = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.alpha -= .013; p.vx *= .98; p.vy *= .98;
+      ctx.save(); ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    });
+    fr++;
+    if (fr < 200) requestAnimationFrame(draw);
+    else { ctx.clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+  }
+  requestAnimationFrame(draw);
+}
+
+/* ═══════════════════════════════
+   BOOT
+═══════════════════════════════ */
+init();
+</script>
+</body>
+</html>
