@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AnniversaryGlow ✨ — Beautiful Anniversary Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:wght@300;400;600;700;800&family=Pacifico&family=Dancing+Script:wght@500;700&family=Satisfy&family=Sacramento&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#fff8fd;--card:#fff;--ink:#1e0a28;
+  --mid:#6a3a8a;--muted:#b090cc;--border:#f0e0f8;
+  --rose:#d0406a;--gold:#c9a84c;--purple:#8040c0;
+  --shadow:0 16px 60px rgba(120,60,160,.12);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none}
+
+/* CURSOR */
+#cur{position:fixed;width:12px;height:12px;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);background:#d0406a;mix-blend-mode:multiply}
+#cur2{position:fixed;width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(208,64,106,.4);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .09s ease}
+
+/* LOADER */
+#loader{position:fixed;inset:0;z-index:10000;background:linear-gradient(135deg,#fff0f6,#f8eaff);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s,visibility .9s}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.ld-heart{font-size:4rem;animation:ldPulse 1.2s ease-in-out infinite}
+@keyframes ldPulse{0%,100%{transform:scale(.9)}50%{transform:scale(1.18)}}
+.ld-brand{font-family:'Pacifico',cursive;font-size:2rem;color:var(--rose);margin-top:14px}
+.ld-brand span{color:var(--gold)}
+.ld-bar{width:180px;height:3px;background:rgba(208,64,106,.15);border-radius:3px;margin-top:22px;overflow:hidden}
+.ld-fill{height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--purple),var(--gold));animation:ldFill 1.5s ease forwards}
+@keyframes ldFill{to{width:100%}}
+
+/* BG CANVAS */
+#bgCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45}
+
+/* FIREWORKS */
+#fwCanvas{position:fixed;inset:0;pointer-events:none;z-index:8000;display:none}
+
+/* BURST */
+#burst{position:fixed;inset:0;pointer-events:none;z-index:7000;overflow:hidden}
+.bln{position:absolute;bottom:-80px;font-size:var(--sz,2.2rem);animation:bRise var(--d,6s) ease-in var(--dl,0s) forwards}
+@keyframes bRise{0%{bottom:-80px;opacity:1;transform:rotate(0)}50%{transform:translateX(-12px)rotate(-5deg)}100%{bottom:110vh;opacity:0}}
+.cnf{position:absolute;top:-10px;border-radius:2px;animation:cFall var(--d,4s) ease-in var(--dl,0s) forwards}
+@keyframes cFall{0%{transform:translateY(0)rotate(0);opacity:1}100%{transform:translateY(100vh)rotate(720deg)translateX(var(--sx,40px));opacity:0}}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);z-index:9999;background:#1e0a28;color:white;padding:12px 28px;border-radius:50px;font-size:.86rem;font-weight:700;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:15px 44px;background:rgba(255,248,253,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Pacifico',cursive;font-size:1.35rem;color:var(--rose);text-decoration:none}
+.nav-logo span{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-badge{font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);background:var(--border);padding:5px 14px;border-radius:50px}
+#soundBtn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:white;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:none;transition:border-color .2s}
+#soundBtn:hover{border-color:var(--rose)}
+
+/* ══════════════════════════════
+   CREATOR
+══════════════════════════════ */
+#creator{position:relative;z-index:10;min-height:100vh;padding:100px 24px 60px;display:flex;flex-direction:column;align-items:center}
+.creator-header{text-align:center;margin-bottom:44px}
+.ch-eyebrow{font-size:.68rem;font-weight:800;letter-spacing:.25em;text-transform:uppercase;color:var(--purple);display:block;margin-bottom:10px}
+.ch-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:var(--ink);line-height:1.15;margin-bottom:10px}
+.ch-title em{font-style:italic;color:var(--rose)}
+.ch-sub{font-size:.95rem;color:var(--muted);line-height:1.65;max-width:440px;margin:0 auto}
+
+/* STEPS */
+.steps-row{display:flex;align-items:center;margin-bottom:36px;max-width:680px;width:100%}
+.sdot{display:flex;flex-direction:column;align-items:center;gap:5px}
+.sdc{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;border:2px solid var(--border);color:var(--muted);background:white;transition:all .3s}
+.sdc.active{background:linear-gradient(135deg,var(--rose),var(--purple));color:white;border-color:transparent;box-shadow:0 4px 16px rgba(208,64,106,.3)}
+.sdc.done{background:#e8f8f0;color:#22c55e;border-color:#22c55e}
+.sdl{font-size:.58rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center}
+.sdl.active{color:var(--rose)}
+.sline{flex:1;height:2px;background:var(--border);margin:0 3px;margin-bottom:20px;transition:background .4s}
+.sline.done{background:linear-gradient(90deg,var(--rose),var(--purple))}
+
+/* FORM CARD */
+.form-card{background:white;border-radius:28px;box-shadow:var(--shadow);padding:42px 38px;max-width:680px;width:100%;border:1px solid var(--border);position:relative;overflow:hidden}
+.form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#d0406a,#8040c0,#c9a84c,#d0406a);background-size:200%;animation:gradShift 3s linear infinite}
+@keyframes gradShift{to{background-position:200% center}}
+
+.fsec{display:none;animation:fadeIn .4s ease}
+.fsec.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.fs-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-style:italic;color:var(--ink);margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.fs-title span{color:var(--rose)}
+
+.field{margin-bottom:18px}
+.fl{display:block;font-size:.68rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.fi,.fta,.fsel{width:100%;padding:12px 15px;border-radius:12px;border:1.5px solid var(--border);font-family:'Nunito',sans-serif;font-size:.93rem;color:var(--ink);background:white;outline:none;transition:border-color .3s,box-shadow .3s;cursor:none}
+.fi:focus,.fta:focus,.fsel:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(208,64,106,.1)}
+.fta{resize:vertical;min-height:80px;line-height:1.6}
+.fsel{appearance:none;cursor:none}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* PHOTO UPLOAD */
+.phu-area{border:2px dashed var(--border);border-radius:16px;padding:24px;text-align:center;cursor:none;transition:border-color .3s,background .3s;position:relative}
+.phu-area:hover{border-color:var(--rose);background:rgba(208,64,106,.03)}
+.phu-area.has-photo{border-style:solid;border-color:var(--rose)}
+.phu-icon{font-size:2rem;display:block;margin-bottom:8px}
+.phu-text{font-size:.85rem;color:var(--muted);line-height:1.5}
+.phu-btn{display:inline-block;margin-top:12px;padding:8px 22px;border-radius:50px;background:linear-gradient(135deg,var(--rose),var(--purple));color:white;font-size:.76rem;font-weight:800;letter-spacing:.06em;cursor:none}
+.phu-preview-wrap{position:relative;display:inline-block;margin-top:10px}
+.phu-preview{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--rose);box-shadow:0 4px 16px rgba(208,64,106,.25)}
+.phu-del{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--rose);color:white;font-size:.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:none;border:none}
+#photoInput{display:none}
+
+/* THEME GRID */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tc{border-radius:14px;overflow:hidden;border:3px solid transparent;cursor:none;transition:transform .2s,border-color .2s,box-shadow .2s;position:relative}
+.tc:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(0,0,0,.1)}
+.tc.sel{border-color:var(--rose);box-shadow:0 0 0 2px rgba(208,64,106,.25)}
+.tc .ck{position:absolute;top:7px;right:7px;width:22px;height:22px;border-radius:50%;background:var(--rose);color:white;display:none;align-items:center;justify-content:center;font-size:.72rem;font-weight:900}
+.tc.sel .ck{display:flex}
+.tt{height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.tn{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-align:center;padding:7px 4px;background:white;color:var(--mid)}
+/* theme bgs */
+.th-rose{background:linear-gradient(135deg,#ffe0ea,#ffb0c8)}
+.th-gold{background:linear-gradient(135deg,#1a1200,#3a2800)}
+.th-lavender{background:linear-gradient(135deg,#f0e8ff,#d8c8f8)}
+.th-midnight{background:linear-gradient(135deg,#060416,#1a0a38)}
+.th-bloom{background:linear-gradient(135deg,#fff8e0,#ffe0c8)}
+.th-ocean{background:linear-gradient(135deg,#e0eeff,#b0c8f0)}
+
+/* FONT PICKER */
+.font-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.font-btn{border-radius:12px;border:2px solid var(--border);padding:12px 10px;background:white;text-align:center;cursor:none;transition:all .2s}
+.font-btn:hover{border-color:rgba(208,64,106,.4)}
+.font-btn.sel{border-color:var(--rose);background:rgba(208,64,106,.06);box-shadow:0 0 0 2px rgba(208,64,106,.15)}
+.fb-prev{font-size:1.1rem;color:var(--ink);display:block;margin-bottom:4px}
+.fb-nm{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* WISH TEMPLATES */
+.templ-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ttab{padding:6px 16px;border-radius:50px;border:1.5px solid var(--border);background:white;font-size:.74rem;font-weight:700;color:var(--muted);cursor:none;transition:all .2s}
+.ttab:hover,.ttab.atab{background:var(--rose);border-color:var(--rose);color:white}
+.templ-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:200px;overflow-y:auto;padding-right:4px}
+.templ-list::-webkit-scrollbar{width:4px}
+.templ-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.titem{padding:10px 13px;border-radius:10px;border:1.5px solid var(--border);background:white;font-size:.78rem;line-height:1.45;color:var(--mid);cursor:none;text-align:left;transition:all .2s}
+.titem:hover{border-color:var(--rose);color:var(--ink);background:rgba(208,64,106,.04)}
+
+/* STICKER GRID */
+.sticker-grid{display:flex;flex-wrap:wrap;gap:8px}
+.sbtn{width:44px;height:44px;border-radius:10px;border:2px solid var(--border);background:white;font-size:1.25rem;display:flex;align-items:center;justify-content:center;cursor:none;transition:all .2s}
+.sbtn:hover{border-color:var(--rose);transform:scale(1.15)}
+.sbtn.ssel{border-color:var(--rose);background:rgba(208,64,106,.08);box-shadow:0 0 0 2px rgba(208,64,106,.15)}
+
+/* MEMORY TIMELINE */
+.timeline-wrap{border:1.5px solid var(--border);border-radius:16px;padding:16px;background:#fdf8ff}
+.timeline-item{display:grid;grid-template-columns:80px 1fr auto;gap:10px;align-items:center;margin-bottom:10px;background:white;border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.timeline-item:last-child{margin-bottom:0}
+.tl-date{font-size:.72rem;font-weight:700;color:var(--rose);white-space:nowrap}
+.tl-memo{font-size:.84rem;color:var(--ink);border:none;outline:none;width:100%;font-family:'Nunito',sans-serif}
+.tl-del{background:none;border:none;color:var(--muted);font-size:.9rem;cursor:none;padding:4px;transition:color .2s}
+.tl-del:hover{color:var(--rose)}
+.add-tl-btn{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;border:2px dashed var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;cursor:none;transition:.2s;margin-top:10px}
+.add-tl-btn:hover{border-color:var(--rose);color:var(--rose)}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;margin-top:24px}
+.btn-next{flex:1;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--rose),var(--purple));color:white;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:.06em;cursor:none;box-shadow:0 6px 22px rgba(208,64,106,.28);transition:transform .2s,box-shadow .2s}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(208,64,106,.42)}
+.btn-bk{padding:14px 22px;border-radius:12px;border:1.5px solid var(--border);background:white;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:none;transition:border-color .2s,color .2s}
+.btn-bk:hover{border-color:var(--rose);color:var(--rose)}
+
+/* ══════════════════════════════
+   ENVELOPE REVEAL
+══════════════════════════════ */
+#envWrap{display:none;position:fixed;inset:0;z-index:5000;background:rgba(10,4,22,.9);backdrop-filter:blur(18px);align-items:center;justify-content:center;padding:20px}
+#envWrap.open{display:flex}
+.env-scene{position:relative;width:min(440px,92vw)}
+.env-back{width:100%;padding-bottom:68%;border-radius:14px;background:linear-gradient(160deg,#300830,#180318);border:1px solid rgba(208,64,106,.2);box-shadow:0 40px 100px rgba(0,0,0,.7);position:relative;overflow:hidden}
+.env-pattern{position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 0,transparent 50%);background-size:18px 18px}
+.env-flap{position:absolute;top:0;left:0;right:0;height:0;border-left:220px solid transparent;border-right:220px solid transparent;border-top:155px solid #4a1060;transform-origin:top center;animation:envFlap 1.4s .3s cubic-bezier(.22,1,.36,1) forwards;z-index:4;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4))}
+@keyframes envFlap{0%{transform:rotateX(0);opacity:1}50%{transform:rotateX(-150deg)}100%{transform:rotateX(-180deg);opacity:0}}
+.env-card-slide{position:absolute;top:10%;left:5%;right:5%;background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden;transform:translateY(30px) scale(.94);opacity:0;animation:cardSlide 1s 1s cubic-bezier(.22,1,.36,1) forwards;z-index:3}
+@keyframes cardSlide{to{transform:translateY(-32%) scale(1);opacity:1}}
+.env-inner{padding:26px 22px;text-align:center}
+.env-heart{font-size:2.8rem;animation:ldPulse 1.5s ease-in-out infinite alternate;display:block;margin-bottom:8px}
+.env-to{font-family:'Great Vibes',cursive;font-size:2rem;color:var(--rose)}
+.env-msg{font-size:.8rem;color:var(--muted);margin-top:6px}
+.env-open-btn{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:12px 28px;border-radius:50px;border:none;background:linear-gradient(135deg,var(--rose),var(--purple));color:white;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:800;cursor:none;box-shadow:0 6px 24px rgba(208,64,106,.35);transition:transform .2s;animation:popIn .6s 1.8s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.env-open-btn:hover{transform:translateY(-2px)}
+
+/* ══════════════════════════════
+   CARD PAGE
+══════════════════════════════ */
+#cardPage{display:none;position:relative;z-index:10;min-height:100vh}
+.card-scene{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0;overflow:hidden;position:relative}
+.card-inner{width:100%;max-width:720px;margin:0 auto;padding:60px 28px 90px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:2}
+
+/* ANNI BADGE / BANNER */
+.anni-banner{display:none;width:100%;background:linear-gradient(135deg,#d0406a,#8040c0,#c9a84c);padding:15px;text-align:center;font-size:.82rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:white;animation:bannerGlow 2s ease-in-out infinite alternate}
+.anni-banner.show{display:block}
+@keyframes bannerGlow{from{box-shadow:0 0 0 rgba(208,64,106,.3)}to{box-shadow:0 4px 30px rgba(208,64,106,.55)}}
+
+/* COUNTDOWN */
+.countdown-box{display:none;flex-direction:column;align-items:center;border-radius:18px;padding:16px 28px;margin-bottom:22px;backdrop-filter:blur(8px)}
+.countdown-box.show{display:flex}
+.cd-lbl{font-size:.6rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.65;margin-bottom:10px}
+.cd-tiles{display:flex;gap:10px}
+.cd-tile{border-radius:10px;padding:10px 14px;text-align:center;min-width:58px;background:rgba(255,255,255,.14)}
+.cd-num{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;line-height:1;display:block}
+.cd-unit{font-size:.52rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.55;display:block;margin-top:3px}
+
+/* YEARS BADGE */
+.years-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:50px;font-weight:800;font-size:1.05rem;margin-bottom:20px;animation:cardIn .8s .4s both}
+@keyframes cardIn{from{opacity:0;transform:scale(.8) translateY(18px)}to{opacity:1;transform:none}}
+
+/* PHOTOS */
+.photo-pair{display:flex;gap:-16px;justify-content:center;margin-bottom:16px;animation:cardIn .8s .2s both}
+.photo-circle{width:90px;height:90px;border-radius:50%;object-fit:cover;border:4px solid white;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.photo-circle:first-child{transform:translateX(10px);z-index:1}
+.photo-circle:last-child{transform:translateX(-10px)}
+.photo-single{width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid white;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:cardIn .8s .2s both}
+
+/* STICKERS */
+.card-stickers{display:flex;gap:12px;justify-content:center;margin-bottom:12px}
+.cs{font-size:2.1rem;animation:sFloat 3s ease-in-out infinite}
+.cs:nth-child(2){animation-delay:.5s}
+.cs:nth-child(3){animation-delay:1s}
+@keyframes sFloat{0%,100%{transform:translateY(0)rotate(-4deg)}50%{transform:translateY(-10px)rotate(4deg)}}
+
+.card-to-lbl{font-size:.62rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;opacity:.5;margin-bottom:4px}
+.card-to{font-family:'Great Vibes',cursive;font-size:clamp(2rem,7vw,3.8rem);line-height:1.1;margin-bottom:6px;animation:cardIn .8s .25s both}
+.card-headline{font-family:'Pacifico',cursive;font-size:clamp(1.5rem,4vw,2.6rem);line-height:1.25;margin-bottom:16px;animation:cardIn .8s .38s both}
+
+/* HEART ANIMATION */
+.heart-wrap{margin:14px 0 20px;animation:cardIn .9s .5s cubic-bezier(.34,1.56,.64,1) both;cursor:none}
+.heart-svg{width:140px;height:140px}
+.heart-hint{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.4;margin-top:5px;display:block}
+
+/* MESSAGE BOX */
+.msg-box{border-radius:20px;padding:26px 28px;margin-bottom:22px;max-width:520px;width:100%;animation:cardIn .8s .7s both}
+.msg-text{font-size:1.06rem;line-height:1.9}
+.from-lbl{font-size:.6rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.42;margin-top:12px;display:block}
+.from-name{font-family:'Great Vibes',cursive;font-size:1.5rem;display:block;margin-top:3px}
+
+/* MEMORY TIMELINE ON CARD */
+.card-timeline{width:100%;max-width:520px;margin-bottom:22px;animation:cardIn .8s .85s both}
+.tl-title{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.5;margin-bottom:12px}
+.tl-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;text-align:left}
+.tl-dot-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;border:3px solid currentColor}
+.tl-vline{flex:1;width:2px;margin-top:3px;min-height:20px;opacity:.25;background:currentColor}
+.tl-content{}
+.tl-dt{font-size:.7rem;font-weight:800;letter-spacing:.08em;opacity:.6;display:block;margin-bottom:2px}
+.tl-mm{font-size:.9rem;line-height:1.5}
+
+/* ACTIONS */
+.card-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;animation:cardIn .8s .95s both}
+.ca-btn{display:inline-flex;align-items:center;gap:7px;padding:13px 22px;border-radius:50px;border:none;cursor:none;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;transition:transform .2s,box-shadow .2s;letter-spacing:.04em}
+.ca-btn:hover{transform:translateY(-2px)}
+.ca-wa{background:linear-gradient(135deg,#25D366,#128C7E);color:white;box-shadow:0 6px 22px rgba(37,211,102,.3)}
+.ca-copy{color:white;box-shadow:0 6px 22px rgba(0,0,0,.2)}
+.ca-dl{background:white;border:1.5px solid rgba(255,255,255,.3)!important;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.ca-new{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25)!important;backdrop-filter:blur(6px);color:white}
+
+/* ══════════════════════════════
+   CARD THEMES
+══════════════════════════════ */
+/* ROSE */
+.sc-rose{background:linear-gradient(160deg,#fff0f5,#ffe4ef,#ffd6e9)}
+.sc-rose .card-to,.sc-rose .from-name{color:#b01850}
+.sc-rose .card-headline,.sc-rose .years-badge{color:#d0406a}
+.sc-rose .years-badge{background:rgba(208,64,106,.1);border:1px solid rgba(208,64,106,.22)}
+.sc-rose .msg-box{background:rgba(255,255,255,.75);border:1px solid rgba(255,180,210,.35)}
+.sc-rose .msg-text{color:#380820}
+.sc-rose .card-to-lbl,.sc-rose .from-lbl,.sc-rose .cd-lbl,.sc-rose .tl-title{color:rgba(176,24,80,.5)}
+.sc-rose .ca-copy{background:linear-gradient(135deg,#d0406a,#f06090)}
+.sc-rose .ca-dl{color:#d0406a!important}
+.sc-rose .ca-new{color:#b01850!important;background:rgba(255,255,255,.55)!important}
+.sc-rose .countdown-box{background:rgba(208,64,106,.08);border:1px solid rgba(208,64,106,.15)}
+.sc-rose .cd-tile{background:rgba(208,64,106,.1)}
+.sc-rose .cd-num{color:#d0406a}
+.sc-rose .tl-dot{border-color:#d0406a;color:#d0406a}
+.sc-rose .tl-dt{color:#d0406a}
+.sc-rose .tl-mm{color:#380820}
+
+/* GOLD */
+.sc-gold{background:linear-gradient(160deg,#0e0800,#1c1200,#0e0800)}
+.sc-gold .card-to{color:#ffd060}
+.sc-gold .card-headline{color:#ffbe30;text-shadow:0 0 30px rgba(255,180,0,.5)}
+.sc-gold .years-badge{color:#ffd060;background:rgba(255,190,0,.12);border:1px solid rgba(255,190,0,.22)}
+.sc-gold .msg-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,200,60,.2)}
+.sc-gold .msg-text{color:#ffe0a0}
+.sc-gold .from-name{color:#ffd060}
+.sc-gold .card-to-lbl,.sc-gold .from-lbl,.sc-gold .cd-lbl,.sc-gold .tl-title{color:rgba(255,200,80,.45)}
+.sc-gold .ca-copy{background:linear-gradient(135deg,#a87000,#ffd700)}
+.sc-gold .countdown-box{background:rgba(255,180,0,.1);border:1px solid rgba(255,180,0,.18)}
+.sc-gold .cd-num{color:#ffd060}
+.sc-gold .tl-dot{border-color:#ffd060;color:#ffd060}
+.sc-gold .tl-dt{color:#ffd060}
+.sc-gold .tl-mm{color:#ffe0a0}
+
+/* LAVENDER */
+.sc-lavender{background:linear-gradient(160deg,#f8f0ff,#f0e4ff,#e8d8ff)}
+.sc-lavender .card-to,.sc-lavender .from-name{color:#5020a0}
+.sc-lavender .card-headline,.sc-lavender .years-badge{color:#7040c0}
+.sc-lavender .years-badge{background:rgba(128,64,192,.1);border:1px solid rgba(128,64,192,.2)}
+.sc-lavender .msg-box{background:rgba(255,255,255,.78);border:1px solid rgba(180,140,240,.35)}
+.sc-lavender .msg-text{color:#280848}
+.sc-lavender .card-to-lbl,.sc-lavender .from-lbl,.sc-lavender .cd-lbl,.sc-lavender .tl-title{color:rgba(80,32,160,.45)}
+.sc-lavender .ca-copy{background:linear-gradient(135deg,#7040c0,#a060e0)}
+.sc-lavender .ca-dl{color:#7040c0!important}
+.sc-lavender .ca-new{color:#5020a0!important;background:rgba(255,255,255,.55)!important}
+.sc-lavender .countdown-box{background:rgba(128,64,192,.08);border:1px solid rgba(128,64,192,.15)}
+.sc-lavender .cd-num{color:#7040c0}
+.sc-lavender .tl-dot{border-color:#7040c0;color:#7040c0}
+.sc-lavender .tl-dt{color:#7040c0}
+.sc-lavender .tl-mm{color:#280848}
+
+/* MIDNIGHT */
+.sc-midnight{background:linear-gradient(160deg,#04020e,#0e0828,#04020e)}
+.sc-midnight .card-to{color:#e0c8ff}
+.sc-midnight .card-headline{color:#c0a0ff;text-shadow:0 0 28px rgba(180,120,255,.5)}
+.sc-midnight .years-badge{color:#e0c8ff;background:rgba(180,120,255,.14);border:1px solid rgba(180,120,255,.25)}
+.sc-midnight .msg-box{background:rgba(255,255,255,.05);border:1px solid rgba(180,120,255,.2)}
+.sc-midnight .msg-text{color:#d8c0ff}
+.sc-midnight .from-name{color:#c0a0ff}
+.sc-midnight .card-to-lbl,.sc-midnight .from-lbl,.sc-midnight .cd-lbl,.sc-midnight .tl-title{color:rgba(200,160,255,.42)}
+.sc-midnight .ca-copy{background:linear-gradient(135deg,#5020a0,#9060ff)}
+.sc-midnight .countdown-box{background:rgba(180,120,255,.1);border:1px solid rgba(180,120,255,.2)}
+.sc-midnight .cd-num{color:#c0a0ff}
+.sc-midnight .tl-dot{border-color:#c0a0ff;color:#c0a0ff}
+.sc-midnight .tl-dt{color:#c0a0ff}
+.sc-midnight .tl-mm{color:#d8c0ff}
+
+/* BLOOM */
+.sc-bloom{background:linear-gradient(160deg,#fffaf0,#fff4e0,#ffecd0)}
+.sc-bloom .card-to,.sc-bloom .from-name{color:#a04820}
+.sc-bloom .card-headline,.sc-bloom .years-badge{color:#c06030}
+.sc-bloom .years-badge{background:rgba(192,96,48,.1);border:1px solid rgba(192,96,48,.2)}
+.sc-bloom .msg-box{background:rgba(255,255,255,.75);border:1px solid rgba(255,200,150,.35)}
+.sc-bloom .msg-text{color:#3a1808}
+.sc-bloom .card-to-lbl,.sc-bloom .from-lbl,.sc-bloom .cd-lbl,.sc-bloom .tl-title{color:rgba(160,72,32,.45)}
+.sc-bloom .ca-copy{background:linear-gradient(135deg,#c06030,#e89060)}
+.sc-bloom .ca-dl{color:#c06030!important}
+.sc-bloom .ca-new{color:#a04820!important;background:rgba(255,255,255,.55)!important}
+.sc-bloom .countdown-box{background:rgba(192,96,48,.08);border:1px solid rgba(192,96,48,.15)}
+.sc-bloom .cd-num{color:#c06030}
+.sc-bloom .tl-dot{border-color:#c06030;color:#c06030}
+.sc-bloom .tl-dt{color:#c06030}
+.sc-bloom .tl-mm{color:#3a1808}
+
+/* OCEAN */
+.sc-ocean{background:linear-gradient(160deg,#e8f4ff,#d0e8ff,#b8dcff)}
+.sc-ocean .card-to,.sc-ocean .from-name{color:#003870}
+.sc-ocean .card-headline,.sc-ocean .years-badge{color:#0058a8}
+.sc-ocean .years-badge{background:rgba(0,120,200,.1);border:1px solid rgba(0,120,200,.2)}
+.sc-ocean .msg-box{background:rgba(255,255,255,.78);border:1px solid rgba(0,140,220,.2)}
+.sc-ocean .msg-text{color:#001e3a}
+.sc-ocean .card-to-lbl,.sc-ocean .from-lbl,.sc-ocean .cd-lbl,.sc-ocean .tl-title{color:rgba(0,56,112,.42)}
+.sc-ocean .ca-copy{background:linear-gradient(135deg,#0068c0,#40a8f0)}
+.sc-ocean .ca-dl{color:#0058a8!important}
+.sc-ocean .ca-new{color:#003870!important;background:rgba(255,255,255,.55)!important}
+.sc-ocean .countdown-box{background:rgba(0,120,200,.08);border:1px solid rgba(0,120,200,.15)}
+.sc-ocean .cd-num{color:#0058a8}
+.sc-ocean .tl-dot{border-color:#0058a8;color:#0058a8}
+.sc-ocean .tl-dt{color:#0058a8}
+.sc-ocean .tl-mm{color:#001e3a}
+
+/* MOBILE */
+@media(max-width:620px){
+  .form-card{padding:26px 18px}
+  .theme-grid,.font-grid{grid-template-columns:repeat(2,1fr)}
+  .templ-list{grid-template-columns:1fr}
+  nav{padding:13px 18px}
+  .steps-row{gap:0}
+  .frow{grid-template-columns:1fr}
+  .card-actions{gap:8px}
+  .ca-btn{padding:11px 16px;font-size:.75rem}
+  .timeline-item{grid-template-columns:70px 1fr auto}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-heart">💕</div>
+  <div class="ld-brand">Anniversary<span>Glow</span></div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+</div>
+
+<!-- CURSOR -->
+<div id="cur"></div><div id="cur2"></div>
+
+<!-- CANVASES -->
+<canvas id="bgCanvas"></canvas>
+<canvas id="fwCanvas"></canvas>
+<div id="burst"></div>
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" onclick="goCreate();return false">Anniversary<span>Glow</span></a>
+  <div class="nav-right">
+    <span class="nav-badge">💕 Free forever</span>
+    <button id="soundBtn" onclick="toggleSound()">🔇</button>
+  </div>
+</nav>
+
+<!-- ENVELOPE -->
+<div id="envWrap">
+  <div class="env-scene">
+    <div class="env-back">
+      <div class="env-pattern"></div>
+      <div class="env-flap"></div>
+      <div class="env-card-slide">
+        <div class="env-inner">
+          <span class="env-heart">💕</span>
+          <div class="env-to" id="envTo">My Love</div>
+          <div class="env-msg">You have a special anniversary card 🌹</div>
+          <button class="env-open-btn" onclick="openFullCard()">Open With Love 💌</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATOR -->
+<div id="creator">
+  <div class="creator-header">
+    <span class="ch-eyebrow">💕 Personalised Anniversary E-Cards</span>
+    <h1 class="ch-title">Create an <em>Anniversary Card</em></h1>
+    <p class="ch-sub">Celebrate your love story — add photos, a timeline of memories, choose a theme and share instantly 🌹</p>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps-row" id="stepsRow">
+    <div class="sdot"><div class="sdc active" id="sd1">1</div><div class="sdl active" id="sl1">Couple</div></div>
+    <div class="sline" id="sln1"></div>
+    <div class="sdot"><div class="sdc" id="sd2">2</div><div class="sdl" id="sl2">Theme</div></div>
+    <div class="sline" id="sln2"></div>
+    <div class="sdot"><div class="sdc" id="sd3">3</div><div class="sdl" id="sl3">Message</div></div>
+    <div class="sline" id="sln3"></div>
+    <div class="sdot"><div class="sdc" id="sd4">4</div><div class="sdl" id="sl4">Memories</div></div>
+    <div class="sline" id="sln4"></div>
+    <div class="sdot"><div class="sdc" id="sd5">💕</div><div class="sdl" id="sl5">Create!</div></div>
+  </div>
+
+  <div class="form-card">
+
+    <!-- STEP 1: COUPLE DETAILS -->
+    <div class="fsec active" id="sec1">
+      <div class="fs-title">About the <span>Couple</span> 💕</div>
+      <div class="frow">
+        <div class="field">
+          <label class="fl">Partner 1 Name *</label>
+          <input class="fi" id="fP1" placeholder="e.g. Priya"/>
+        </div>
+        <div class="field">
+          <label class="fl">Partner 2 Name *</label>
+          <input class="fi" id="fP2" placeholder="e.g. Rohit"/>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="field">
+          <label class="fl">Anniversary Date</label>
+          <input class="fi" id="fDate" type="date"/>
+        </div>
+        <div class="field">
+          <label class="fl">Years Together</label>
+          <input class="fi" id="fYears" type="number" placeholder="e.g. 5" min="1" max="100"/>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="field">
+          <label class="fl">From (Sender)</label>
+          <input class="fi" id="fFrom" placeholder="Your name or 'Both of You'"/>
+        </div>
+        <div class="field">
+          <label class="fl">Occasion Type</label>
+          <select class="fsel" id="fOccasion">
+            <option value="anniversary">Anniversary 💕</option>
+            <option value="wedding">Wedding Anniversary 💍</option>
+            <option value="monthiversary">Monthiversary 🌙</option>
+            <option value="first">First Anniversary 🌟</option>
+            <option value="silver">Silver (25th) ✨</option>
+            <option value="golden">Golden (50th) 👑</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PHOTOS -->
+      <div class="field">
+        <label class="fl">Couple Photos <span style="font-weight:400;text-transform:none;letter-spacing:0">(Optional — up to 2)</span></label>
+        <div class="frow">
+          <div>
+            <div class="phu-area" id="phu1" onclick="document.getElementById('photoInput1').click()">
+              <span class="phu-icon" id="phuIcon1">📸</span>
+              <p class="phu-text" id="phuText1">Photo 1</p>
+              <div class="phu-btn">Choose</div>
+              <div class="phu-preview-wrap" id="phuPrev1" style="display:none">
+                <img class="phu-preview" id="phuImg1" src="" alt=""/>
+                <button class="phu-del" onclick="removePhoto(1,event)">✕</button>
+              </div>
+            </div>
+            <input type="file" id="photoInput1" accept="image/*"/>
+          </div>
+          <div>
+            <div class="phu-area" id="phu2" onclick="document.getElementById('photoInput2').click()">
+              <span class="phu-icon" id="phuIcon2">📸</span>
+              <p class="phu-text" id="phuText2">Photo 2</p>
+              <div class="phu-btn">Choose</div>
+              <div class="phu-preview-wrap" id="phuPrev2" style="display:none">
+                <img class="phu-preview" id="phuImg2" src="" alt=""/>
+                <button class="phu-del" onclick="removePhoto(2,event)">✕</button>
+              </div>
+            </div>
+            <input type="file" id="photoInput2" accept="image/*"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-next" onclick="goSec(2)">Next: Choose Theme →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: THEME -->
+    <div class="fsec" id="sec2">
+      <div class="fs-title">Pick a <span>Theme</span> 🎨</div>
+      <div class="theme-grid" id="themeGrid">
+        <div class="tc sel" data-t="rose" onclick="selTheme(this,'rose')"><div class="tt th-rose"><span style="font-size:1.7rem">🌹</span><span style="font-size:.9rem">💕✨</span></div><div class="tn">Rose Romance</div><div class="ck">✓</div></div>
+        <div class="tc" data-t="gold" onclick="selTheme(this,'gold')"><div class="tt th-gold"><span style="font-size:1.7rem">👑</span><span style="font-size:.9rem;color:#ffd060">💛✨</span></div><div class="tn">Golden Love</div><div class="ck">✓</div></div>
+        <div class="tc" data-t="lavender" onclick="selTheme(this,'lavender')"><div class="tt th-lavender"><span style="font-size:1.7rem">💜</span><span style="font-size:.9rem">🌸✨</span></div><div class="tn">Lavender Dream</div><div class="ck">✓</div></div>
+        <div class="tc" data-t="midnight" onclick="selTheme(this,'midnight')"><div class="tt th-midnight"><span style="font-size:1.7rem">🌙</span><span style="font-size:.9rem;color:#c0a0ff">⭐💫</span></div><div class="tn">Midnight Star</div><div class="ck">✓</div></div>
+        <div class="tc" data-t="bloom" onclick="selTheme(this,'bloom')"><div class="tt th-bloom"><span style="font-size:1.7rem">🌺</span><span style="font-size:.9rem">🍂✨</span></div><div class="tn">Warm Bloom</div><div class="ck">✓</div></div>
+        <div class="tc" data-t="ocean" onclick="selTheme(this,'ocean')"><div class="tt th-ocean"><span style="font-size:1.7rem">🌊</span><span style="font-size:.9rem">💎🫧</span></div><div class="tn">Ocean Serenity</div><div class="ck">✓</div></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-bk" onclick="goSec(1)">← Back</button>
+        <button class="btn-next" onclick="goSec(3)">Next: Message →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: MESSAGE -->
+    <div class="fsec" id="sec3">
+      <div class="fs-title">Write Your <span>Message</span> 💌</div>
+      <div class="field">
+        <label class="fl">Quick Templates</label>
+        <div class="templ-tabs" id="templTabs"></div>
+        <div class="templ-list" id="templList"></div>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label class="fl">Personal Message</label>
+        <textarea class="fta" id="fMsg" placeholder="Write from the heart… or choose a template above 🌹" maxlength="380"></textarea>
+        <div style="text-align:right;font-size:.66rem;color:var(--muted);margin-top:4px" id="charCount">0 / 380</div>
+      </div>
+      <div class="field">
+        <label class="fl">Message Font Style</label>
+        <div class="font-grid" id="fontGrid"></div>
+      </div>
+      <div class="field">
+        <label class="fl">Add Stickers (up to 3)</label>
+        <div class="sticker-grid" id="stickerGrid"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-bk" onclick="goSec(2)">← Back</button>
+        <button class="btn-next" onclick="goSec(4)">Next: Memories →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: MEMORY TIMELINE -->
+    <div class="fsec" id="sec4">
+      <div class="fs-title">Your <span>Memory Timeline</span> 🗓️</div>
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:18px;line-height:1.6">Add special moments from your journey — your first date, proposal, a trip, a milestone… These will appear as a beautiful timeline on your card.</p>
+      <div class="timeline-wrap" id="tlWrap">
+        <div id="tlItems"></div>
+        <button class="add-tl-btn" onclick="addMemory()">+ Add a Memory</button>
+      </div>
+      <p style="font-size:.74rem;color:var(--muted);margin-top:10px">Leave empty if you prefer a card without timeline.</p>
+      <div class="btn-row">
+        <button class="btn-bk" onclick="goSec(3)">← Back</button>
+        <button class="btn-next" onclick="createCard()">💕 Create Anniversary Card!</button>
+      </div>
+    </div>
+
+  </div><!-- /form-card -->
+</div><!-- /creator -->
+
+<div id="cardPage"></div>
+
+<script>
+/* ── CURSOR ── */
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=-100,my=-100,rx=-100,ry=-100;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function tc(){cur.style.left=mx+'px';cur.style.top=my+'px';rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cur2.style.left=rx+'px';cur2.style.top=ry+'px';requestAnimationFrame(tc)})();
+
+/* ── LOADER ── */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{document.getElementById('loader').classList.add('gone');initAll()},1700);
+});
+
+/* ── BG CANVAS ── */
+const bgcv=document.getElementById('bgCanvas'),bgctx=bgcv.getContext('2d');
+function rsz(){bgcv.width=innerWidth;bgcv.height=innerHeight}rsz();window.addEventListener('resize',rsz);
+const bgSyms=['💕','🌹','✨','💫','🌸','⭐','💖','🎊','🌟','💝'];
+const bgPs=Array.from({length:28},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,s:9+Math.random()*11,a:.04+Math.random()*.07,sp:.2+Math.random()*.4,ph:Math.random()*Math.PI*2,sym:bgSyms[Math.floor(Math.random()*bgSyms.length)]}));
+let bt=0;
+(function abg(){bgctx.clearRect(0,0,bgcv.width,bgcv.height);bt++;bgPs.forEach(p=>{p.y-=p.sp;if(p.y<-30){p.y=bgcv.height+30;p.x=Math.random()*bgcv.width}bgctx.save();bgctx.globalAlpha=p.a;bgctx.font=p.s+'px serif';bgctx.fillText(p.sym,p.x+Math.sin(bt/60+p.ph)*7,p.y);bgctx.restore()});requestAnimationFrame(abg)})();
+
+/* ── FIREWORKS ── */
+const fwcv=document.getElementById('fwCanvas'),fwctx=fwcv.getContext('2d');
+let fwPs=[],fwActive=false;
+function rsz2(){fwcv.width=innerWidth;fwcv.height=innerHeight}rsz2();window.addEventListener('resize',rsz2);
+function launchFW(x,y){
+  const cols=['#d0406a','#8040c0','#c9a84c','#ff8fc0','#e060a0','#fff','#ffd0e8'];
+  for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2,s=1.5+Math.random()*5.5;fwPs.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,alpha:1,size:2+Math.random()*3,color:cols[Math.floor(Math.random()*cols.length)]})}
+}
+function drawFW(){
+  fwctx.clearRect(0,0,fwcv.width,fwcv.height);
+  fwPs.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.07;p.alpha-=.016;p.vx*=.97;fwctx.save();fwctx.globalAlpha=Math.max(0,p.alpha);fwctx.fillStyle=p.color;fwctx.beginPath();fwctx.arc(p.x,p.y,p.size,0,Math.PI*2);fwctx.fill();fwctx.restore()});
+  fwPs=fwPs.filter(p=>p.alpha>0);
+  if(fwActive||fwPs.length>0)requestAnimationFrame(drawFW);
+  else fwcv.style.display='none';
+}
+function startFW(){
+  fwcv.style.display='block';fwActive=true;
+  [{x:.2,y:.4},{x:.5,y:.22},{x:.8,y:.38},{x:.35,y:.55},{x:.65,y:.42},{x:.15,y:.6}].forEach((s,i)=>
+    setTimeout(()=>launchFW(fwcv.width*s.x,fwcv.height*s.y),i*280)
+  );
+  drawFW();
+  setTimeout(()=>fwActive=false,3500);
+}
+
+/* ── SOUND ── */
+let actx=null,gainNode=null,soundOn=false;
+function toggleSound(){
+  const btn=document.getElementById('soundBtn');
+  if(!actx){
+    actx=new(window.AudioContext||window.webkitAudioContext)();
+    gainNode=actx.createGain();gainNode.gain.value=0;gainNode.connect(actx.destination);
+    function note(f,t,d,v=.03){const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,actx.currentTime+t);g.gain.linearRampToValueAtTime(v,actx.currentTime+t+.25);g.gain.linearRampToValueAtTime(0,actx.currentTime+t+d);o.connect(g);g.connect(gainNode);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+d+.1)}
+    // Soft romantic melody loop
+    function loop(){const melody=[392,330,349,294,330,262,294,330,349,392,440,392,349,330];melody.forEach((f,i)=>note(f,i*.55,1.1,.035));setTimeout(loop,melody.length*.55*1000+4000)}
+    loop();
+  }
+  soundOn=!soundOn;
+  gainNode.gain.linearRampToValueAtTime(soundOn?.18:0,actx.currentTime+1);
+  btn.textContent=soundOn?'🎵':'🔇';
+  showToast(soundOn?'🎵 Romantic music on!':'🔇 Music off');
+}
+
+/* ── STATE ── */
+let theme='rose',chosenFont='Great Vibes',chosenStickers=[],photos=['',''];
+let curSec=1,memories=[],currentData=null;
+
+/* ── PHOTO UPLOAD ── */
+function setupPhoto(n){
+  document.getElementById('photoInput'+n).addEventListener('change',function(){
+    const file=this.files[0];if(!file)return;
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const cv=document.createElement('canvas');
+        const max=400;let w=img.width,h=img.height;
+        if(w>max||h>max){const ratio=Math.min(max/w,max/h);w=Math.round(w*ratio);h=Math.round(h*ratio)}
+        cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);
+        photos[n-1]=cv.toDataURL('image/jpeg',.75);
+        document.getElementById('phuImg'+n).src=photos[n-1];
+        document.getElementById('phuPrev'+n).style.display='inline-block';
+        document.getElementById('phuIcon'+n).style.display='none';
+        document.getElementById('phuText'+n).style.display='none';
+        document.getElementById('phu'+n).classList.add('has-photo');
+      };
+      img.src=e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+function removePhoto(n,e){
+  e.stopPropagation();photos[n-1]='';
+  document.getElementById('phuPrev'+n).style.display='none';
+  document.getElementById('phuIcon'+n).style.display='block';
+  document.getElementById('phuText'+n).style.display='block';
+  document.getElementById('phu'+n).classList.remove('has-photo');
+  document.getElementById('photoInput'+n).value='';
+}
+
+/* ── THEME ── */
+function selTheme(el,t){document.querySelectorAll('.tc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');theme=t}
+
+/* ── FONTS ── */
+const fonts=[
+  {name:'Great Vibes',label:'Romantic',prev:'Love ❤️'},
+  {name:'Dancing Script',label:'Handwritten',prev:'Forever'},
+  {name:'Playfair Display',label:'Elegant',prev:'Always'},
+  {name:'Pacifico',label:'Fun Bold',prev:'Together!'},
+  {name:'Satisfy',label:'Script',prev:'My Love'},
+  {name:'Sacramento',label:'Calligraphy',prev:'Us ♥'},
+];
+function buildFonts(){
+  const g=document.getElementById('fontGrid');g.innerHTML='';
+  fonts.forEach(f=>{
+    const b=document.createElement('button');b.className='font-btn'+(f.name===chosenFont?' sel':'');
+    b.innerHTML=`<span class="fb-prev" style="font-family:'${f.name}',cursive">${f.prev}</span><span class="fb-nm">${f.label}</span>`;
+    b.onclick=()=>{chosenFont=f.name;document.querySelectorAll('.font-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')};
+    g.appendChild(b);
+  });
+}
+
+/* ── TEMPLATES ── */
+const templates={
+  'Spouse':[
+    "Every moment with you is my favourite memory. You are my home, my laughter, my reason. Happy Anniversary, my love — here is to forever and beyond 💕",
+    "Years have passed and yet every morning I wake up grateful it is you beside me. Thank you for loving me the way you do. Happy Anniversary 🌹",
+  ],
+  'Partner':[
+    "You walked into my life and everything changed for the better. Thank you for your love, your patience and your endless support. Happy Anniversary! 💖",
+    "From the very first moment I knew. Happy Anniversary — here is to all the adventures still ahead of us, and all the quiet evenings too ✨",
+  ],
+  'Parents':[
+    "You two have shown us what real love looks like — patient, kind, joyful, unwavering. Happy Anniversary Maa and Papa — we love you both so much 🌸",
+    "Watching you together has been our greatest blessing. Happy Anniversary — may your love continue to inspire everyone around you 💐",
+  ],
+  'Friends':[
+    "To the couple who makes love look effortless and beautiful — Happy Anniversary! You both deserve every bit of happiness life has to offer 🥂",
+    "Here is to the two of you — the most amazing couple we know. Happy Anniversary — cheers to your love story! 🎊",
+  ],
+};
+let activeTab='Spouse';
+function buildTemplates(){
+  const tabs=document.getElementById('templTabs'),list=document.getElementById('templList');
+  tabs.innerHTML='';
+  Object.keys(templates).forEach(k=>{
+    const t=document.createElement('button');t.className='ttab'+(k===activeTab?' atab':'');
+    t.textContent=k;t.onclick=()=>{activeTab=k;buildTemplates()};
+    tabs.appendChild(t);
+  });
+  list.innerHTML='';
+  templates[activeTab].forEach(w=>{
+    const b=document.createElement('button');b.className='titem';b.textContent=w;
+    b.onclick=()=>{document.getElementById('fMsg').value=w;updateChar()};
+    list.appendChild(b);
+  });
+}
+function updateChar(){
+  const v=document.getElementById('fMsg').value.length;
+  document.getElementById('charCount').textContent=v+' / 380';
+}
+
+/* ── STICKERS ── */
+const allStk=['💕','🌹','💍','🥂','✨','💫','🌸','💖','🎊','🎉','🌟','💐','🕊️','🌙','⭐','🏡','❤️','💌','🎶','🌺','🦋','💎','🎠','🌈','🍾'];
+function buildStickers(){
+  const g=document.getElementById('stickerGrid');g.innerHTML='';
+  allStk.forEach(s=>{
+    const b=document.createElement('button');b.className='sbtn';b.textContent=s;
+    b.onclick=()=>{
+      if(chosenStickers.includes(s)){chosenStickers=chosenStickers.filter(x=>x!==s);b.classList.remove('ssel')}
+      else if(chosenStickers.length<3){chosenStickers.push(s);b.classList.add('ssel')}
+      else showToast('Max 3 stickers! Remove one first 😊');
+    };
+    g.appendChild(b);
+  });
+}
+
+/* ── MEMORY TIMELINE ── */
+let memCount=0;
+function addMemory(date='',memo=''){
+  memCount++;
+  const id='mem'+memCount;
+  const wrap=document.getElementById('tlItems');
+  const row=document.createElement('div');row.className='timeline-item';row.id=id;
+  row.innerHTML=`
+    <input class="fi tl-date" style="padding:8px 10px;font-size:.8rem" type="month" value="${date}" placeholder="YYYY-MM"/>
+    <input class="fi tl-memo" style="padding:8px 10px;font-size:.84rem" placeholder="e.g. Our first date at the park 🌿" value="${memo}"/>
+    <button class="tl-del" onclick="document.getElementById('${id}').remove()">✕</button>`;
+  wrap.appendChild(row);
+}
+function getMemories(){
+  const items=document.querySelectorAll('.timeline-item');
+  const arr=[];
+  items.forEach(row=>{
+    const dt=row.querySelector('input[type=month]')?.value||'';
+    const mm=row.querySelector('.tl-memo')?.value?.trim()||'';
+    if(mm)arr.push({date:dt,memo:mm});
+  });
+  return arr;
+}
+
+/* ── STEPS NAV ── */
+function goSec(n){
+  if(n===2&&!document.getElementById('fP1').value.trim()){showToast('⚠️ Please enter Partner 1\'s name!');return}
+  document.getElementById('sec'+curSec).classList.remove('active');
+  curSec=n;
+  document.getElementById('sec'+curSec).classList.add('active');
+  for(let i=1;i<=5;i++){
+    const d=document.getElementById('sd'+i),l=document.getElementById('sl'+i),ln=document.getElementById('sln'+i);
+    if(!d)continue;
+    d.classList.remove('active','done');l.classList.remove('active');
+    if(ln)ln.classList.remove('done');
+    if(i<n){d.classList.add('done');d.textContent='✓'}
+    else if(i===n){d.classList.add('active');d.textContent=i==='5'?'💕':i;l.classList.add('active')}
+    else d.textContent=i==='5'?'💕':i;
+    if(ln&&i<n)ln.classList.add('done');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── ANNIVERSARY CHECK ── */
+function checkAnniversary(dateStr){
+  if(!dateStr)return{isToday:false,daysUntil:null,nextDate:null};
+  const d=new Date(dateStr+'T00:00:00');
+  const today=new Date();today.setHours(0,0,0,0);
+  const thisYear=new Date(today.getFullYear(),d.getMonth(),d.getDate());
+  if(thisYear.getTime()===today.getTime())return{isToday:true,daysUntil:0,nextDate:thisYear};
+  if(thisYear<today)thisYear.setFullYear(today.getFullYear()+1);
+  return{isToday:false,daysUntil:Math.round((thisYear-today)/86400000),nextDate:thisYear};
+}
+function startCountdown(target,tilesEl){
+  function tick(){
+    const diff=target-new Date();
+    if(diff<=0){tilesEl.closest('.countdown-box')?.classList.remove('show');return}
+    const dd=Math.floor(diff/86400000),hh=Math.floor((diff%86400000)/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
+    tilesEl.innerHTML=
+      `<div class="cd-tile"><span class="cd-num">${dd}</span><span class="cd-unit">Days</span></div>`+
+      `<div class="cd-tile"><span class="cd-num">${String(hh).padStart(2,'0')}</span><span class="cd-unit">Hrs</span></div>`+
+      `<div class="cd-tile"><span class="cd-num">${String(mm).padStart(2,'0')}</span><span class="cd-unit">Min</span></div>`+
+      `<div class="cd-tile"><span class="cd-num">${String(ss).padStart(2,'0')}</span><span class="cd-unit">Sec</span></div>`;
+  }
+  tick();setInterval(tick,1000);
+}
+
+/* ── HEART SVG ── */
+const heartColors={
+  rose:'#d0406a',gold:'#ffd060',lavender:'#9060d0',
+  midnight:'#c0a0ff',bloom:'#c06030',ocean:'#0068c0'
+};
+let heartBeating=true;
+function makeHeartSVG(t,interactive=false){
+  const c=heartColors[t]||'#d0406a';
+  const c2=t==='gold'?'#ffb030':t==='midnight'?'#e080ff':'#ff80b0';
+  const click=interactive?'onclick="pulseHeart()" style="cursor:pointer"':'';
+  return `<svg class="heart-svg" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" ${click}>
+  <defs>
+    <radialGradient id="hg" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="${c2}" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="${c}" stop-opacity="1"/>
+    </radialGradient>
+  </defs>
+  <g id="heartGroup" style="transform-origin:70px 70px">
+    <path d="M70,108 C70,108 16,72 16,44 C16,26 30,16 44,20 C54,23 62,32 70,42 C78,32 86,23 96,20 C110,16 124,26 124,44 C124,72 70,108 70,108Z" fill="url(#hg)"/>
+    <path d="M42,32 Q50,28 58,36" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-linecap="round"/>
+    <!-- floating mini hearts -->
+    <text id="mh1" x="80" y="30" font-size="12" opacity="0" style="animation:mhFloat 3s 1s ease-in-out infinite">💕</text>
+    <text id="mh2" x="55" y="22" font-size="9" opacity="0" style="animation:mhFloat 3s 2s ease-in-out infinite">✨</text>
+  </g>
+  <style>
+    @keyframes mhFloat{0%,100%{opacity:0;transform:translateY(0)}40%{opacity:.8}60%{opacity:.6;transform:translateY(-18px)}}
+    #heartGroup{animation:heartPulse 1.6s ease-in-out infinite}
+    @keyframes heartPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  </style>
+  </svg>`;
+}
+function pulseHeart(){
+  showToast('💕 Every beat is for you!');
+  startFW();
+}
+
+/* ── OCCASION LABELS ── */
+const occasionLabel={
+  'anniversary':'Anniversary','wedding':'Wedding Anniversary',
+  'monthiversary':'Monthiversary','first':'1st Anniversary',
+  'silver':'Silver Anniversary','golden':'Golden Anniversary'
+};
+
+/* ── CREATE CARD ── */
+function createCard(){
+  const p1=document.getElementById('fP1').value.trim()||'You';
+  const p2=document.getElementById('fP2').value.trim()||'Me';
+  const from=document.getElementById('fFrom').value.trim()||'With Love';
+  const dateStr=document.getElementById('fDate').value;
+  let years=parseInt(document.getElementById('fYears').value)||0;
+  if(!years&&dateStr){const d=new Date(dateStr+'T00:00:00'),t=new Date();let y=t.getFullYear()-d.getFullYear();const mo=t.getMonth()-d.getMonth();if(mo<0||(mo===0&&t.getDate()<d.getDate()))y--;if(y>0)years=y}
+  const msg=document.getElementById('fMsg').value.trim()||'Every love story is beautiful, but ours is my favourite ✨';
+  const occasion=document.getElementById('fOccasion').value;
+  const stickers=chosenStickers.length?chosenStickers:['💕','🌹','✨'];
+  memories=getMemories();
+  currentData={p1,p2,from,dateStr,years,msg,occasion,theme,font:chosenFont,stickers,photos:[...photos],memories};
+  showEnvelope(currentData);
+}
+
+/* ── ENVELOPE ── */
+function showEnvelope(d){
+  document.getElementById('envTo').textContent=d.p1+' & '+d.p2;
+  const flap=document.querySelector('.env-flap'),slide=document.querySelector('.env-card-slide');
+  flap.style.animation='none';slide.style.animation='none';
+  void flap.offsetWidth;void slide.offsetWidth;
+  flap.style.animation='';slide.style.animation='';
+  document.getElementById('envWrap').classList.add('open');
+  document.getElementById('creator').style.display='none';
+}
+function openFullCard(){
+  document.getElementById('envWrap').classList.remove('open');
+  renderCard(currentData);
+  document.getElementById('cardPage').style.display='block';
+  window.scrollTo(0,0);
+  setTimeout(()=>{launchBurst();startFW()},600);
+}
+function renderCard(d){
+  const ann=checkAnniversary(d.dateStr);
+  const isToday=ann.isToday;
+  const stRow=(d.stickers||['💕','🌹','✨']).map((s,i)=>`<span class="cs" style="animation-delay:${i*.4}s">${s}</span>`).join('');
+  const yrBadge=d.years>0?`<div class="years-badge">💕 ${d.years} Year${d.years>1?'s':''} of Love</div>`:'';
+  const banner=isToday?`<div class="anni-banner show">💕 HAPPY ANNIVERSARY ${d.p1.toUpperCase()} & ${d.p2.toUpperCase()}! 💕</div>`:'';
+  const cdBox=(!isToday&&ann.daysUntil!==null)?`<div class="countdown-box show" id="cdBox"><div class="cd-lbl">💕 Anniversary countdown</div><div class="cd-tiles" id="cdTiles"></div></div>`:'';
+  const occasion=occasionLabel[d.occasion]||'Anniversary';
+
+  // Photos
+  let photoHtml='';
+  if(d.photos[0]&&d.photos[1]){
+    photoHtml=`<div class="photo-pair"><img class="photo-circle" src="${d.photos[0]}" alt="${d.p1}"/><img class="photo-circle" src="${d.photos[1]}" alt="${d.p2}"/></div>`;
+  }else if(d.photos[0]){
+    photoHtml=`<img class="photo-single" src="${d.photos[0]}" alt="${d.p1}"/>`;
+  }else if(d.photos[1]){
+    photoHtml=`<img class="photo-single" src="${d.photos[1]}" alt="${d.p2}"/>`;
+  }
+
+  // Memory timeline
+  let tlHtml='';
+  if(d.memories&&d.memories.length){
+    const isLight=['rose','lavender','bloom','ocean'].includes(d.theme);
+    const rows=d.memories.map((m,i)=>{
+      const isLast=i===d.memories.length-1;
+      let dtStr=m.date;
+      if(m.date){const dt=new Date(m.date+'-01');dtStr=dt.toLocaleDateString('en-IN',{year:'numeric',month:'short'})}
+      return `<div class="tl-row">
+        <div class="tl-dot-line">
+          <div class="tl-dot"></div>
+          ${!isLast?'<div class="tl-vline"></div>':''}
+        </div>
+        <div class="tl-content">
+          ${dtStr?`<span class="tl-dt">${dtStr}</span>`:''}
+          <div class="tl-mm">${m.memo}</div>
+        </div>
+      </div>`;
+    }).join('');
+    tlHtml=`<div class="card-timeline"><div class="tl-title">💕 Our Story</div>${rows}</div>`;
+  }
+
+  const shareData=btoa(encodeURIComponent(JSON.stringify({...d,photos:['','']})));
+  const base=window.location.href.startsWith('about:')||window.location.href.startsWith('blob:')?'https://anniversaryglow.app/':window.location.href.split('#')[0];
+  const shareUrl=base+'#card='+shareData;
+  const waMsg=encodeURIComponent(`💕 Happy Anniversary ${d.p1} & ${d.p2}! We made you a special anniversary card — open it here: ${shareUrl}`);
+
+  document.getElementById('cardPage').innerHTML=`
+  <div class="card-scene sc-${d.theme}" id="cardScene">
+    ${banner}
+    <div class="card-inner" id="cardInner">
+      ${cdBox}
+      <div class="card-stickers">${stRow}</div>
+      ${photoHtml}
+      <div class="card-to-lbl">💕 Happy ${occasion}</div>
+      <div class="card-to">${d.p1} & ${d.p2}</div>
+      ${yrBadge}
+      <div class="card-headline">Happy ${occasion}! 🌹</div>
+      <div class="heart-wrap" title="Click the heart! 💕">
+        ${makeHeartSVG(d.theme,true)}
+        <span class="heart-hint">👆 Click to send love!</span>
+      </div>
+      <div class="msg-box">
+        <p class="msg-text" style="font-family:'${d.font||'Great Vibes'}',cursive,serif">"${d.msg}"</p>
+        <span class="from-lbl">With love, from</span>
+        <span class="from-name">${d.from}</span>
+      </div>
+      ${tlHtml}
+      <div class="card-actions">
+        <a class="ca-btn ca-wa" href="https://wa.me/?text=${waMsg}" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M5.339 18.897C4.146 17.8 3.3 16.393 2.903 14.817c-.395-1.576-.271-3.24.352-4.74A9.923 9.923 0 0 1 5.22 7.192a9.9 9.9 0 0 1 6.78-2.69 9.9 9.9 0 0 1 6.78 2.69 9.9 9.9 0 0 1 2.69 6.78 9.9 9.9 0 0 1-2.69 6.78 9.9 9.9 0 0 1-6.78 2.69c-1.77 0-3.43-.46-4.88-1.27l-5.31 1.39 1.53-5.35zm2.27-1.77l.342.203a8.25 8.25 0 0 0 4.049 1.063 8.25 8.25 0 0 0 5.657-2.245 8.25 8.25 0 0 0 2.245-5.657 8.25 8.25 0 0 0-2.245-5.657A8.25 8.25 0 0 0 12 2.588a8.25 8.25 0 0 0-5.657 2.245 8.25 8.25 0 0 0-2.245 5.657 8.25 8.25 0 0 0 1.16 4.188l.221.35-.74 2.585 2.87-.716z"/></svg>
+          WhatsApp
+        </a>
+        <button class="ca-btn ca-copy" onclick="copyLink()">🔗 Copy Link</button>
+        <button class="ca-btn ca-dl" onclick="downloadCard()">⬇️ Download PNG</button>
+        <button class="ca-btn ca-new" onclick="goCreate()">✏️ New Card</button>
+      </div>
+    </div>
+  </div>`;
+
+  if(!isToday&&ann.daysUntil!==null){
+    const tilesEl=document.getElementById('cdTiles');
+    if(tilesEl)startCountdown(ann.nextDate,tilesEl);
+  }
+}
+
+/* ── BURST ── */
+function launchBurst(){
+  const el=document.getElementById('burst');el.innerHTML='';
+  const bls=['💕','🌹','🎊','✨','💖','🥂','💐','🌸'];
+  const cc=['#d0406a','#8040c0','#c9a84c','#ff8fc0','#e060c0','#fff','#ffd0e8'];
+  for(let i=0;i<20;i++){const b=document.createElement('div');b.className='bln';b.textContent=bls[Math.floor(Math.random()*bls.length)];b.style.cssText=`left:${3+Math.random()*94}%;--d:${5+Math.random()*4}s;--dl:${Math.random()*1.5}s;--sz:${1.6+Math.random()*1.4}rem`;el.appendChild(b)}
+  for(let i=0;i<70;i++){const c=document.createElement('div');c.className='cnf';c.style.cssText=`left:${Math.random()*100}%;background:${cc[Math.floor(Math.random()*cc.length)]};width:${5+Math.random()*9}px;height:${5+Math.random()*9}px;--d:${3+Math.random()*3}s;--dl:${Math.random()*1.2}s;--sx:${(Math.random()-.5)*200}px;border-radius:${Math.random()>.5?'50%':'2px'}`;el.appendChild(c)}
+  setTimeout(()=>el.innerHTML='',9000);
+}
+
+/* ── DOWNLOAD ── */
+async function downloadCard(){
+  showToast('📸 Preparing your card…');
+  const el=document.getElementById('cardInner');
+  if(!el){showToast('⚠️ Card not found');return}
+  try{
+    const canvas=await html2canvas(el,{backgroundColor:null,scale:2,useCORS:true,allowTaint:true});
+    const a=document.createElement('a');
+    const name=(currentData?.p1||'anniversary').replace(/\s+/g,'-');
+    a.download=`anniversary-card-${name}.png`;a.href=canvas.toDataURL('image/png');a.click();
+    showToast('🎉 Card downloaded!');
+  }catch(e){showToast('⚠️ Download failed — try another browser')}
+}
+
+/* ── COPY LINK ── */
+function copyLink(){
+  if(!currentData)return;
+  const data=btoa(encodeURIComponent(JSON.stringify({...currentData,photos:['','']})));
+  const base=window.location.href.startsWith('about:')||window.location.href.startsWith('blob:')?'https://anniversaryglow.app/':window.location.href.split('#')[0];
+  const url=base+'#card='+data;
+  navigator.clipboard.writeText(url)
+    .then(()=>showToast('🔗 Link copied! Share it with '+currentData.p1+' & '+currentData.p2+' 💕'))
+    .catch(()=>{prompt('Copy this link:',url)});
+}
+
+/* ── TOAST ── */
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ── GO CREATE ── */
+function goCreate(){
+  document.getElementById('cardPage').style.display='none';
+  document.getElementById('envWrap').classList.remove('open');
+  document.getElementById('creator').style.display='';
+  window.scrollTo(0,0);
+}
+
+/* ── INIT ── */
+function initAll(){
+  setupPhoto(1);setupPhoto(2);
+  buildFonts();buildTemplates();buildStickers();
+  document.getElementById('fMsg').addEventListener('input',updateChar);
+  // Pre-add 2 memory slots
+  addMemory('','');addMemory('','');
+}
+</script>
+</body>
+</html>
